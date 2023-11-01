@@ -1,24 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
-
+import "./App.scss";
+import "boxicons/css/boxicons.min.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AppLayout from "./components/layout/AppLayout";
+import Home from "./components/page/Home";
+import Charge from "./components/page/Charge";
+import Household from "./components/page/Household/Household";
+import Report from "./components/page/Logout";
+import Logout from "./components/page/Logout";
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AppLayout />}>
+          <Route index element={<Home />} />
+          <Route path="/hogiadinh" element={<Household />} />
+          <Route path="/thuphi" element={<Charge />} />
+          <Route path="/baocao" element={<Report />} />
+          <Route path="/dangxuat" element={<Logout />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
