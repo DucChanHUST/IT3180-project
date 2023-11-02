@@ -1,37 +1,44 @@
 const { Model, DataTypes } = require('sequelize')
 
 const { sequelize } = require('../util/db')
+class Resident extends Model {}
 
-class User extends Model {}
-
-User.init({
+Resident.init({
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  username: {
+  idnum: {
     type: DataTypes.STRING,
-    unique: true,
     allowNull: false,
+    unique: true
   },
   name: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  passwordHash: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   },
-  role: {
+  phoneNumber: {
     type: DataTypes.STRING,
     allowNull: true
+  },
+  relationship: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  registrationId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   }
 }, {
   sequelize,
   underscored: true,
   timestamps: false,
-  modelName: 'user'
+  modelName: 'resident'
 })
 
-module.exports = User
+module.exports = Resident

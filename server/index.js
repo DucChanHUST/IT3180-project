@@ -7,7 +7,8 @@ const { connectToDatabase } = require('./util/db')
 
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
-const residentsRouter = require('./controllers/residents')
+const regRouter = require('./controllers/registration')
+const resRouter = require('./controllers/resident')
 
 app.use(cors())
 app.use(express.json())
@@ -15,7 +16,8 @@ app.use(express.json())
 
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
-app.use('/api/residents', residentsRouter)
+app.use('/api/registration', regRouter)
+app.use('/api/resident', resRouter)
 
 const start = async () => {
   await connectToDatabase()

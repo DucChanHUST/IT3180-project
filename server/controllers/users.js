@@ -1,24 +1,20 @@
-const bcrypt = require('bcrypt');
-const usersRouter = require('express').Router();
-const { Resident, User } = require('../models')
+const bcrypt = require('bcrypt')
+const usersRouter = require('express').Router()
+const { User, Registration, Resident } = require('../models/associations')
+const { checkUserRole } = require('../util/checkUserRole');
+
 
 usersRouter.get('/', async (req, res) => {
-  try {
-    const users = await User.findAll({
-      include: {      
-        model: Resident,
-        attributes: { exclude: ['userId'] }    
-      }
-    });
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch users' });
-  }
-});
+  const users = await User.findAll({
+    include: {
+      model: Resident,
+    }
+  })
+  res.json(users)
+})
 
-usersRouter.post('/', async (req, res) => {
-  const { username, name, password, role } = req.body;
-
+usersRouter.post('/',checkUserRole(['leader']), async (req, res) => {
+  const { username, name, password, role, residentId } = req.body;
   try {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
@@ -27,27 +23,60 @@ usersRouter.post('/', async (req, res) => {
       username,
       name,
       passwordHash,
-      role
+      role,
+      residentId
     });
 
     res.status(201).json(newUser);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to create a new user' });
+    return res.status(400).json({ error })
   }
 });
 
 usersRouter.get('/:id', async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id);
-
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).end();
-    }
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to retrieve user by ID' });
+  const user = await User.findByPk(req.params.id)
+  if (user) {
+    res.json(user)
+  } else {
+    res.status(404).end()
   }
-});
+})
 
-module.exports = usersRouter;
+// Get user's residentInfo 
+usersRouter.get('/residentInfo/:id', async (req, res) => {
+  const user = await User.findByPk(req.params.id)
+  if (user) {
+    const resident = await Resident.findOne({
+      where: {
+        idnum: user.username
+      }
+    })
+    res.status(200).json(resident)
+  } else {
+    res.status(404).json({ error })
+  }
+})
+
+// Get user's registrationInfo
+usersRouter.get('/registrationInfo/:id', async (req, res) => {
+  const user = await User.findByPk(req.params.id)
+  if (user) {
+    const resident = await Resident.findOne({
+      where: {
+        idnum: user.username
+      }
+    })
+    const resInReg = await Resident.findAll({
+      where: {
+        registrationId: resident.registrationId
+      }
+    })
+    res.status(200).json(resInReg)
+  } else {
+    res.status(404).json({ error })
+  }
+})
+
+
+
+module.exports = usersRouter
