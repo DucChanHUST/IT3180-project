@@ -7,7 +7,7 @@ regRouter.get('/', async(req, res) => {
 })
 
 regRouter.get('/:regId', async(req, res) => {
-    const reg = await HoKhau.findByPk(req.params.regId)
+    const reg = await Reg.findByPk(req.params.regId)
     if(reg){
         res.json(reg)
     }else{
