@@ -13,7 +13,11 @@ User.init({
   username: {
     type: DataTypes.STRING,
     unique: true,
-    allowNull: false
+    allowNull: false,
+    // references: {
+    //   model: "residents",
+    //   key: "idnum"
+    // }
   },
   name: {
     type: DataTypes.STRING,
@@ -23,6 +27,10 @@ User.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
 }, {
   sequelize,
   underscored: true,
