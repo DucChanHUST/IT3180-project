@@ -14,8 +14,30 @@ residentRouter.get('/', async (req, res) => {
         ]
     })
     res.json(listRes)
-})
+});
 
+residentRouter.get('/:id', async (req, res) => {
+    try {
+      const resident = await Resident.findByPk(req.params.id, {
+        include: [
+          {
+            model: User,
+          },
+          {
+            model: Registration
+          }
+        ]
+      });
+  
+      if (resident) {
+        res.status(200).json(resident);
+      } else {
+        res.status(404).json({ error: 'Resident not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  });
 
 residentRouter.post('/add', checkUserRole(['leader']), async (req, res) => {
     try {

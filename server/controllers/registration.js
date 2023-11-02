@@ -13,7 +13,11 @@ regRouter.get('/', async(req, res) => {
 })
 
 regRouter.get('/:regId', async(req, res) => {
-    const reg = await Registration.findByPk(req.params.regId)
+    const reg = await Registration.findByPk(req.params.regId,{
+        include: {
+            model: Resident,
+          }
+    })
     if(reg){
         res.json(reg)
     }else{
@@ -45,7 +49,7 @@ regRouter.delete('/delete/:id', checkUserRole(['leader']), async(req, res) => {
     const delReg = await Registration.findByPk(req.params.id)
     if(delReg){
         try {
-            await Reg.destroy({
+            await Registration.destroy({
                 where: {
                     id: req.params.id
                 }
@@ -53,7 +57,7 @@ regRouter.delete('/delete/:id', checkUserRole(['leader']), async(req, res) => {
             res.status(202).json('Delete successfully')
         } catch (error) {
             // Xóa sẽ không thành công nếu trong hộ khẩu có các nhân khẩu
-            res.json({error})
+            res.json({error: error.message})
         }
     }else{
         res.status(204).json('Registration not found')
