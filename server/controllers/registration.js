@@ -13,15 +13,19 @@ regRouter.get('/', async(req, res) => {
 })
 
 regRouter.get('/:regId', async(req, res) => {
-    const reg = await Registration.findByPk(req.params.regId,{
-        include: {
-            model: Resident,
-          }
-    })
-    if(reg){
-        res.json(reg)
-    }else{
-        res.status(401).json({error})
+    try {
+        const reg = await Registration.findByPk(req.params.regId,{
+            include: {
+                model: Resident,
+              }
+        })
+        if(reg){
+            res.json(reg)
+        }else{
+            res.status(404).json("Registration not found")
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message})
     }
 })
 
@@ -35,33 +39,31 @@ regRouter.post('/add', checkUserRole(['leader']), async(req, res) => {
 })
 
 regRouter.put('/update/:id', checkUserRole(['leader']), async(req, res) => {
-    const updateReg = await Registration.findByPk(req.params.id)
-    if(updateReg){
-        updateReg.address = req.body.address
-        await updateReg.save()
-        res.status(200).json({updateReg})
-    }else{
-        res.status.json('Registration not found')
+    try {
+        const updateReg = await Registration.findByPk(req.params.id)
+        if(updateReg){
+            updateReg.address = req.body.address
+            await updateReg.save()
+            res.status(200).json(updateReg)
+        }else{
+            res.status(404).json('Registration not found')
+        }
+    } catch (error) {
+        res.status(400).json({  error: error.message})
     }
 })
 
 regRouter.delete('/delete/:id', checkUserRole(['leader']), async(req, res) => {
-    const delReg = await Registration.findByPk(req.params.id)
-    if(delReg){
-        try {
-            await Registration.destroy({
-                where: {
-                    id: req.params.id
-                }
-            })
+    try {
+        const delReg = await Registration.findByPk(req.params.id)
+        if(delReg){
+            await delReg.destroy()
             res.status(202).json('Delete successfully')
-        } catch (error) {
-            // Xóa sẽ không thành công nếu trong hộ khẩu có các nhân khẩu
-            res.json({error: error.message})
+        }else{
+            res.status(404).json('Registration not found')
         }
-    }else{
-        res.status(204).json('Registration not found')
+    } catch (error) {
+        res.status(400).json({ error: error.message})
     }
 })
-
 module.exports = regRouter
