@@ -4,9 +4,11 @@ const { checkUserRole } = require('../util/checkUserRole');
 
 residentRouter.get('/', async (req, res) => {
   const listRes = await Resident.findAll({
+    attributes: { exclude: ['registrationId'] },
     include: [
       {
         model: User,
+        attributes: { exclude: ['passwordHash', 'residentId'] }
       },
       {
         model: Registration
@@ -19,9 +21,11 @@ residentRouter.get('/', async (req, res) => {
 residentRouter.get('/:id', async (req, res) => {
   try {
     const resident = await Resident.findByPk(req.params.id, {
+      attributes: { exclude: ['registrationId'] },
       include: [
         {
           model: User,
+          attributes: { exclude: ['passwordHash', 'residentId'] }
         },
         {
           model: Registration
