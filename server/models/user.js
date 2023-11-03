@@ -15,10 +15,6 @@ User.init({
     unique: true,
     allowNull: false,
   },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
   passwordHash: {
     type: DataTypes.STRING,
     allowNull: false,

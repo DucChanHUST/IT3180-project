@@ -11,7 +11,7 @@ Resident.init({
   },
   idnum: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true
   },
   name: {

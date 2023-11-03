@@ -14,14 +14,13 @@ usersRouter.get('/', async (req, res) => {
 })
 
 usersRouter.post('/',checkUserRole(['leader']), async (req, res) => {
-  const { username, name, password, role, residentId } = req.body;
+  const { username, password, role, residentId } = req.body;
   try {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     const newUser = await User.create({
       username,
-      name,
       passwordHash,
       role,
       residentId
@@ -34,7 +33,7 @@ usersRouter.post('/',checkUserRole(['leader']), async (req, res) => {
 });
 
 usersRouter.put('/:id', async (req, res) => {
-  const { username, name, password, role, residentId } = req.body;
+  const { username, password, role, residentId } = req.body;
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) {
@@ -44,9 +43,6 @@ usersRouter.put('/:id', async (req, res) => {
     // Choose to update only the fields that are provided in the request
     if (username) {
       user.username = username;
-    }
-    if (name) {
-      user.name = name;
     }
     if (password) {
       const saltRounds = 10;
@@ -80,41 +76,6 @@ usersRouter.get('/:id', async (req, res) => {
     res.status(404).end()
   }
 })
-
-// // Get user's residentInfo 
-// usersRouter.get('/residentInfo/:id', async (req, res) => {
-//   const user = await User.findByPk(req.params.id)
-//   if (user) {
-//     const resident = await Resident.findOne({
-//       where: {
-//         idnum: user.username
-//       }
-//     })
-//     res.status(200).json(resident)
-//   } else {
-//     res.status(404).json({ error })
-//   }
-// })
-
-// // Get user's registrationInfo
-// usersRouter.get('/registrationInfo/:id', async (req, res) => {
-//   const user = await User.findByPk(req.params.id)
-//   if (user) {
-//     const resident = await Resident.findOne({
-//       where: {
-//         idnum: user.username
-//       }
-//     })
-//     const resInReg = await Resident.findAll({
-//       where: {
-//         registrationId: resident.registrationId
-//       }
-//     })
-//     res.status(200).json(resInReg)
-//   } else {
-//     res.status(404).json({ error })
-//   }
-// });
 
 usersRouter.delete('/:id', async (req, res) => {
   try {
