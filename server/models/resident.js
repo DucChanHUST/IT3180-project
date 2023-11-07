@@ -11,7 +11,7 @@ Resident.init({
   },
   idnum: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true
   },
   name: {
@@ -33,10 +33,6 @@ Resident.init({
   registrationId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: "registrations",
-      key: "id"
-    }
   }
 }, {
   sequelize,
@@ -44,8 +40,5 @@ Resident.init({
   timestamps: false,
   modelName: 'resident'
 })
-
-
-Resident.sync({ alter: true })
 
 module.exports = Resident

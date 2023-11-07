@@ -14,14 +14,6 @@ User.init({
     type: DataTypes.STRING,
     unique: true,
     allowNull: false,
-    // references: {
-    //   model: "residents",
-    //   key: "idnum"
-    // }
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
   },
   passwordHash: {
     type: DataTypes.STRING,
@@ -37,7 +29,5 @@ User.init({
   timestamps: false,
   modelName: 'user'
 })
-
-User.sync({ alter: true })
 
 module.exports = User

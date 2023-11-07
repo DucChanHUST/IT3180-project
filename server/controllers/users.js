@@ -1,24 +1,30 @@
 const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
-const User = require('../models/user')
-const Resident = require('../models/resident')
+const { User, Registration, Resident } = require('../models/associations')
+const { checkUserRole } = require('../util/checkUserRole');
+
 
 usersRouter.get('/', async (req, res) => {
-  const users = await User.findAll()
+  const users = await User.findAll({
+    attributes: { exclude: ['passwordHash', 'residentId'] },
+    include: {
+      model: Resident,
+    }
+  })
   res.json(users)
 })
 
-usersRouter.post('/', async (req, res) => {
-  const { username, name, password, role } = req.body;
+usersRouter.post('/',checkUserRole(['leader']), async (req, res) => {
+  const { username, password, role, residentId } = req.body;
   try {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     const newUser = await User.create({
       username,
-      name,
       passwordHash,
-      role
+      role,
+      residentId
     });
 
     res.status(201).json(newUser);
@@ -27,8 +33,45 @@ usersRouter.post('/', async (req, res) => {
   }
 });
 
+usersRouter.put('/:id', async (req, res) => {
+  const { username, password, role, residentId } = req.body;
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Choose to update only the fields that are provided in the request
+    if (username) {
+      user.username = username;
+    }
+    if (password) {
+      const saltRounds = 10;
+      user.passwordHash = await bcrypt.hash(password, saltRounds);
+    }
+    if (role) {
+      user.role = role;
+    }
+    if (residentId) {
+      user.residentId = residentId;
+    }
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+});
+
 usersRouter.get('/:id', async (req, res) => {
-  const user = await User.findByPk(req.params.id)
+  const user = await User.findByPk(req.params.id,{
+    attributes: { exclude: ['passwordHash', 'residentId'] },
+    include: {
+      model: Resident,
+    }
+  })
   if (user) {
     res.json(user)
   } else {
@@ -36,41 +79,20 @@ usersRouter.get('/:id', async (req, res) => {
   }
 })
 
-// Get user's residentInfo 
-usersRouter.get('/residentInfo/:id', async (req, res) => {
-  const user = await User.findByPk(req.params.id)
-  if (user) {
-    const resident = await Resident.findOne({
-      where: {
-        idnum: user.username
-      }
-    })
-    res.status(200).json(resident)
-  } else {
-    res.status(404).json({ error })
+usersRouter.delete('/:id', async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete the user
+    await user.destroy();
+
+    res.status(202).json("Delete successfully")
+  } catch (error) {
+    return res.status(400).json({ error });
   }
-})
-
-// Get user's registrationInfo
-usersRouter.get('/registrationInfo/:id', async (req, res) => {
-  const user = await User.findByPk(req.params.id)
-  if (user) {
-    const resident = await Resident.findOne({
-      where: {
-        idnum: user.username
-      }
-    })
-    const resInReg = await Resident.findAll({
-      where: {
-        registrationId: resident.registrationId
-      }
-    })
-    res.status(200).json(resInReg)
-  } else {
-    res.status(404).json({ error })
-  }
-})
-
-
+});
 
 module.exports = usersRouter
