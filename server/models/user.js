@@ -13,23 +13,21 @@ User.init({
   username: {
     type: DataTypes.STRING,
     unique: true,
-    allowNull: false
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   passwordHash: {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
 }, {
   sequelize,
   underscored: true,
   timestamps: false,
   modelName: 'user'
 })
-
-User.sync({ alter: true })
 
 module.exports = User
