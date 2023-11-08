@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Login, HomePage, Population, Residence, Fee, PayFee, Statistic, Setting } from "./pages";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { PathConstant } from "./const";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {/* LOGIN */}
+        <Route path={PathConstant.LOGIN} element={<Login />} />
+
+        {/* MANAGE */}
+        <Route path={PathConstant.ROOT} element={<HomePage />} />
+        <Route path={PathConstant.POPULATION} element={<Population />} />
+        <Route path={PathConstant.RESIDENCE} element={<Residence />} />
+        <Route path={PathConstant.FEE} element={<Fee />} />
+        <Route path={PathConstant.PAY_FEE} element={<PayFee />} />
+        <Route path={PathConstant.STATISTIC} element={<Statistic />} />
+        <Route path={PathConstant.SETTING} element={<Setting />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
