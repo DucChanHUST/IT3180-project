@@ -2,23 +2,23 @@ const { Model, DataTypes } = require('sequelize')
 
 const { sequelize } = require('../util/db')
 
-class KhoanThu extends Model {}
+class Expense extends Model {}
 
-KhoanThu.init({
-  maKhoanThu: {
+Expense.init({
+  IDExpense: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  tenKhoanThu: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  soTien: {
+  amount: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  loaiKhoanThu: {
+  type: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
@@ -26,9 +26,9 @@ KhoanThu.init({
   sequelize,
   underscored: true,
   timestamps: false,
-  modelName: 'khoan_thu'
+  modelName: 'expense'
 })
 
-KhoanThu.sync({ alter: true })
+Expense.sync({ alter: true })
 
-module.exports = KhoanThu
+module.exports = Expense

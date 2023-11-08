@@ -10,7 +10,7 @@
 //     primaryKey: true,
 //     autoIncrement: true
 //   },
-//   maKhoanThu: {
+//   maExpense: {
 //     // TODO foreign key
 //     type: DataTypes.INTEGER,
 //     primaryKey: true,
