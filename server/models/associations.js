@@ -1,6 +1,7 @@
 const Registration = require('./registration')
 const Resident = require('./resident')
 const User = require('./user')
+const Expense = require('./expense')
 
 Registration.hasMany(Resident)
 Resident.belongsTo(Registration)
@@ -13,5 +14,5 @@ Registration.sync({ alter: true })
 User.sync({ alter: true})
 
 module.exports = {
-    User, Registration, Resident
+    User, Registration, Resident, Expense
   }

@@ -10,7 +10,7 @@ Expense.init({
     primaryKey: true,
     autoIncrement: true
   },
-  name: {
+  nameExpense: {
     type: DataTypes.STRING,
     allowNull: false
   },
