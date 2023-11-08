@@ -37,12 +37,7 @@ const userSlice = createSlice({
   },
 });
 
-export const {
-  getUsersStart,
-  getUsersSuccess,
-  getUsersFailed,
-  deleteUserFailed,
-  deleteUserStart,
-  deleteUserSuccess } = userSlice.actions;
+export const { getUsersStart, getUsersSuccess, getUsersFailed, deleteUserFailed, deleteUserStart, deleteUserSuccess } =
+  userSlice.actions;
 
 export default userSlice.reducer;

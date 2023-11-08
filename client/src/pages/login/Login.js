@@ -56,8 +56,8 @@ function SignIn() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
+          <Avatar sx={{ m: 1, backgroundColor: "bluewhite" }}>
+            <LockOutlinedIcon sx={{ color: "white" }} />
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign in
@@ -68,7 +68,7 @@ function SignIn() {
             noValidate
             sx={{ mt: 1 }}
             className={username && password ? "active" : ""}
-          // Chú ý: Bạn không nên sử dụng 'disable' như một thuộc tính trực tiếp trên thẻ 'Box'
+            // Chú ý: Bạn không nên sử dụng 'disable' như một thuộc tính trực tiếp trên thẻ 'Box'
           >
             <TextField
               margin="normal"

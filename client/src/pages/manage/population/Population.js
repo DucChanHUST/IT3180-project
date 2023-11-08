@@ -5,6 +5,8 @@ import "./population.css";
 import { deleteUser, getAllUsers } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
+
 const Population = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const listPeople = useSelector((state) => state.users.users?.allUsers);
