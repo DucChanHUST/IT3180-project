@@ -1,8 +1,11 @@
 const residentRouter = require('express').Router()
 const { User, Registration, Resident } = require('../models/associations')
+const { tokenExtractor } = require('../util/tokenExtractor');
 const { checkUserRole } = require('../util/checkUserRole');
 
-residentRouter.get('/', async (req, res) => {
+residentRouter.use(tokenExtractor);
+
+residentRouter.get('/',checkUserRole(['leader']), async (req, res) => {
   const listRes = await Resident.findAll({
     attributes: { exclude: ['registrationId'] },
     include: [
@@ -18,7 +21,7 @@ residentRouter.get('/', async (req, res) => {
   res.json(listRes)
 });
 
-residentRouter.get('/:id', async (req, res) => {
+residentRouter.get('/:id',checkUserRole(['leader']), async (req, res) => {
   try {
     const resident = await Resident.findByPk(req.params.id, {
       attributes: { exclude: ['registrationId'] },
