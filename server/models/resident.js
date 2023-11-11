@@ -18,7 +18,7 @@ Resident.init({
     type: DataTypes.STRING,
     allowNull: false
   },
-  age: {
+  year: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
