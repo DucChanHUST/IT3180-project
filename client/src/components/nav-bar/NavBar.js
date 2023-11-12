@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
-import MuiAppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import MuiAppBar from "@mui/material/AppBar";
+import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
@@ -10,9 +11,12 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useAppStore } from "../../stores";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { PathConstant } from "../../const";
+import { useSelector } from "react-redux";
+import "./Navbar.css";
 
+// Cấu hình
 const AppBar = styled(
   MuiAppBar,
   {},
@@ -20,15 +24,18 @@ const AppBar = styled(
   zIndex: theme.zIndex.drawer + 1,
 }));
 
+///Hàm chính
 const NavBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-
   const navigate = useNavigate();
-    
   const updateOpen = useAppStore(state => state.updateOpen);
   const dopen = useAppStore(state => state.dopen);
-
   const isMenuOpen = Boolean(anchorEl);
+
+  // user
+  const user = useSelector(state => state.auth.login.currentUser);
+
+  //-----------------------------------------
 
   const handleProfileMenuOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -39,6 +46,7 @@ const NavBar = () => {
   };
 
   const menuId = "account-menu";
+
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -55,8 +63,13 @@ const NavBar = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem>
+        <NavLink to="/Profile/userid">Profile</NavLink>
+      </MenuItem>
+      <MenuItem>
+        <NavLink to="/Profile/userid">My account</NavLink>
+      </MenuItem>
+      <MenuItem>Log out</MenuItem>
     </Menu>
   );
 
@@ -76,22 +89,50 @@ const NavBar = () => {
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-            Quản lí ABCXYZ
+            Q
           </Typography>
-          <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
+
+          {user ? (
+            <>
+              <p className="username">
+                {" "}
+                Hi,
+                <span> {user.username}</span>
+              </p>
+
+              <Box sx={{ flexGrow: 1 }} />
+              <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                <IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleProfileMenuOpen}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+              </Box>
+            </>
+          ) : (
+            <Button
+              sx={{
+                marginRight: "0",
+                marginLeft: "auto",
+                color: "white",
+                fontSize: "15px",
+                backgroundColor: "white", // Màu nền xanh
+                "&:hover": {
+                  backgroundColor: "gray", // Màu nền xám khi hover
+                },
+              }}
             >
-              <AccountCircle />
-            </IconButton>
-          </Box>
+              <NavLink to="/Login" sx={{ color: "white" }}>
+                Login
+              </NavLink>
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       {renderMenu}

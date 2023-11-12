@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
@@ -16,7 +16,7 @@ const PAGE_ITEM_LIST = [
     icon: <PersonRoundedIcon />,
   },
   {
-    name: "Hộ khẩu",
+    name: "Gia đình",
     path: PathConstant.RESIDENCE,
     icon: <HomeRoundedIcon />,
   },
@@ -31,7 +31,7 @@ const PAGE_ITEM_LIST = [
     icon: <SavingsRoundedIcon />,
   },
   {
-    name: "Thống kê",
+    name: "Báo cáo",
     path: PathConstant.STATISTIC,
     icon: <InsightsRoundedIcon />,
   },
@@ -44,6 +44,7 @@ const PAGE_ITEM_LIST = [
 
 const PageItemList = ({ open }) => {
   const navigate = useNavigate();
+  const [selected, setSelected] = useState(null);
 
   return (
     <div>
@@ -52,9 +53,13 @@ const PageItemList = ({ open }) => {
           <ListItem
             key={index}
             disablePadding
-            sx={{ display: "block" }}
+            sx={{
+              display: "block",
+              backgroundColor: selected === index ? "#b0c4de" : "transparent", // Set the background color for the selected item
+            }}
             onClick={() => {
               navigate(item.path);
+              setSelected(index); // Update the selected item
             }}
           >
             <ListItemButton sx={{ minHeight: 48, justifyContent: open ? "initial" : "center", px: 2.5 }}>
