@@ -1,9 +1,11 @@
 const regRouter = require('express').Router()
 const { User, Registration, Resident } = require('../models/associations')
+const { tokenExtractor } = require('../util/tokenExtractor');
 const { checkUserRole } = require('../util/checkUserRole');
 
+regRouter.use(tokenExtractor);
 
-regRouter.get('/', async(req, res) => {
+regRouter.get('/',checkUserRole(['leader']), async(req, res) => {
     const listReg = await Registration.findAll({
         include: {
             model: Resident,
@@ -12,7 +14,7 @@ regRouter.get('/', async(req, res) => {
     res.json(listReg)
 })
 
-regRouter.get('/:regId', async(req, res) => {
+regRouter.get('/:regId',checkUserRole(['leader']), async(req, res) => {
     try {
         const reg = await Registration.findByPk(req.params.regId,{
             include: {
