@@ -68,62 +68,23 @@ usersRouter.put('/:id',verifyUser, async (req, res) => {
   }
 });
 
-usersRouter.get('/:id',checkUserRole(['leader']), async (req, res) => {
-  const user = await User.findByPk(req.params.id,{
-    attributes: { exclude: ['passwordHash', 'residentId'] },
-    include: {
-      model: Resident,
-    }
-  })
-  if (user) {
-    res.json(user)
-  } else {
-    res.status(404).end()
-  }
-})
-
-//Get user's resident
-usersRouter.get('/resident/:id', verifyUser, async (req, res) => {
+// GET user 's info
+usersRouter.get('/:id', checkUserRole(['leader', 'resident']), verifyUser, async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id, {
-      include: Resident,
-      attributes: ['id', 'username', 'role'], // Add any other user attributes you want to include
-    });
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    if (!user.resident) {
-      return res.status(404).json({ error: 'Resident information not found for this user' });
-    }
-
-    res.json({ resident: user.resident });
-  } catch (error) {
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// GET user 's registration
-usersRouter.get('/registration/:id', verifyUser, async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id, {
+      attributes: { exclude: ['passwordHash', 'residentId'] },
       include: {
         model: Resident,
+        attributes: { exclude: ['registrationId'] },
         include: Registration,
       },
-      attributes: ['id', 'username', 'role'], // Add any other user attributes you want to include
     });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (!user.resident || !user.resident.registration) {
-      return res.status(404).json({ error: 'Registration information not found for this user' });
-    }
-
-    res.json({ registration: user.resident.registration });
+    res.json(user);
   } catch (error) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
