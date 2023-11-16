@@ -33,7 +33,7 @@ const CreateNewRegis = () => {
       addNewRegistration(user.token, dispatch, data)
         .then(() => {
           // Handle success, navigate, or reset form fields
-          navigate("/Residence");
+          navigate("/Registration");
         })
         .catch(error => {
           // Handle errors and set the error message
@@ -68,7 +68,7 @@ const CreateNewRegis = () => {
           Submit
         </button>
       </form>
-      <Link to="/Residence" style={styles.link}>
+      <Link to="/Registration" style={styles.link}>
         <Button variant="contained" style={styles.button}>
           Trở về
         </Button>

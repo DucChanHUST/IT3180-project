@@ -1,14 +1,25 @@
 import axios from "axios";
 import { loginFailed, loginStart, loginSuccess } from "./authSlice";
 import {
-  getUsersStart, getUsersSuccess, getUsersFailed,
-  deleteUserFailed, deleteUserSuccess, deleteUserStart
+  getUsersStart,
+  getUsersSuccess,
+  getUsersFailed,
+  deleteUserFailed,
+  deleteUserSuccess,
+  deleteUserStart,
 } from "./userSlice";
 import {
-  getRegistrationsStart, getRegistrationsSuccess, getRegistrationsFailed,
-  deleteRegistrationFailed, deleteRegistrationStart, deleteRegistrationSuccess,
-  addRegistrationsStart, addRegistrationsSuccess, addRegistrationsFailed,
+  getRegistrationsStart,
+  getRegistrationsSuccess,
+  getRegistrationsFailed,
+  deleteRegistrationFailed,
+  deleteRegistrationStart,
+  deleteRegistrationSuccess,
+  addRegistrationsStart,
+  addRegistrationsSuccess,
+  addRegistrationsFailed,
 } from "./registrationSlice";
+import { getResidentStart, getResidentSuccess, getResidentFailed } from "./residentSlice";
 
 //Hàm đăng nhập -------------------------------------------------------------
 export const loginUser = async (user, dispatch, navigate) => {
@@ -141,5 +152,19 @@ export const addNewRegistration = async (accessToken, dispatch, data) => {
   } catch (err) {
     // Handle other errors like network issues
     dispatch(addRegistrationsFailed("An error occurred while creating the registration."));
+  }
+};
+
+export const getAllResident = async (accessToken, dispatch) => {
+  if (!accessToken) return;
+
+  dispatch(getResidentStart());
+  try {
+    const res = await axios.get("http://localhost:3001/api/resident", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    dispatch(getResidentSuccess(res.data));
+  } catch (err) {
+    dispatch(getResidentFailed());
   }
 };

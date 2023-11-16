@@ -25,9 +25,9 @@ import { useNavigate, Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import RegistrationDetails from "./RegistrationDetails";
-import "./Residence.css";
+import "./Registration.css";
 
-const Residence = () => {
+const Registration = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const listRegistrations = useSelector(state => state.registration.registrations.allRegistrations);
   const dispatch = useDispatch();
@@ -77,7 +77,7 @@ const Residence = () => {
       addNewRegistration(user.token, dispatch, data)
         .then(() => {
           setOpenForm(false);
-          navigate("/Residence");
+          navigate("/Registration");
         })
         .catch(error => {
           console.log(error);
@@ -87,7 +87,7 @@ const Residence = () => {
   };
 
   return (
-    <div className="residence-container">
+    <div className="Registration-container">
       <NavBar />
       <Box height={25} />
 
@@ -153,4 +153,4 @@ const styles = {
   },
 };
 
-export default Residence;
+export default Registration;
