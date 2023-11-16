@@ -12,7 +12,7 @@ import { PathConstant } from "../../const";
 const PAGE_ITEM_LIST = [
   {
     name: "Nhân khẩu",
-    path: PathConstant.RESIDENCE,
+    path: PathConstant.RESIDENT,
     icon: <PersonRoundedIcon />,
   },
   {

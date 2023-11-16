@@ -77,7 +77,7 @@ const Registration = () => {
       addNewRegistration(user.token, dispatch, data)
         .then(() => {
           setOpenForm(false);
-          navigate("/Residence");
+          navigate("/Registration");
         })
         .catch(error => {
           console.log(error);
@@ -87,9 +87,9 @@ const Registration = () => {
   };
 
   return (
-    <div className="residence-container">
+    <div className="Registration-container">
       <NavBar />
-      <Box height={25} />
+      <Box height={64} />
 
       <SideBar />
       <main className="home-container">
