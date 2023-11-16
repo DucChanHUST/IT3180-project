@@ -1,156 +1,58 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-} from "@mui/material";
+import React, { useEffect } from "react";
+import { Box } from "@mui/material";
 import { SideBar, NavBar } from "../../../components";
-import {
-  getAllRegistrations,
-  deleteRegistration,
-  getRegistrationID,
-  addNewRegistration,
-} from "../../../redux/apiRequest";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import RegistrationDetails from "./RegistrationDetails";
 import "./Residence.css";
+import { deleteUser, getAllUsers } from "../../../redux/apiRequest";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 
 const Residence = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
-  const listRegistrations = useSelector(state => state.registration.registrations.allRegistrations);
+  const listPeople = useSelector((state) => state.users.users?.allUsers);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [selectedRegistration, setSelectedRegistration] = useState(null);
-  const [openForm, setOpenForm] = useState(false);
-  const [address, setAddress] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null);
+
 
   useEffect(() => {
     if (!user) {
       navigate("/Login");
     }
     if (user?.token) {
-      const accessToken = user?.token;
-      getAllRegistrations(accessToken, dispatch);
+      const accessToken = user?.token; // Replace with your actual access token
+      getAllUsers(accessToken, dispatch);
     }
-  }, [dispatch, user?.token, navigate]);
+  }, []); // Include 'dispatch' and 'user.token' in the dependency array
 
-  const handleDelete = id => {
-    deleteRegistration(user?.token, dispatch, id);
-  };
-
-  const handleEditRegistration = regis => {
-    const url = `/RegistrationDetails?id=${regis.id}`;
-    navigate(url);
-  };
-
-  const handleOpenForm = () => {
-    setOpenForm(true);
-  };
-  const handleEnterKeyPress = event => {
-    if (event.key === "Enter") {
-      handleAddNewRegistration();
-    }
-  };
-  const handleCloseForm = () => {
-    setOpenForm(false);
-  };
-
-  const handleAddNewRegistration = () => {
-    const data = {
-      address,
-    };
-
-    if (user?.token) {
-      addNewRegistration(user.token, dispatch, data)
-        .then(() => {
-          setOpenForm(false);
-          navigate("/Residence");
-        })
-        .catch(error => {
-          console.log(error);
-          setErrorMessage(error.message);
-        });
-    }
-  };
-
+  const handleDelete = (id) => {
+    deleteUser(user?.token, dispatch, id);
+  }
   return (
-    <div className="residence-container">
+    <>
       <NavBar />
       <Box height={25} />
-
-      <SideBar />
-      <main className="home-container">
-        <div className="home-title">Danh sách các hộ gia đình:</div>
-        <div className="List_family">
-          {listRegistrations?.map(regis => (
-            <ul key={regis.id}>
-              <li className="line-family">
-                <div>{regis.address}</div>
-                <div>
-                  <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(regis.id)}>
-                    <DeleteIcon />
-                  </IconButton>
+      <Box sx={{ display: "flex" }}>
+        <SideBar />
+        <main className="home-container">
+          <div className="home-title">User List</div>
+          <div className="home-userlist">
+            {/* //optional training */}
+            {listPeople?.map(person => {
+              return (
+                <div className="user-container">
+                  <div className="home-user">{person.username}</div>
+                  <div className="delete-user" onClick={() => handleDelete(person.id)}>
+                    {" "}
+                    Delete{" "}
+                  </div>
                 </div>
-                <div>
-                  <IconButton edge="end" aria-label="edit" onClick={() => handleEditRegistration(regis)}>
-                    <EditIcon />
-                  </IconButton>
-                </div>
-              </li>
-            </ul>
-          ))}
-        </div>
-
-        <Button variant="contained" style={styles.button} onClick={handleOpenForm}>
-          Add New Registration
-        </Button>
-      </main>
-
-      <Dialog open={openForm} onClose={handleCloseForm}>
-        <DialogTitle>Create New Registration</DialogTitle>
-        <DialogContent sx={{ width: "500px", height: "100px" }}>
-          <TextField
-            label="Address"
-            fullWidth
-            value={address}
-            onChange={e => setAddress(e.target.value)}
-            onKeyPress={handleEnterKeyPress} // Handle "Enter" key press
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseForm}>Cancel</Button>
-          <Button onClick={handleAddNewRegistration} color="primary">
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+              );
+            })}
+          </div>
+        </main>
+      </Box>
+    </>
   );
-};
-
-const styles = {
-  button: {
-    marginTop: "20px",
-    backgroundColor: "#007bff",
-    color: "#fff",
-    border: "none",
-    padding: "10px 20px",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
 };
 
 export default Residence;

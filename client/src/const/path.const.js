@@ -4,7 +4,7 @@ export const ROOT = "/";
 export const LOGIN = "/login";
 
 // Manage
-export const POPULATION = "/population";
+export const REGISTRATION = "/registration";
 export const RESIDENCE = "/residence";
 export const FEE = "/fee";
 export const PAY_FEE = "/pay-fee";

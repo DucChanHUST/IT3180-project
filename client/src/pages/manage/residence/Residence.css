@@ -1,70 +1,56 @@
-/* home-container */
-.home-container {
-  padding: 20px;
-  max-width: 800px; /* Độ rộng tối đa của home-container */
-  width: 100%; /* Kéo dài home-container đến bên trái và phải */
-  margin: 0 auto; /* Căn giữa theo chiều ngang */
- 
+.home-container{
+    display: flex;
+    height:600px;
+    width:60%;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 3rem;
+}
+.home-title{
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+.home-userlist{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.home-user{
+    margin: 1.5rem;
+    background-color: rgb(194, 194, 194);
+    padding:0.5rem;
+    border-radius: 12px;
+}
+.home-role{
+    margin-top: 1rem;
+    font-size: 1.25rem;
 }
 
-/* List_family */
-/* List_family */
-.List_family {
-  list-style: none;
-  padding: 0;
-  max-height: 500px; /* Chiều cao tối đa trước khi hiển thị scrollbar */
-   overflow-y: auto; /* Hiển thị scrollbar khi quá dài */
+.user-container{
+    display: flex;
+    width: 200px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
-
-
-/* home-title */
-.home-title {
-  font-size: 24px;
-  margin-bottom: 20px;
+.delete-user{
+    cursor: pointer;
+    font-size: 1rem;
+    background-color: rgb(240, 34, 96);
+    padding:0.35rem;
+    border-radius: 12px;
+    color:white;
 }
-
-/* line-family */
-.line-family {
-  width: 400px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #ffffff; /* Màu nền của hàng */
-  padding: 10px;
-  border: 1px solid #ccc; /* Viền */
-  border-radius: 20px;
+.delete-user:hover{
+    background-color:rgb(207, 18, 75) ;
 }
-
-.line-family div{
-  margin-left: 30px;
+.navbar {
+   display: flex;
 }
-
-/* IconButton */
-.line-family .MuiButtonBase-root {
-  padding: 6px;
-  margin: 2px;
-  background-color: #007bff; /* Màu nền của nút */
-  color: #fff; /* Màu chữ trên nút */
-}
-
-/* EditIcon */
-.line-family .MuiButtonBase-root.MuiIconButton-root {
-  padding: 8px; /* Kích thước của biểu tượng chỉnh sửa */
-  background-color: #255e26; /* Màu nền của biểu tượng chỉnh sửa */
-}
-
-/* DeleteIcon */
-.line-family .MuiButtonBase-root.MuiIconButton-root.MuiIconButton-edgeEnd {
-  background-color: rgb(54, 171, 244); /* Màu nền của biểu tượng xóa */
-}
-
-/* Button "Add New Registration" */
-button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
+.errorMsg{
+    margin-top: 3rem;
+    font-size: 1.5rem;
 }
