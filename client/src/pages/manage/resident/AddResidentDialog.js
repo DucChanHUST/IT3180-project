@@ -1,28 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import Stack from "@mui/material/Stack";
+import { Stack } from "@mui/material";
 import { NumberTextField, TextOnlyTextField } from "../../../components";
 
-const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, selectedResident }) => {
+const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
   const [name, setName] = useState("");
   const [year, setYear] = useState();
   const [idnum, setIdnum] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  const handleSetInitValue = () => {
-    setName(selectedResident.name);
-    setYear(selectedResident.year);
-    setIdnum(selectedResident.idnum);
-    setPhoneNumber(selectedResident.phoneNumber);
-  };
-
-  const handleCancelEdit = () => {
-    handleCloseEditDialog();
-    handleSetInitValue();
+  const handleCancelAdd = () => {
+    handleCloseAddDialog();
+    setName("");
+    setYear();
+    setIdnum("");
+    setPhoneNumber("");
   };
 
   const handelChangeName = value => {
@@ -41,13 +37,9 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, selectedR
     setPhoneNumber(value);
   };
 
-  useEffect(() => {
-    handleSetInitValue();
-  }, [selectedResident]);
-
   return (
-    <Dialog open={isEditDialogOpen} onClose={handleCloseEditDialog} fullWidth>
-      <DialogTitle>Chỉnh sửa nhân khẩu</DialogTitle>
+    <Dialog open={isAddDialogOpen} onClose={handleCloseAddDialog} fullWidth>
+      <DialogTitle>Thêm nhân khẩu</DialogTitle>
       <DialogContent>
         <Stack spacing={2} mt={1}>
           <TextOnlyTextField label="Họ và tên" value={name} onChange={handelChangeName} />
@@ -62,15 +54,15 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, selectedR
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button variant="outlined" onClick={handleCancelEdit}>
+        <Button variant="outlined" onClick={handleCancelAdd}>
           Hủy bỏ
         </Button>
-        <Button variant="contained" onClick={handleCloseEditDialog}>
-          Thay đổi
+        <Button variant="contained" onClick={handleCloseAddDialog}>
+          Thêm
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default EditResidentDialog;
+export default AddResidentDialog;

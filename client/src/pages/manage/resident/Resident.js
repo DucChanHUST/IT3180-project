@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
 import { SideBar, NavBar } from "../../../components";
 import { getAllResident } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
+import { Button, Box, Grid } from "@mui/material";
 import DataTable from "./DataTable";
 import EditResidentDialog from "./EditResidentDialog";
+import AddResidentDialog from "./AddResidentDialog";
+import DeleteResidentDialog from "./DeleteResidentDialog";
+import SearchBar from "./SearchBar";
 
 const Resident = () => {
   const dispatch = useDispatch();
@@ -14,8 +16,11 @@ const Resident = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const allResident = useSelector(state => state.resident.allResident);
 
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedResident, setSelectedResident] = useState({});
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [filteredResident, setFilteredResident] = useState(allResident);
 
   const handleOpenEditDialog = resident => {
     setIsEditDialogOpen(true);
@@ -26,8 +31,17 @@ const Resident = () => {
     setIsEditDialogOpen(false);
   };
 
-  const handleSelectResident = resident => {
+  const handleOpenDeleteDialog = resident => {
+    setIsDeleteDialogOpen(true);
     setSelectedResident(resident);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleCloseAddDialog = () => {
+    setIsAddDialogOpen(false);
   };
 
   useEffect(() => {
@@ -40,24 +54,40 @@ const Resident = () => {
     getAllResident(accessToken, dispatch);
   }, [user, dispatch, navigate]);
 
-  console.log("rerender");
-
   return (
     <>
       <NavBar />
       <Box height={64} />
       <Box sx={{ display: "flex" }}>
         <SideBar />
-        <DataTable
-          allResident={allResident}
-          handleOpenEditDialog={handleOpenEditDialog}
-          onSelectResident={handleSelectResident}
-        />
+        <Grid container direction="column" sx={{ margin: 3, gap: 2 }}>
+          <Grid container alignItems="center" justifyContent="space-between">
+            <Grid item xs={9}>
+              <SearchBar allResident={allResident} setFilteredResident={setFilteredResident} />
+            </Grid>
+            <Grid item>
+              <Button onClick={() => setIsAddDialogOpen(true)} variant="contained">
+                Thêm nhân khẩu
+              </Button>
+            </Grid>
+          </Grid>
+          <DataTable
+            allResident={filteredResident}
+            handleOpenEditDialog={handleOpenEditDialog}
+            handleOpenDeleteDialog={handleOpenDeleteDialog}
+          />
+        </Grid>
         <EditResidentDialog
           isEditDialogOpen={isEditDialogOpen}
           handleCloseEditDialog={handleCloseEditDialog}
           selectedResident={selectedResident}
         />
+        <DeleteResidentDialog
+          isDeleteDialogOpen={isDeleteDialogOpen}
+          handleCloseDeleteDialog={handleCloseDeleteDialog}
+          selectedResident={selectedResident}
+        />
+        <AddResidentDialog isAddDialogOpen={isAddDialogOpen} handleCloseAddDialog={handleCloseAddDialog} />
       </Box>
     </>
   );
