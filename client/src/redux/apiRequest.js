@@ -18,6 +18,9 @@ import {
   addRegistrationsStart,
   addRegistrationsSuccess,
   addRegistrationsFailed,
+  updateRegistrationsStart,
+  updateRegistrationsSuccess,
+  updateRegistrationsFailed,
 } from "./registrationSlice";
 import { getResidentStart, getResidentSuccess, getResidentFailed } from "./residentSlice";
 
@@ -35,6 +38,16 @@ export const loginUser = async (user, dispatch, navigate) => {
   }
 };
 
+// Ham logout ------------------------------------------------------------------
+
+// export const logOut = async (dispatch, navigate, token, axiosJWT) => {
+//   dispatch(loginStart())
+
+//   try
+//   {
+//     await axiosJWT.post("")
+//   }
+// }
 // Hàm getuser ----------------------------------------------------------------
 
 export const getAllUsers = async (accessToken, dispatch) => {
@@ -155,6 +168,24 @@ export const addNewRegistration = async (accessToken, dispatch, data) => {
   }
 };
 
+//Hàm updateRegistration
+export const updateRegistration = async (accessToken, dispatch, data, id) => {
+  dispatch(updateRegistrationsStart());
+
+  try {
+    const res = await axios.put(`http://localhost:3001/api/registration/update/${id}`, data, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+
+    if (res.data.success) {
+      dispatch(updateRegistrationsSuccess(res.data));
+    }
+  } catch (err) {
+    dispatch(updateRegistrationsFailed("An error occurred while updating the registration."));
+  }
+};
+
+//Get all resident-----------------------------------------------------------------------------------
 export const getAllResident = async (accessToken, dispatch) => {
   if (!accessToken) return;
 

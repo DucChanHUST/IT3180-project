@@ -22,7 +22,6 @@ const registrationSlice = createSlice({
       state.registrations.error = true;
     },
 
-    
     deleteRegistrationStart: state => {
       state.registrations.isFetching = true;
     },
@@ -39,7 +38,6 @@ const registrationSlice = createSlice({
       state.msg = action.payload;
     },
 
-
     addRegistrationsStart: state => {
       state.registrations.isFetching = true;
     },
@@ -52,6 +50,20 @@ const registrationSlice = createSlice({
       state.registrations.isFetching = false;
       state.registrations.error = true;
       // You can handle errors when adding registrations
+    },
+
+    updateRegistrationsStart: state => {
+      state.registrations.isFetching = true;
+      state.registrations.error = false; // Reset error state
+    },
+    updateRegistrationsSuccess: (state, action) => {
+      state.registrations.isFetching = false;
+      state.msg = action.payload; // Store success message or updated data
+    },
+    updateRegistrationsFailed: state => {
+      state.registrations.isFetching = false;
+      state.registrations.error = true; // Set error flag
+      // Additional error handling logic if needed
     },
   },
 });
@@ -66,6 +78,9 @@ export const {
   addRegistrationsStart,
   addRegistrationsSuccess,
   addRegistrationsFailed,
+  updateRegistrationsStart,
+  updateRegistrationsSuccess,
+  updateRegistrationsFailed
 } = registrationSlice.actions;
 
 export default registrationSlice.reducer;
