@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { SideBar, NavBar } from "../../../components";
 import { getAllResident } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,27 +22,27 @@ const Resident = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [filteredResident, setFilteredResident] = useState(allResident);
 
-  const handleOpenEditDialog = resident => {
+  const handleOpenEditDialog = useCallback(resident => {
     setIsEditDialogOpen(true);
     setSelectedResident(resident);
-  };
+  }, []);
 
-  const handleCloseEditDialog = () => {
+  const handleCloseEditDialog = useCallback(() => {
     setIsEditDialogOpen(false);
-  };
+  }, []);
 
-  const handleOpenDeleteDialog = resident => {
+  const handleOpenDeleteDialog = useCallback(resident => {
     setIsDeleteDialogOpen(true);
     setSelectedResident(resident);
-  };
+  }, []);
 
-  const handleCloseDeleteDialog = () => {
+  const handleCloseDeleteDialog = useCallback(() => {
     setIsDeleteDialogOpen(false);
-  };
+  }, []);
 
-  const handleCloseAddDialog = () => {
+  const handleCloseAddDialog = useCallback(() => {
     setIsAddDialogOpen(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (!user || !user.token) {

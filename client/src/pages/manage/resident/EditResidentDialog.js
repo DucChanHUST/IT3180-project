@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -73,4 +73,4 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, selectedR
   );
 };
 
-export default EditResidentDialog;
+export default memo(EditResidentDialog);

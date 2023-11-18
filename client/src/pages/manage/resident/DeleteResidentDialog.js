@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -7,7 +7,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Stack, Typography } from "@mui/material";
 
 const DeleteResidentDialog = ({ isDeleteDialogOpen, handleCloseDeleteDialog, selectedResident }) => {
-  console.log(selectedResident);
   return (
     <Dialog open={isDeleteDialogOpen} onClose={handleCloseDeleteDialog} fullWidth>
       <DialogTitle>Xóa nhân khẩu</DialogTitle>
@@ -28,4 +27,4 @@ const DeleteResidentDialog = ({ isDeleteDialogOpen, handleCloseDeleteDialog, sel
   );
 };
 
-export default DeleteResidentDialog;
+export default memo(DeleteResidentDialog);

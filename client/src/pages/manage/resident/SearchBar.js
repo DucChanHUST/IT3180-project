@@ -22,15 +22,22 @@ const SearchBar = ({ allResident, setFilteredResident }) => {
 
   const filterResident = (term, searchCategory) => {
     const filteredResident = allResident.filter(item => {
+      if (!item) {
+        return false;
+      }
+  
+      const value = item[searchCategory];
+  
       if (searchCategory === "all") {
-        return Object.values(item).some(value => value.toString().toLowerCase().includes(term.toLowerCase()));
+        return Object.values(item).some(val => val && val.toString().toLowerCase().includes(term.toLowerCase()));
       } else {
-        return item[searchCategory].toString().toLowerCase().includes(term.toLowerCase());
+        return value && value.toString().toLowerCase().includes(term.toLowerCase());
       }
     });
-
+  
     setFilteredResident(filteredResident);
   };
+  
 
   return (
     <Stack direction="row" spacing={2} style={{ width: "100%" }}>
