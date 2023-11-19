@@ -19,12 +19,14 @@ const RESIDENT_COLUMNS = [
   { id: "year", label: "Tuổi", minWidth: 30, align: "center" },
   { id: "idnum", label: "Số CCCD", minWidth: 150, align: "center" },
   { id: "phoneNumber", label: "Số điện thoại", minWidth: 140, align: "center" },
+  { id: "registrationId", label: "Mã hộ", minWidth: 30, align: "center" },
+  { id: "relationship", label: "Quan hệ với chủ hộ", minWidth: 140, align: "center" },
   { id: "action", label: "Thao tác", minWidth: 70, align: "center" },
 ];
 
 const NUMBER_OF_COLUMNS = RESIDENT_COLUMNS.length;
 
-const DataTable = ({ allResident, handleOpenEditDialog, handleOpenDeleteDialog }) => {
+const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDialog }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -51,7 +53,7 @@ const DataTable = ({ allResident, handleOpenEditDialog, handleOpenDeleteDialog }
             </TableRow>
           </TableHead>
           <TableBody>
-            {allResident?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(resident => {
+            {filteredResident?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(resident => {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={resident.id}>
                   {RESIDENT_COLUMNS.slice(0, NUMBER_OF_COLUMNS - 1).map(column => {
@@ -85,7 +87,7 @@ const DataTable = ({ allResident, handleOpenEditDialog, handleOpenDeleteDialog }
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={allResident?.length}
+        count={filteredResident?.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

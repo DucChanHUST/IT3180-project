@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FormControl, MenuItem, Select, Stack, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
-const SearchBar = ({ allResident, setFilteredResident }) => {
+const SearchBar = ({ flattenedResident, setFilteredResident }) => {
   const [searchCategory, setSearchCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -21,7 +21,7 @@ const SearchBar = ({ allResident, setFilteredResident }) => {
   };
 
   const filterResident = (term, searchCategory) => {
-    const filteredResident = allResident.filter(item => {
+    const filteredResident = flattenedResident.filter(item => {
       if (!item) {
         return false;
       }
@@ -58,10 +58,13 @@ const SearchBar = ({ allResident, setFilteredResident }) => {
       <FormControl style={{ width: "35%" }}>
         <Select value={searchCategory} onChange={handleCategoryChange}>
           <MenuItem value="all">Tất cả</MenuItem>
+          <MenuItem value="id">ID</MenuItem>
           <MenuItem value="name">Họ và tên</MenuItem>
           <MenuItem value="year">Tuổi</MenuItem>
           <MenuItem value="idnum">Số CCCD</MenuItem>
           <MenuItem value="phoneNumber">Số điện thoại</MenuItem>
+          <MenuItem value="registrationId">Mã hộ</MenuItem>
+          <MenuItem value="relationship">Quan hệ với chủ hộ</MenuItem>
         </Select>
       </FormControl>
     </Stack>

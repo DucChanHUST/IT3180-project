@@ -20,7 +20,8 @@ const Resident = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [filteredResident, setFilteredResident] = useState(allResident);
+  const [filteredResident, setFilteredResident] = useState([]);
+  const [flattenedResident, setFlattenedResident] = useState([]);
 
   const handleOpenEditDialog = useCallback(resident => {
     setIsEditDialogOpen(true);
@@ -54,6 +55,32 @@ const Resident = () => {
     getAllResident(accessToken, dispatch);
   }, [user, dispatch, navigate]);
 
+  useEffect(() => {
+    const flattenedData = allResident.map(item => {
+      const {
+        id,
+        idnum,
+        name,
+        year,
+        phoneNumber,
+        registration: { id: registrationId },
+        relationship,
+      } = item;
+  
+      return {
+        id,
+        idnum,
+        name,
+        year,
+        phoneNumber,
+        registrationId,
+        relationship,
+      };
+    });
+    setFlattenedResident(flattenedData)
+    setFilteredResident(flattenedData);
+  }, [allResident]);
+
   return (
     <>
       <NavBar />
@@ -63,7 +90,7 @@ const Resident = () => {
         <Grid container direction="column" sx={{ margin: 3, gap: 2 }}>
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item xs={9}>
-              <SearchBar allResident={allResident} setFilteredResident={setFilteredResident} />
+              <SearchBar flattenedResident={flattenedResident} setFilteredResident={setFilteredResident} />
             </Grid>
             <Grid item>
               <Button onClick={() => setIsAddDialogOpen(true)} variant="contained">
@@ -72,7 +99,7 @@ const Resident = () => {
             </Grid>
           </Grid>
           <DataTable
-            allResident={filteredResident}
+            filteredResident={filteredResident}
             handleOpenEditDialog={handleOpenEditDialog}
             handleOpenDeleteDialog={handleOpenDeleteDialog}
           />
