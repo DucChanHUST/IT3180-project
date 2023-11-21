@@ -20,8 +20,8 @@ User.init({
     allowNull: false,
   },
   role: {
-    type: DataTypes.STRING,
-    allowNull: true
+    type: DataTypes.ENUM('leader', 'accountant', 'resident'),
+    allowNull: false,
   }
 }, {
   sequelize,

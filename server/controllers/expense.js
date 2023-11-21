@@ -1,5 +1,6 @@
 const expenseRouter = require('express').Router()
 const { Expense } = require('../models/associations')
+const { checkUserRole } = require('../util/checkUserRole')
 
 expenseRouter.get('/', async (req, res) => {
   const expenses = await Expense.findAll()
@@ -7,11 +8,8 @@ expenseRouter.get('/', async (req, res) => {
 })
 
 expenseRouter.post('/',checkUserRole(['accountant']), async (req, res) => {
-  const { Expensename, password, role, residentId } = req.body;
+  const { nameExpense, amount, type } = req.body;
   try {
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
-
     const newExpense = await Expense.create({
       nameExpense,
       amount,

@@ -9,7 +9,7 @@ Resident.init({
     primaryKey: true,
     autoIncrement: true
   },
-  idnum: {
+  idNumber: {
     type: DataTypes.STRING,
     allowNull: true,
     unique: true
@@ -18,8 +18,12 @@ Resident.init({
     type: DataTypes.STRING,
     allowNull: false
   },
-  age: {
-    type: DataTypes.INTEGER,
+  dob: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  gender: {
+    type: DataTypes.STRING,
     allowNull: false
   },
   phoneNumber: {
@@ -29,10 +33,6 @@ Resident.init({
   relationship: {
     type: DataTypes.STRING,
     allowNull: false
-  },
-  registrationId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
   }
 }, {
   sequelize,

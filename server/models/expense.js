@@ -5,7 +5,7 @@ const { sequelize } = require('../util/db')
 class Expense extends Model {}
 
 Expense.init({
-  IDExpense: {
+  id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
