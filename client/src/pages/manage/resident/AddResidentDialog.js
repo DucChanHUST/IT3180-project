@@ -19,8 +19,15 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { NumberTextField, TextOnlyTextField } from "../../../components";
 import { RelationshipConstant } from "../../../const";
+import { addNewResident } from "../../../redux/apiRequest";
+import { useSelector, useDispatch } from "react-redux";
+import { INIT_ERRORS_VALUES, FIELD_MAPPING } from "./const";
+import { handleFilterRelationship } from "./helper";
 
 const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedResident }) => {
+  const user = useSelector(state => state.auth.login?.currentUser);
+  const dispatch = useDispatch();
+
   const [residentValues, setResidentValues] = useState(INIT_RESIDENT_VALUES);
   const [errors, setErrors] = useState(INIT_ERRORS_VALUES);
   const [errorDialogContent, setErrorDialogContent] = useState("");
@@ -52,83 +59,12 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
     } else {
       handleCloseAddDialog();
       setResidentValues(INIT_RESIDENT_VALUES);
-      console.log("added", residentValues);
+      addNewResident(user.token, dispatch, residentValues);
     }
   };
 
   const handleResidentValueChange = field => value => {
     setResidentValues(prevValue => ({ ...prevValue, [field]: value }));
-  };
-
-  const handleRelationshipChange = event => {
-    const value = event.target.value;
-    setResidentValues(prevValues => ({ ...prevValues, relationship: value }));
-  };
-
-  const handleFilterRelationship = (registrationIdInput, genderInput, yearInput) => {
-    let allRegistrationId = [];
-
-    for (var i = 0; i < flattenedResident.length; i++) {
-      var currentId = flattenedResident[i].registrationId;
-
-      if (allRegistrationId.indexOf(currentId) === -1) {
-        allRegistrationId.push(currentId);
-      }
-    }
-
-    if (!allRegistrationId.includes(parseInt(registrationIdInput))) {
-      setPossibleRelationship(["Chủ hộ"]);
-      return;
-    }
-
-    let headYear = null;
-    let headGender = null;
-    let existedRelationship = [];
-
-    for (let i = 0; i < flattenedResident.length; i++) {
-      if (flattenedResident[i].relationship === "Chủ hộ") {
-        headYear = new Date(flattenedResident[i].dob);
-        headGender = flattenedResident[i].gender;
-      }
-      existedRelationship.push(flattenedResident[i].relationship);
-    }
-
-    const filteredRelationship = RelationshipConstant.RELATIONSHIP.filter(relationship => {
-      if (
-        (yearInput < headYear && relationship.isOlder === false) ||
-        (yearInput > headYear && relationship.isOlder === true)
-      ) {
-        return false;
-      }
-
-      if (
-        (genderInput === RelationshipConstant.GENDER.MALE &&
-          relationship.gender === RelationshipConstant.GENDER.FEMALE) ||
-        (genderInput === RelationshipConstant.GENDER.FEMALE && relationship.gender === RelationshipConstant.GENDER.MALE)
-      ) {
-        return false;
-      }
-
-      if (existedRelationship.includes(relationship.role) && relationship.isUnique) {
-        return false;
-      }
-
-      if (relationship.isHead === false) {
-        if (
-          (headGender === RelationshipConstant.GENDER.MALE &&
-            relationship.gender === RelationshipConstant.GENDER.FEMALE) ||
-          (headGender === RelationshipConstant.GENDER.FEMALE &&
-            relationship.gender === RelationshipConstant.GENDER.MALE)
-        ) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-
-    const filteredRole = filteredRelationship.map(item => item.role);
-    setPossibleRelationship(filteredRole || []);
   };
 
   return (
@@ -150,7 +86,14 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
                 value={residentValues.dob}
                 onChange={value => {
                   handleResidentValueChange("dob")(value.$d);
-                  handleFilterRelationship(residentValues.registrationId, residentValues.gender, value);
+                  const filteredRelationship = handleFilterRelationship(
+                    residentValues.registrationId,
+                    residentValues.gender,
+                    value,
+                    flattenedResident,
+                  );
+                  setPossibleRelationship(filteredRelationship);
+                  handleResidentValueChange("relationship")("");
                 }}
                 maxDate={TODAY}
                 minDate={START_OF_1900}
@@ -170,7 +113,14 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
                 onChange={event => {
                   const value = event.target.value;
                   handleResidentValueChange("gender")(value);
-                  handleFilterRelationship(residentValues.registrationId, value, residentValues.dob);
+                  const filteredRelationship = handleFilterRelationship(
+                    residentValues.registrationId,
+                    value,
+                    residentValues.dob,
+                    flattenedResident,
+                  );
+                  setPossibleRelationship(filteredRelationship);
+                  handleResidentValueChange("relationship")("");
                 }}
                 error={errors.gender}
                 fullWidth
@@ -198,7 +148,14 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
               value={residentValues.registrationId}
               onChange={value => {
                 handleResidentValueChange("registrationId")(value);
-                handleFilterRelationship(value, residentValues.gender, residentValues.dob);
+                const filteredRelationship = handleFilterRelationship(
+                  value,
+                  residentValues.gender,
+                  residentValues.dob,
+                  flattenedResident,
+                );
+                setPossibleRelationship(filteredRelationship);
+                handleResidentValueChange("relationship")("");
               }}
               error={errors.registrationId}
             />
@@ -207,7 +164,10 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
               <Select
                 label={FIELD_MAPPING.relationship + "*"}
                 value={residentValues.relationship}
-                onChange={handleRelationshipChange}
+                onChange={event => {
+                  const value = event.target.value;
+                  handleResidentValueChange("relationship")(value);
+                }}
                 disabled={!residentValues.registrationId || !residentValues.gender || !residentValues.dob}
                 error={errors.relationship}
               >
@@ -249,25 +209,6 @@ const INIT_RESIDENT_VALUES = {
   phoneNumber: "",
   registrationId: "",
   relationship: "",
-};
-
-const INIT_ERRORS_VALUES = {
-  name: false,
-  dob: false,
-  gender: false,
-  idNumber: false,
-  registrationId: false,
-  relationship: false,
-};
-
-const FIELD_MAPPING = {
-  name: "Họ và tên",
-  dob: "Ngày sinh",
-  gender: "Giới tính",
-  idNumber: "Số CCCD",
-  phoneNumber: "Số điện thoại",
-  registrationId: "Mã hộ",
-  relationship: "Quan hệ với chủ hộ",
 };
 
 const ALL_RESIDENT_ROLE = RelationshipConstant.RELATIONSHIP.map(item => item.role);

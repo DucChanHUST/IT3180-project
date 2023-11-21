@@ -29,7 +29,7 @@ export const RELATIONSHIP = [
   { role: "Cô ruột", gender: GENDER.FEMALE },
   { role: "Dì ruột", gender: GENDER.FEMALE },
   { role: "Chắt ruột" },
-  { role: "người giám hộ" },
+  { role: "Người giám hộ" },
   { role: "Ở nhờ" },
   { role: "Ở mượn" },
   { role: "Ở thuê" },

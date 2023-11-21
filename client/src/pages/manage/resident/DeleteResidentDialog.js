@@ -5,8 +5,18 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Stack, Typography } from "@mui/material";
+import { deleteResident } from "../../../redux/apiRequest";
+import { useSelector, useDispatch } from "react-redux";
 
 const DeleteResidentDialog = ({ isDeleteDialogOpen, handleCloseDeleteDialog, selectedResident }) => {
+  const user = useSelector(state => state.auth.login?.currentUser);
+  const dispatch = useDispatch();
+
+  const handleDeleteResident = () => {
+    deleteResident(user.token, dispatch, selectedResident.id);
+    handleCloseDeleteDialog();
+  };
+
   return (
     <Dialog open={isDeleteDialogOpen} onClose={handleCloseDeleteDialog} fullWidth>
       <DialogTitle>Xóa nhân khẩu</DialogTitle>
@@ -19,7 +29,7 @@ const DeleteResidentDialog = ({ isDeleteDialogOpen, handleCloseDeleteDialog, sel
         <Button variant="outlined" onClick={handleCloseDeleteDialog}>
           Hủy bỏ
         </Button>
-        <Button variant="contained" color="error" onClick={handleCloseDeleteDialog}>
+        <Button variant="contained" color="error" onClick={handleDeleteResident}>
           Xóa
         </Button>
       </DialogActions>

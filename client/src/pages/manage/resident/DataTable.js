@@ -54,7 +54,7 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 680 }}>
+      <TableContainer sx={{ maxHeight: 510 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>

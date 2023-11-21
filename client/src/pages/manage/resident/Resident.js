@@ -109,6 +109,7 @@ const Resident = () => {
         <EditResidentDialog
           isEditDialogOpen={isEditDialogOpen}
           handleCloseEditDialog={handleCloseEditDialog}
+          flattenedResident={filteredResident}
           selectedResident={selectedResident}
         />
         <DeleteResidentDialog
