@@ -1,4 +1,4 @@
-import React, { useState, memo } from "react";
+import React, { useState, memo, useEffect } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,15 +12,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
+import { handleFormatDate } from "./helper";
 
 const RESIDENT_COLUMNS = [
   { id: "id", label: "ID", minWidth: 30 },
-  { id: "name", label: "Họ và tên", minWidth: 200 },
-  { id: "year", label: "Tuổi", minWidth: 30, align: "center" },
-  { id: "idnum", label: "Số CCCD", minWidth: 150, align: "center" },
+  { id: "name", label: "Họ và tên", minWidth: 160 },
+  { id: "dob", label: "Ngày sinh", minWidth: 80, align: "center" },
+  { id: "gender", label: "Giới tính", minWidth: 50, align: "center" },
+  { id: "idNumber", label: "Số CCCD", minWidth: 150, align: "center" },
   { id: "phoneNumber", label: "Số điện thoại", minWidth: 140, align: "center" },
   { id: "registrationId", label: "Mã hộ", minWidth: 30, align: "center" },
-  { id: "relationship", label: "Quan hệ với chủ hộ", minWidth: 140, align: "center" },
+  { id: "relationship", label: "Quan hệ với chủ hộ", minWidth: 120, align: "center" },
   { id: "action", label: "Thao tác", minWidth: 70, align: "center" },
 ];
 
@@ -29,6 +31,7 @@ const NUMBER_OF_COLUMNS = RESIDENT_COLUMNS.length;
 const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDialog }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [updatedResident, setUpdatedResident] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -38,6 +41,16 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  useEffect(() => {
+    if (!filteredResident) return;
+    setUpdatedResident(
+      filteredResident.map(item => ({
+        ...item,
+        dob: handleFormatDate(item.dob),
+      })),
+    );
+  }, [filteredResident]);
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -53,14 +66,14 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredResident?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(resident => {
+            {updatedResident?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(resident => {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={resident.id}>
                   {RESIDENT_COLUMNS.slice(0, NUMBER_OF_COLUMNS - 1).map(column => {
                     const value = resident[column.id];
                     return (
                       <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === "number" ? column.format(value) : value}
+                        {value}
                       </TableCell>
                     );
                   })}

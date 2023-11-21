@@ -20,21 +20,16 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { NumberTextField, TextOnlyTextField } from "../../../components";
 import { RelationshipConstant } from "../../../const";
 
-const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
-  const [residentValues, setResidentValues] = useState(initialResidentValues);
-  const [errors, setErrors] = useState({
-    name: false,
-    year: false,
-    gender: false,
-    idnum: false,
-    registrationId: false,
-    relationship: false,
-  });
+const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedResident }) => {
+  const [residentValues, setResidentValues] = useState(INIT_RESIDENT_VALUES);
+  const [errors, setErrors] = useState(INIT_ERRORS_VALUES);
   const [errorDialogContent, setErrorDialogContent] = useState("");
+  const [possibleRelationship, setPossibleRelationship] = useState(ALL_RESIDENT_ROLE);
 
   const handleCancelAdd = () => {
     handleCloseAddDialog();
-    setResidentValues(initialResidentValues);
+    setErrors(INIT_ERRORS_VALUES);
+    setResidentValues(INIT_RESIDENT_VALUES);
   };
 
   const handleAdd = () => {
@@ -44,36 +39,96 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
       if (!residentValues[field]) {
         acc[field] = true;
         hasErrors = true;
-        errorContent.push(mapping[field]);
+        errorContent.push(FIELD_MAPPING[field]);
       } else {
         acc[field] = false;
       }
       return acc;
     }, {});
     setErrors(newErrors);
-    
+
     if (hasErrors) {
       setErrorDialogContent(`Vui lòng nhập ${errorContent.join(", ")}`);
     } else {
       handleCloseAddDialog();
-      setResidentValues(initialResidentValues);
+      setResidentValues(INIT_RESIDENT_VALUES);
       console.log("added", residentValues);
     }
-    console.log(newErrors);
   };
 
   const handleResidentValueChange = field => value => {
     setResidentValues(prevValue => ({ ...prevValue, [field]: value }));
   };
 
-  const handleGenderChange = event => {
-    const value = event.target.value;
-    setResidentValues(prevValue => ({ ...prevValue, gender: value }));
-  };
-
   const handleRelationshipChange = event => {
     const value = event.target.value;
     setResidentValues(prevValues => ({ ...prevValues, relationship: value }));
+  };
+
+  const handleFilterRelationship = (registrationIdInput, genderInput, yearInput) => {
+    let allRegistrationId = [];
+
+    for (var i = 0; i < flattenedResident.length; i++) {
+      var currentId = flattenedResident[i].registrationId;
+
+      if (allRegistrationId.indexOf(currentId) === -1) {
+        allRegistrationId.push(currentId);
+      }
+    }
+
+    if (!allRegistrationId.includes(parseInt(registrationIdInput))) {
+      setPossibleRelationship(["Chủ hộ"]);
+      return;
+    }
+
+    let headYear = null;
+    let headGender = null;
+    let existedRelationship = [];
+
+    for (let i = 0; i < flattenedResident.length; i++) {
+      if (flattenedResident[i].relationship === "Chủ hộ") {
+        headYear = new Date(flattenedResident[i].dob);
+        headGender = flattenedResident[i].gender;
+      }
+      existedRelationship.push(flattenedResident[i].relationship);
+    }
+
+    const filteredRelationship = RelationshipConstant.RELATIONSHIP.filter(relationship => {
+      if (
+        (yearInput < headYear && relationship.isOlder === false) ||
+        (yearInput > headYear && relationship.isOlder === true)
+      ) {
+        return false;
+      }
+
+      if (
+        (genderInput === RelationshipConstant.GENDER.MALE &&
+          relationship.gender === RelationshipConstant.GENDER.FEMALE) ||
+        (genderInput === RelationshipConstant.GENDER.FEMALE && relationship.gender === RelationshipConstant.GENDER.MALE)
+      ) {
+        return false;
+      }
+
+      if (existedRelationship.includes(relationship.role) && relationship.isUnique) {
+        return false;
+      }
+
+      if (relationship.isHead === false) {
+        if (
+          (headGender === RelationshipConstant.GENDER.MALE &&
+            relationship.gender === RelationshipConstant.GENDER.FEMALE) ||
+          (headGender === RelationshipConstant.GENDER.FEMALE &&
+            relationship.gender === RelationshipConstant.GENDER.MALE)
+        ) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    const filteredRole = filteredRelationship.map(item => item.role);
+    setPossibleRelationship(filteredRole || []);
   };
 
   return (
@@ -83,7 +138,7 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
         <DialogContentText>{errorDialogContent}</DialogContentText>
         <Stack spacing={2} mt={1.5}>
           <TextOnlyTextField
-            label={mapping.name}
+            label={FIELD_MAPPING.name}
             value={residentValues.name}
             onChange={handleResidentValueChange("name")}
             error={errors.name}
@@ -91,25 +146,32 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
           <Stack direction="row" spacing={1}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                label={mapping.year}
-                value={residentValues.year}
-                onChange={handleResidentValueChange("year")}
-                maxDate={today}
-                minDate={startOf1900}
+                label={FIELD_MAPPING.dob}
+                value={residentValues.dob}
+                onChange={value => {
+                  handleResidentValueChange("dob")(value.$d);
+                  handleFilterRelationship(residentValues.registrationId, residentValues.gender, value);
+                }}
+                maxDate={TODAY}
+                minDate={START_OF_1900}
                 slotProps={{
                   textField: {
                     variant: "outlined",
-                    error: !!errors.year,
+                    error: !!errors.dob,
                   },
                 }}
               />
             </LocalizationProvider>
             <FormControl style={{ width: "60%" }}>
-              <InputLabel>Giới tính *</InputLabel>
+              <InputLabel>{FIELD_MAPPING.gender + "*"}</InputLabel>
               <Select
-                label={mapping.gender + "*"}
+                label={FIELD_MAPPING.gender + "*"}
                 value={residentValues.gender}
-                onChange={handleGenderChange}
+                onChange={event => {
+                  const value = event.target.value;
+                  handleResidentValueChange("gender")(value);
+                  handleFilterRelationship(residentValues.registrationId, value, residentValues.dob);
+                }}
                 error={errors.gender}
                 fullWidth
               >
@@ -119,42 +181,45 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
             </FormControl>
           </Stack>
           <NumberTextField
-            label={mapping.idnum}
-            value={residentValues.idnum}
-            onChange={handleResidentValueChange("idnum")}
-            error={errors.idnum}
+            label={FIELD_MAPPING.idNumber}
+            value={residentValues.idNumber}
+            onChange={handleResidentValueChange("idNumber")}
+            error={errors.idNumber}
           />
           <NumberTextField
-            label={mapping.phoneNumber}
+            label={FIELD_MAPPING.phoneNumber}
             value={residentValues.phoneNumber}
             onChange={handleResidentValueChange("phoneNumber")}
             required={false}
           />
           <Stack direction="row" spacing={1}>
             <NumberTextField
-              label={mapping.registrationId}
+              label={FIELD_MAPPING.registrationId}
               value={residentValues.registrationId}
-              onChange={handleResidentValueChange("registrationId")}
+              onChange={value => {
+                handleResidentValueChange("registrationId")(value);
+                handleFilterRelationship(value, residentValues.gender, residentValues.dob);
+              }}
               error={errors.registrationId}
             />
             <FormControl fullWidth>
-              <InputLabel>Quan hệ với chủ hộ *</InputLabel>
+              <InputLabel>{FIELD_MAPPING.relationship + "*"}</InputLabel>
               <Select
-                label={mapping.relationship + "*"}
+                label={FIELD_MAPPING.relationship + "*"}
                 value={residentValues.relationship}
                 onChange={handleRelationshipChange}
-                disabled={!residentValues.registrationId}
+                disabled={!residentValues.registrationId || !residentValues.gender || !residentValues.dob}
                 error={errors.relationship}
               >
-                {RelationshipConstant.RELATIONSHIP.map(item => (
-                  <MenuItem key={item.role} value={item.role}>
-                    {item.role}
+                {possibleRelationship.map(item => (
+                  <MenuItem key={item} value={item}>
+                    {item}
                   </MenuItem>
                 ))}
               </Select>
               {!residentValues.registrationId && (
                 <FormHelperText>
-                  Vui lòng nhập {mapping.year}, {mapping.gender}, {mapping.registrationId} trước
+                  Vui lòng nhập {FIELD_MAPPING.dob}, {FIELD_MAPPING.gender}, {FIELD_MAPPING.registrationId} trước
                 </FormHelperText>
               )}
             </FormControl>
@@ -173,27 +238,38 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
   );
 };
 
-const today = dayjs();
-const startOf1900 = dayjs("1900-01-01T00:00:00.000");
+const TODAY = dayjs();
+const START_OF_1900 = dayjs("1900-01-01T00:00:00.000");
 
-const initialResidentValues = {
+const INIT_RESIDENT_VALUES = {
   name: "",
-  year: today,
+  dob: TODAY,
   gender: "",
-  idnum: "",
+  idNumber: "",
   phoneNumber: "",
   registrationId: "",
   relationship: "",
 };
 
-const mapping = {
+const INIT_ERRORS_VALUES = {
+  name: false,
+  dob: false,
+  gender: false,
+  idNumber: false,
+  registrationId: false,
+  relationship: false,
+};
+
+const FIELD_MAPPING = {
   name: "Họ và tên",
-  year: "Ngày sinh",
+  dob: "Ngày sinh",
   gender: "Giới tính",
-  idnum: "Số CCCD",
+  idNumber: "Số CCCD",
   phoneNumber: "Số điện thoại",
   registrationId: "Mã hộ",
   relationship: "Quan hệ với chủ hộ",
 };
+
+const ALL_RESIDENT_ROLE = RelationshipConstant.RELATIONSHIP.map(item => item.role);
 
 export default memo(AddResidentDialog);

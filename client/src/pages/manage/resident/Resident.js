@@ -59,25 +59,27 @@ const Resident = () => {
     const flattenedData = allResident.map(item => {
       const {
         id,
-        idnum,
+        idNumber,
         name,
-        year,
+        dob,
+        gender,
         phoneNumber,
         registration: { id: registrationId },
         relationship,
       } = item;
-  
+
       return {
         id,
-        idnum,
+        idNumber,
         name,
-        year,
+        dob,
+        gender,
         phoneNumber,
         registrationId,
         relationship,
       };
     });
-    setFlattenedResident(flattenedData)
+    setFlattenedResident(flattenedData);
     setFilteredResident(flattenedData);
   }, [allResident]);
 
@@ -114,7 +116,11 @@ const Resident = () => {
           handleCloseDeleteDialog={handleCloseDeleteDialog}
           selectedResident={selectedResident}
         />
-        <AddResidentDialog isAddDialogOpen={isAddDialogOpen} handleCloseAddDialog={handleCloseAddDialog} />
+        <AddResidentDialog
+          isAddDialogOpen={isAddDialogOpen}
+          handleCloseAddDialog={handleCloseAddDialog}
+          flattenedResident={flattenedResident}
+        />
       </Box>
     </>
   );
