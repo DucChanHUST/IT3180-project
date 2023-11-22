@@ -151,7 +151,9 @@ export const addNewRegistration = async (accessToken, dispatch, data) => {
       dispatch(addRegistrationsSuccess(res.data));
     } else {
       // Handle specific error cases
-      if (res.data.message === "Duplicate Identity Card Number") {
+      if (res.data.message === "Duplicate Identity Card Number")
+      {
+        console.log("híudaugasgdasf");
         // Handle the case where identity card number already exists
         dispatch(addRegistrationsFailed("This Identity Card Number already exists."));
       } else if (res.data.message === "Duplicate Address") {
