@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect } from "react";
+import React, { useState, memo, useEffect, Fragment } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -28,7 +28,7 @@ const RESIDENT_COLUMNS = [
 
 const NUMBER_OF_COLUMNS = RESIDENT_COLUMNS.length;
 
-const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDialog }) => {
+const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDialog, isLeader }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [updatedResident, setUpdatedResident] = useState([]);
@@ -58,7 +58,7 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {RESIDENT_COLUMNS.map(column => (
+              {(isLeader ? RESIDENT_COLUMNS : RESIDENT_COLUMNS.slice(0, -1)).map(column => (
                 <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
                   {column.label}
                 </TableCell>
@@ -77,20 +77,24 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
                       </TableCell>
                     );
                   })}
-                  <TableCell padding="normal">
-                    <Stack direction="row" justifyContent="center" spacing={1}>
-                      <Tooltip title="Chỉnh sửa">
-                        <IconButton edge="end" color="primary" onClick={() => handleOpenEditDialog(resident)}>
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Xóa">
-                        <IconButton edge="end" color="error" onClick={() => handleOpenDeleteDialog(resident)}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Stack>
-                  </TableCell>
+                  {isLeader ? (
+                    <TableCell padding="normal">
+                      <Stack direction="row" justifyContent="center" spacing={1}>
+                        <Tooltip title="Chỉnh sửa">
+                          <IconButton edge="end" color="primary" onClick={() => handleOpenEditDialog(resident)}>
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Xóa">
+                          <IconButton edge="end" color="error" onClick={() => handleOpenDeleteDialog(resident)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Stack>
+                    </TableCell>
+                  ) : (
+                    <Fragment />
+                  )}
                 </TableRow>
               );
             })}

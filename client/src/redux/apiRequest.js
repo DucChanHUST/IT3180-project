@@ -7,6 +7,9 @@ import {
   deleteUserFailed,
   deleteUserSuccess,
   deleteUserStart,
+  addUserStart,
+  addUserSuccess,
+  addUserFailed,
 } from "./userSlice";
 import {
   getRegistrationsStart,
@@ -77,6 +80,7 @@ export const getAllUsers = async (accessToken, dispatch) => {
   } catch (err) {
     dispatch(getUsersFailed());
   }
+  console.log("heheeeee");
 };
 
 //Hàm xóa user
@@ -197,47 +201,89 @@ export const updateRegistration = async (accessToken, dispatch, data, id) => {
   }
 };
 
-//Resident function-----------------------------------------------------------------------------------
+// Resident function-----------------------------------------------------------------------------------
 // getAllResident
 export const getAllResident = async (accessToken, dispatch) => {
   dispatch(getResidentStart());
   try {
-    const res = await axios.get("http://localhost:3001/api/resident", {
+    const response = await axios.get("http://localhost:3001/api/resident", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    dispatch(getResidentSuccess(res.data));
+    dispatch(getResidentSuccess(response.data));
+  } catch (error) {
+    dispatch(getResidentFailed());
+  }
+};
+
+export const getRegistrationResident = async (accessToken, dispatch, userId) => {
+  dispatch(getResidentStart());
+  try {
+    const response = await axios.get(`http://localhost:3001/api/users/${userId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    dispatch(getResidentSuccess(response.data.resident.registration.residents));
   } catch (error) {
     dispatch(getResidentFailed());
   }
 };
 
 // addNewResident
-export const addNewResident = async (accessToken, dispatch, data) => {
+export const addNewResident = async (accessToken, dispatch, residentData) => {
   dispatch(addResidentStart());
-
   try {
-    const res = await axios.post(`http://localhost:3001/api/resident/add`, data, {
+    const residentResponse = await axios.post(`http://localhost:3001/api/resident/add`, residentData, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    dispatch(addResidentSuccess(res.data));
+    dispatch(addResidentSuccess(residentResponse.data));
     getAllResident(accessToken, dispatch);
+
+    if (!residentData.idNumber) return;
+
+    const userData = {
+      username: residentData.idNumber,
+      password: residentData.idNumber,
+      role: "resident",
+      residentId: residentResponse.data.id,
+    };
+
+    dispatch(addUserStart());
+    try {
+      const userResponse = await axios.post(`http://localhost:3001/api/users`, userData, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      dispatch(addUserSuccess(userResponse.data));
+    } catch (error) {
+      dispatch(addUserFailed());
+      return;
+    }
   } catch (error) {
-    dispatch(addResidentFailed());
+    dispatch(addResidentFailed(error.response.data.error.errors[0]));
+    return;
   }
 };
 
 // deleteResident
 export const deleteResident = async (accessToken, dispatch, id) => {
   dispatch(deleteRegistrationStart());
-
   try {
-    await axios.delete(`http://localhost:3001/api/resident/delete/${id}`, {
+    const residentResponse = await axios.delete(`http://localhost:3001/api/resident/delete/${id}`, {
       headers: { Authorization: `bearer ${accessToken}` },
     });
-    dispatch(deleteResidentSuccess(id));
+    dispatch(deleteResidentSuccess(residentResponse.data));
     getAllResident(accessToken, dispatch);
   } catch (error) {
     dispatch(deleteResidentFailed());
+  }
+
+  dispatch(deleteUserStart());
+  try {
+    const userResponse = await axios.post(`http://localhost:3001/api/users/${id}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    dispatch(deleteUserSuccess(userResponse.data));
+  } catch (error) {
+    dispatch(deleteUserFailed());
   }
 };
 
@@ -246,12 +292,12 @@ export const updateResident = async (accessToken, dispatch, data, id) => {
   dispatch(updateResidentStart());
 
   try {
-    const res = await axios.put(`http://localhost:3001/api/resident/update/${id}`, data, {
+    const response = await axios.put(`http://localhost:3001/api/resident/update/${id}`, data, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    dispatch(updateResidentSuccess(res.data));
+    dispatch(updateResidentSuccess(response.data));
     getAllResident(accessToken, dispatch);
   } catch (error) {
-    dispatch(updateResidentFailed());
+    dispatch(updateResidentFailed(error.response.data.error.errors[0]));
   }
 };

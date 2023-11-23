@@ -5,7 +5,7 @@ const residentSlice = createSlice({
   initialState: {
     allResident: [],
     isLoading: false,
-    isError: false,
+    errorMsg: "",
   },
   reducers: {
     getResidentStart: state => {
@@ -17,7 +17,6 @@ const residentSlice = createSlice({
     },
     getResidentFailed: state => {
       state.isLoading = false;
-      state.isError = true;
     },
 
     addResidentStart: state => {
@@ -25,11 +24,11 @@ const residentSlice = createSlice({
     },
     addResidentSuccess: (state, action) => {
       state.isLoading = false;
-      console.log("added", action.payload);
+      console.log("added resident", action.payload);
     },
-    addResidentFailed: state => {
+    addResidentFailed: (state, action) => {
       state.isLoading = false;
-      state.isError = true;
+      state.errorMsg = action.payload.message;
     },
 
     deleteResidentStart: state => {
@@ -37,10 +36,10 @@ const residentSlice = createSlice({
     },
     deleteResidentSuccess: (state, action) => {
       state.isLoading = false;
-      console.log("deleted", action.payload);
+      console.log("deleted resident", action.payload);
     },
     deleteResidentFailed: state => {
-      state.isError = true;
+      state.isLoading = false;
     },
 
     updateResidentStart: state => {
@@ -48,11 +47,15 @@ const residentSlice = createSlice({
     },
     updateResidentSuccess: (state, action) => {
       state.isLoading = false;
-      console.log("updated", action.payload);
+      console.log("updated resident", action.payload);
     },
-    updateResidentFailed: state => {
+    updateResidentFailed: (state, action) => {
       state.isLoading = false;
-      state.isError = true;
+      state.errorMsg = action.payload.message;
+    },
+
+    clearResidentError: state => {
+      state.errorMsg = "";
     },
   },
 });
@@ -70,6 +73,7 @@ export const {
   updateResidentStart,
   updateResidentSuccess,
   updateResidentFailed,
+  clearResidentError,
 } = residentSlice.actions;
 
 export default residentSlice.reducer;

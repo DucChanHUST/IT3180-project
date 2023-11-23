@@ -2,7 +2,6 @@ export const INIT_ERRORS_VALUES = {
   name: false,
   dob: false,
   gender: false,
-  idNumber: false,
   registrationId: false,
   relationship: false,
 };

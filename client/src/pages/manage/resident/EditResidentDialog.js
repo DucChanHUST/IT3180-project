@@ -70,6 +70,7 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
     } else {
       handleCloseEditDialog();
       setResidentValues(INIT_RESIDENT_VALUES);
+      residentValues.idNumber = residentValues.idNumber || null;
       updateResident(user.token, dispatch, residentValues, selectedResident.id);
     }
   };
@@ -149,7 +150,7 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
             label={FIELD_MAPPING.idNumber}
             value={residentValues.idNumber}
             onChange={handleResidentValueChange("idNumber")}
-            error={errors.idNumber}
+            required={false}
           />
           <NumberTextField
             label={FIELD_MAPPING.phoneNumber}

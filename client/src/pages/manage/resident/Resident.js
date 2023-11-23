@@ -1,20 +1,22 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { SideBar, NavBar } from "../../../components";
-import { getAllResident } from "../../../redux/apiRequest";
+import { getAllResident, getRegistrationResident } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Box, Grid } from "@mui/material";
+import { Button, Box, Grid, Snackbar, Alert } from "@mui/material";
 import DataTable from "./DataTable";
 import EditResidentDialog from "./EditResidentDialog";
 import AddResidentDialog from "./AddResidentDialog";
 import DeleteResidentDialog from "./DeleteResidentDialog";
 import SearchBar from "./SearchBar";
+import { clearResidentError } from "../../../redux/residentSlice";
 
 const Resident = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector(state => state.auth.login?.currentUser);
   const allResident = useSelector(state => state.resident.allResident);
+  const errorMsg = useSelector(state => state.resident.errorMsg);
 
   const [selectedResident, setSelectedResident] = useState({});
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -22,6 +24,9 @@ const Resident = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [filteredResident, setFilteredResident] = useState([]);
   const [flattenedResident, setFlattenedResident] = useState([]);
+  const [residents, setResidents] = useState([]);
+  const [isLeader, setIsLeader] = useState(false);
+  const [errorAlertMsg, setErrorAlertMsg] = useState("");
 
   const handleOpenEditDialog = useCallback(resident => {
     setIsEditDialogOpen(true);
@@ -45,43 +50,79 @@ const Resident = () => {
     setIsAddDialogOpen(false);
   }, []);
 
+  const handleCloseAlert = () => {
+    dispatch(clearResidentError());
+  };
+
+  const fetchResident = async () => {
+    try {
+      if (user.userRole === "leader") {
+        setIsLeader(true);
+        await getAllResident(user.token, dispatch);
+      } else {
+        setIsLeader(false);
+        await getRegistrationResident(user.token, dispatch, user.userId);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setResidents(allResident);
+  };
+
   useEffect(() => {
     if (!user || !user.token) {
       navigate("/Login");
       return;
     }
 
-    const accessToken = user.token;
-    getAllResident(accessToken, dispatch);
-  }, [user, dispatch, navigate]);
+    fetchResident();
+  }, [user, navigate]);
 
   useEffect(() => {
-    const flattenedData = allResident.map(item => {
-      const {
-        id,
-        idNumber,
-        name,
-        dob,
-        gender,
-        phoneNumber,
-        registration: { id: registrationId },
-        relationship,
-      } = item;
+    if (!user) return;
+    if (user.userRole === "leader") {
+      const flattenedData = residents.map(item => {
+        const {
+          id,
+          idNumber,
+          name,
+          dob,
+          gender,
+          phoneNumber,
+          registration: { id: registrationId },
+          relationship,
+        } = item;
 
-      return {
-        id,
-        idNumber,
-        name,
-        dob,
-        gender,
-        phoneNumber,
-        registrationId,
-        relationship,
-      };
-    });
-    setFlattenedResident(flattenedData);
-    setFilteredResident(flattenedData);
-  }, [allResident]);
+        return {
+          id,
+          idNumber,
+          name,
+          dob,
+          gender,
+          phoneNumber,
+          registrationId,
+          relationship,
+        };
+      });
+      setFlattenedResident(flattenedData);
+      setFilteredResident(flattenedData);
+    } else {
+      setFlattenedResident(allResident);
+      setFilteredResident(allResident);
+    }
+  }, [residents, user]);
+
+  useEffect(() => {
+    switch (errorMsg) {
+      case "id_number must be unique":
+        setErrorAlertMsg("Số CCCD đã tồn tại");
+        break;
+      default:
+        setErrorAlertMsg(errorMsg);
+    }
+  }, [errorMsg]);
+
+  console.log(residents);
 
   return (
     <>
@@ -104,6 +145,7 @@ const Resident = () => {
             filteredResident={filteredResident}
             handleOpenEditDialog={handleOpenEditDialog}
             handleOpenDeleteDialog={handleOpenDeleteDialog}
+            isLeader={isLeader}
           />
         </Grid>
         <EditResidentDialog
@@ -123,6 +165,12 @@ const Resident = () => {
           flattenedResident={flattenedResident}
         />
       </Box>
+
+      <Snackbar open={Boolean(errorMsg)} autoHideDuration={5000} onClose={handleCloseAlert}>
+        <Alert onClose={handleCloseAlert} severity="error">
+          {errorAlertMsg}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

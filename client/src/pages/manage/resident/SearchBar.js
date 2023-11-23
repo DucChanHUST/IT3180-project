@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FormControl, MenuItem, Select, Stack, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { FIELD_MAPPING } from "./const";
 
 const SearchBar = ({ flattenedResident, setFilteredResident }) => {
   const [searchCategory, setSearchCategory] = useState("all");
@@ -25,19 +26,18 @@ const SearchBar = ({ flattenedResident, setFilteredResident }) => {
       if (!item) {
         return false;
       }
-  
+
       const value = item[searchCategory];
-  
+
       if (searchCategory === "all") {
         return Object.values(item).some(val => val && val.toString().toLowerCase().includes(term.toLowerCase()));
       } else {
         return value && value.toString().toLowerCase().includes(term.toLowerCase());
       }
     });
-  
+
     setFilteredResident(filteredResident);
   };
-  
 
   return (
     <Stack direction="row" spacing={2} style={{ width: "100%" }}>
@@ -59,12 +59,13 @@ const SearchBar = ({ flattenedResident, setFilteredResident }) => {
         <Select value={searchCategory} onChange={handleCategoryChange}>
           <MenuItem value="all">Tất cả</MenuItem>
           <MenuItem value="id">ID</MenuItem>
-          <MenuItem value="name">Họ và tên</MenuItem>
-          <MenuItem value="year">Tuổi</MenuItem>
-          <MenuItem value="idnum">Số CCCD</MenuItem>
-          <MenuItem value="phoneNumber">Số điện thoại</MenuItem>
-          <MenuItem value="registrationId">Mã hộ</MenuItem>
-          <MenuItem value="relationship">Quan hệ với chủ hộ</MenuItem>
+          <MenuItem value="name">{FIELD_MAPPING.name}</MenuItem>
+          <MenuItem value="dob">{FIELD_MAPPING.dob}</MenuItem>
+          <MenuItem value="gender">{FIELD_MAPPING.gender}</MenuItem>
+          <MenuItem value="idNumber">{FIELD_MAPPING.idNumber}</MenuItem>
+          <MenuItem value="phoneNumber">{FIELD_MAPPING.phoneNumber}</MenuItem>
+          <MenuItem value="registrationId">{FIELD_MAPPING.registrationId}</MenuItem>
+          <MenuItem value="relationship">{FIELD_MAPPING.relationship}</MenuItem>
         </Select>
       </FormControl>
     </Stack>

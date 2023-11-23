@@ -59,6 +59,7 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
     } else {
       handleCloseAddDialog();
       setResidentValues(INIT_RESIDENT_VALUES);
+      residentValues.idNumber = residentValues.idNumber || null;
       addNewResident(user.token, dispatch, residentValues);
     }
   };
@@ -134,7 +135,7 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
             label={FIELD_MAPPING.idNumber}
             value={residentValues.idNumber}
             onChange={handleResidentValueChange("idNumber")}
-            error={errors.idNumber}
+            required={false}
           />
           <NumberTextField
             label={FIELD_MAPPING.phoneNumber}
@@ -177,7 +178,7 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
                   </MenuItem>
                 ))}
               </Select>
-              {!residentValues.registrationId && (
+              {(!residentValues.registrationId || !residentValues.gender || !residentValues.dob) && (
                 <FormHelperText>
                   Vui lòng nhập {FIELD_MAPPING.dob}, {FIELD_MAPPING.gender}, {FIELD_MAPPING.registrationId} trước
                 </FormHelperText>
