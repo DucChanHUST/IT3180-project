@@ -4,24 +4,13 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../index');
 const { User, Registration, Resident } = require('../models/associations');
-const { sequelize } = require('../util/db');
 const generateToken = require('./util/generateToken');
-const { sync } = require('../models/registration');
 
 chai.use(chaiHttp);
 const expect = chai.expect;
 
 describe('Registration API', () => {
 
-  //Truncate the relevant tables in your database
-  // before(async () => {
-  //   try {
-  //     await sequelize.query('TRUNCATE TABLE "registrations" RESTART IDENTITY CASCADE;');
-  //   } catch (error) {
-  //     console.error('Error truncating tables:', error);
-  //   }
-  // });
-  
   //Add a registration to the database before running the test
   let testId;
   before(async () => {
@@ -34,7 +23,6 @@ describe('Registration API', () => {
   // Generate valid token for testing
   const validToken = generateToken(1, 'phuongnguyen', 'leader');
 
-  
   after(async () => {
     // Delete registration inserted in POST
     await Registration.destroy({
@@ -137,7 +125,7 @@ describe('Registration API', () => {
           .set('Authorization', `bearer ${validToken}`)
           .send({
             address: "Số 8 Tạ Quang Bửu"
-          })
+          });
 
         expect(res).to.have.status(200);
         expect(res.body).to.have.property('id').eql(testId);
@@ -157,7 +145,7 @@ describe('Registration API', () => {
     });
 
     describe('/DELETE registration', () => {
-      it('should DELETE registration has given id', async () => {
+      it('should DELETE registration with given id', async () => {
         const res = await chai.request(app)
           .delete('/api/registration/delete/' + testId)
           .set('Authorization', `bearer ${validToken}`);
@@ -171,8 +159,8 @@ describe('Registration API', () => {
           .set('Authorization', `bearer ${validToken}`);
 
         expect(res).to.have.status(404);
-      })
-    })
+      });
+    });
   });
 });
 

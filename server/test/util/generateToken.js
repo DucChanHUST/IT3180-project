@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-// funtion to generate valid token
+// funtion to generate valid token for testing
 const generateToken = (userId, username, role) => {
   const payload = {
     id: userId,

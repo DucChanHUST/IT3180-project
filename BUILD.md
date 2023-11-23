@@ -45,6 +45,8 @@ npm install --save-dev chai
 npm install --save-dev chai-http
 npm install --save-dev supertest
 ----
+-Tham khảo: https://viblo.asia/p/unit-test-cho-nodejs-restful-api-voi-mocha-va-chai-bWrZnLAv5xw
+----
 -Chạy test
  npm test
 (đã tự động reload khi sửa code)
