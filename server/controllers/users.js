@@ -76,7 +76,10 @@ usersRouter.get('/:id', checkUserRole(['leader', 'resident']), verifyUser, async
       include: {
         model: Resident,
         attributes: { exclude: ['registrationId'] },
-        include: Registration,
+        include: {
+          model: Registration,
+          include: Resident
+        }
       },
     });
 
