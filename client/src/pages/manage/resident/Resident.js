@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Fragment } from "react";
 import { SideBar, NavBar } from "../../../components";
 import { getAllResident, getRegistrationResident } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
@@ -135,12 +135,17 @@ const Resident = () => {
             <Grid item xs={9}>
               <SearchBar flattenedResident={flattenedResident} setFilteredResident={setFilteredResident} />
             </Grid>
-            <Grid item>
-              <Button onClick={() => setIsAddDialogOpen(true)} variant="contained">
-                Thêm nhân khẩu
-              </Button>
-            </Grid>
+            {isLeader ? (
+              <Grid item>
+                <Button onClick={() => setIsAddDialogOpen(true)} variant="contained">
+                  Thêm nhân khẩu
+                </Button>
+              </Grid>
+            ) : (
+              <Fragment />
+            )}
           </Grid>
+
           <DataTable
             filteredResident={filteredResident}
             handleOpenEditDialog={handleOpenEditDialog}
@@ -148,6 +153,7 @@ const Resident = () => {
             isLeader={isLeader}
           />
         </Grid>
+
         <EditResidentDialog
           isEditDialogOpen={isEditDialogOpen}
           handleCloseEditDialog={handleCloseEditDialog}
