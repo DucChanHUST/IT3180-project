@@ -93,7 +93,7 @@ usersRouter.get('/:id', checkUserRole(['leader', 'resident']), verifyUser, async
   }
 });
 
-usersRouter.delete('/:id', async (req, res) => {
+usersRouter.delete('/:id',checkUserRole(['leader']), async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) {

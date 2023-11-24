@@ -81,7 +81,7 @@ describe('Resident API', () => {
 
         it('should return 404 for not exist id', async () => {
             const listRes = await Resident.findAll();
-            let notExistId = listRes.length + 10;
+            let notExistId = listRes.length + 100;
 
             const res = await chai.request(app)
                 .get('/api/resident/' + notExistId)
@@ -114,9 +114,8 @@ describe('Resident API', () => {
         });
 
         it('should not POST registration without notnull fields', async () => {
-            // Thiếu trường idNumber và registrationId
+            // Thiếu trường name
             let resident = {
-                name: "Nguyen Mai Phuong",
                 dob: new Date(Date.UTC(2023, 11, 23)),
                 phoneNumber: "0974223591",
                 relationship: "child",
