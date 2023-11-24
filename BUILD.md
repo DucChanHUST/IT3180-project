@@ -50,9 +50,19 @@ npm install --save-dev supertest
 
 - Tham khảo: https://viblo.asia/p/unit-test-cho-nodejs-restful-api-voi-mocha-va-chai-bWrZnLAv5xw
 
+- Tạo test database
+```
+docker run --name testdb -e POSTGRES_PASSWORD=matkhaubimat -d -p 5432:5432 postgres
+```
+
+- cài cross-env package để giúp chỉ định mode (production, development, test) của app trong scripts thông qua NODE_ENV
+```
+npm install --save-dev cross-env
+```
+
 - Chạy test
 ```
 npm test
 ```
 (đã tự động reload khi sửa code)
-- Note: Có cần tạo db riêng cho testing hay không?
+
