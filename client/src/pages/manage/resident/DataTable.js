@@ -12,6 +12,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
+import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
 import { handleFormatDate } from "./helper";
 
 const RESIDENT_COLUMNS = [
@@ -73,7 +74,17 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
                     const value = resident[column.id];
                     return (
                       <TableCell key={column.id} align={column.align}>
-                        {value}
+                        {column.id !== "relationship" ? (
+                          value
+                        ) : value ? (
+                          value
+                        ) : (
+                          <Tooltip title="Lỗi">
+                            <IconButton edge="end" color="error">
+                              <ErrorOutlineRoundedIcon />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                       </TableCell>
                     );
                   })}

@@ -228,20 +228,20 @@ export const getRegistrationResident = async (accessToken, dispatch, userId) => 
 };
 
 // addNewResident
-export const addNewResident = async (accessToken, dispatch, residentData) => {
+export const addNewResident = async (accessToken, dispatch, residentValues) => {
   dispatch(addResidentStart());
   try {
-    const residentResponse = await axios.post(`http://localhost:3001/api/resident/add`, residentData, {
+    const residentResponse = await axios.post(`http://localhost:3001/api/resident/add`, residentValues, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     dispatch(addResidentSuccess(residentResponse.data));
     getAllResident(accessToken, dispatch);
 
-    if (!residentData.idNumber) return;
+    if (!residentValues.idNumber) return;
 
     const userData = {
-      username: residentData.idNumber,
-      password: residentData.idNumber,
+      username: residentValues.idNumber,
+      password: residentValues.idNumber,
       role: "resident",
       residentId: residentResponse.data.id,
     };

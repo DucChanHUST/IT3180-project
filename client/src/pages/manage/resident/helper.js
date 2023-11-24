@@ -22,15 +22,12 @@ export const handleConvertDateFormat = inputDate => {
 };
 
 export const handleFilterRelationship = (registrationIdInput, genderInput, yearInput, flattenedResident) => {
-  let allRegistrationId = [];
+  if (!registrationIdInput || !genderInput) return [];
 
-  for (var i = 0; i < flattenedResident.length; i++) {
-    var currentId = flattenedResident[i].registrationId;
+  const uniqueRegistrationIdsSet = new Set(flattenedResident.map(item => item.registrationId));
+  const allRegistrationId = [...uniqueRegistrationIdsSet];
 
-    if (allRegistrationId.indexOf(currentId) === -1) {
-      allRegistrationId.push(currentId);
-    }
-  }
+  const registrationResident = flattenedResident.filter(item => item.registrationId === parseInt(registrationIdInput));
 
   if (!allRegistrationId.includes(parseInt(registrationIdInput))) {
     return ["Chủ hộ"];
@@ -40,12 +37,12 @@ export const handleFilterRelationship = (registrationIdInput, genderInput, yearI
   let headGender = null;
   let existedRelationship = [];
 
-  for (let i = 0; i < flattenedResident.length; i++) {
-    if (flattenedResident[i].relationship === "Chủ hộ") {
-      headYear = new Date(flattenedResident[i].dob);
-      headGender = flattenedResident[i].gender;
+  for (let i = 0; i < registrationResident.length; i++) {
+    if (registrationResident[i].relationship === "Chủ hộ") {
+      headYear = new Date(registrationResident[i].dob);
+      headGender = registrationResident[i].gender;
     }
-    existedRelationship.push(flattenedResident[i].relationship);
+    existedRelationship.push(registrationResident[i].relationship);
   }
 
   const filteredRelationship = RelationshipConstant.RELATIONSHIP.filter(relationship => {

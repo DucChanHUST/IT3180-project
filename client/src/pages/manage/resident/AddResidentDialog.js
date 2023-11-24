@@ -35,6 +35,7 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
 
   const handleCancelAdd = () => {
     handleCloseAddDialog();
+    setErrorDialogContent('');
     setErrors(INIT_ERRORS_VALUES);
     setResidentValues(INIT_RESIDENT_VALUES);
   };
@@ -56,12 +57,19 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
 
     if (hasErrors) {
       setErrorDialogContent(`Vui lòng nhập ${errorContent.join(", ")}`);
-    } else {
-      handleCloseAddDialog();
-      setResidentValues(INIT_RESIDENT_VALUES);
-      residentValues.idNumber = residentValues.idNumber || null;
-      addNewResident(user.token, dispatch, residentValues);
+      return;
     }
+
+    // `Chủ hộ` bắt buộc phải có `Số CCCD`
+    if (residentValues.relationship === "Chủ hộ" && !residentValues.idNumber) {
+      setErrorDialogContent(`Vui lòng nhập ${FIELD_MAPPING.idNumber} cho Chủ hộ`);
+      return;
+    }
+    
+    residentValues.idNumber = residentValues.idNumber || null;
+    handleCloseAddDialog();
+    setResidentValues(INIT_RESIDENT_VALUES);
+    addNewResident(user.token, dispatch, residentValues);
   };
 
   const handleResidentValueChange = field => value => {

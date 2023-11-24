@@ -14,6 +14,7 @@ import { clearResidentError } from "../../../redux/residentSlice";
 const Resident = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const user = useSelector(state => state.auth.login?.currentUser);
   const allResident = useSelector(state => state.resident.allResident);
   const errorMsg = useSelector(state => state.resident.errorMsg);
@@ -24,7 +25,6 @@ const Resident = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [filteredResident, setFilteredResident] = useState([]);
   const [flattenedResident, setFlattenedResident] = useState([]);
-  const [residents, setResidents] = useState([]);
   const [isLeader, setIsLeader] = useState(false);
   const [errorAlertMsg, setErrorAlertMsg] = useState("");
 
@@ -54,7 +54,11 @@ const Resident = () => {
     dispatch(clearResidentError());
   };
 
-  const fetchResident = async () => {
+  const handleFetchResident = async () => {
+    if (!user) {
+      navigate("/Login");
+      return;
+    }
     try {
       if (user.userRole === "leader") {
         setIsLeader(true);
@@ -64,34 +68,22 @@ const Resident = () => {
         await getRegistrationResident(user.token, dispatch, user.userId);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
-    setResidents(allResident);
   };
 
   useEffect(() => {
-    if (!user || !user.token) {
-      navigate("/Login");
-      return;
-    }
-
-    fetchResident();
-  }, [user, navigate]);
+    handleFetchResident();
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
     if (user.userRole === "leader") {
-      const flattenedData = residents.map(item => {
-        const {
-          id,
-          idNumber,
-          name,
-          dob,
-          gender,
-          phoneNumber,
-          registration: { id: registrationId },
-          relationship,
-        } = item;
+      const flattenedData = allResident.map(item => {
+        const { id, idNumber, name, dob, gender, phoneNumber, registration, user, relationship } = item;
+
+        const registrationId = registration ? registration.id : null;
+        const userId = user ? user.id : null;
 
         return {
           id,
@@ -101,6 +93,7 @@ const Resident = () => {
           gender,
           phoneNumber,
           registrationId,
+          userId,
           relationship,
         };
       });
@@ -110,7 +103,7 @@ const Resident = () => {
       setFlattenedResident(allResident);
       setFilteredResident(allResident);
     }
-  }, [residents, user]);
+  }, [user, allResident]);
 
   useEffect(() => {
     switch (errorMsg) {
@@ -122,7 +115,7 @@ const Resident = () => {
     }
   }, [errorMsg]);
 
-  console.log(residents);
+  console.log(allResident);
 
   return (
     <>
