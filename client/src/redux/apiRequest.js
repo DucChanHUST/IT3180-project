@@ -7,6 +7,9 @@ import {
   deleteUserFailed,
   deleteUserSuccess,
   deleteUserStart,
+  addUserStart,
+  addUserSuccess,
+  addUserFailed,
 } from "./userSlice";
 import {
   getRegistrationsStart,
@@ -22,7 +25,19 @@ import {
   updateRegistrationsSuccess,
   updateRegistrationsFailed,
 } from "./registrationSlice";
-import { getResidentStart, getResidentSuccess, getResidentFailed } from "./residentSlice";
+import {
+  getResidentStart,
+  getResidentSuccess,
+  getResidentFailed,
+  addResidentStart,
+  addResidentSuccess,
+  addResidentFailed,
+  deleteResidentSuccess,
+  deleteResidentFailed,
+  updateResidentStart,
+  updateResidentSuccess,
+  updateResidentFailed,
+} from "./residentSlice";
 
 //Hàm đăng nhập -------------------------------------------------------------
 export const loginUser = async (user, dispatch, navigate) => {
@@ -65,6 +80,7 @@ export const getAllUsers = async (accessToken, dispatch) => {
   } catch (err) {
     dispatch(getUsersFailed());
   }
+  console.log("heheeeee");
 };
 
 //Hàm xóa user
@@ -174,7 +190,7 @@ export const updateRegistration = async (accessToken, dispatch, data, id) => {
 
   try {
     const res = await axios.put(`http://localhost:3001/api/registration/update/${id}`, data, {
-      headers: { Authorization: `Bearer ${accessToken}` }
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
 
     if (res.data.success) {
@@ -185,17 +201,103 @@ export const updateRegistration = async (accessToken, dispatch, data, id) => {
   }
 };
 
-//Get all resident-----------------------------------------------------------------------------------
+// Resident function-----------------------------------------------------------------------------------
+// getAllResident
 export const getAllResident = async (accessToken, dispatch) => {
-  if (!accessToken) return;
-
   dispatch(getResidentStart());
   try {
-    const res = await axios.get("http://localhost:3001/api/resident", {
+    const response = await axios.get("http://localhost:3001/api/resident", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    dispatch(getResidentSuccess(res.data));
-  } catch (err) {
+    dispatch(getResidentSuccess(response.data));
+  } catch (error) {
     dispatch(getResidentFailed());
+  }
+};
+
+export const getRegistrationResident = async (accessToken, dispatch, userId) => {
+  dispatch(getResidentStart());
+  try {
+    const response = await axios.get(`http://localhost:3001/api/users/${userId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    dispatch(getResidentSuccess(response.data.resident.registration.residents));
+  } catch (error) {
+    dispatch(getResidentFailed());
+  }
+};
+
+// addNewResident
+export const addNewResident = async (accessToken, dispatch, residentValues) => {
+  dispatch(addResidentStart());
+  try {
+    const residentResponse = await axios.post(`http://localhost:3001/api/resident/add`, residentValues, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    dispatch(addResidentSuccess(residentResponse.data));
+    getAllResident(accessToken, dispatch);
+
+    if (!residentValues.idNumber) return;
+
+    const userData = {
+      username: residentValues.idNumber,
+      password: residentValues.idNumber,
+      role: "resident",
+      residentId: residentResponse.data.id,
+    };
+
+    dispatch(addUserStart());
+    try {
+      const userResponse = await axios.post(`http://localhost:3001/api/users`, userData, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      dispatch(addUserSuccess(userResponse.data));
+    } catch (error) {
+      dispatch(addUserFailed());
+      return;
+    }
+  } catch (error) {
+    dispatch(addResidentFailed(error.response.data.error.errors[0]));
+    return;
+  }
+};
+
+// deleteResident
+export const deleteResident = async (accessToken, dispatch, id) => {
+  dispatch(deleteRegistrationStart());
+  try {
+    const residentResponse = await axios.delete(`http://localhost:3001/api/resident/delete/${id}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+    dispatch(deleteResidentSuccess(residentResponse.data));
+    getAllResident(accessToken, dispatch);
+  } catch (error) {
+    dispatch(deleteResidentFailed());
+  }
+
+  dispatch(deleteUserStart());
+  try {
+    const userResponse = await axios.post(`http://localhost:3001/api/users/${id}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    dispatch(deleteUserSuccess(userResponse.data));
+  } catch (error) {
+    dispatch(deleteUserFailed());
+  }
+};
+
+// updateResident
+export const updateResident = async (accessToken, dispatch, data, id) => {
+  dispatch(updateResidentStart());
+
+  try {
+    const response = await axios.put(`http://localhost:3001/api/resident/update/${id}`, data, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    dispatch(updateResidentSuccess(response.data));
+    getAllResident(accessToken, dispatch);
+  } catch (error) {
+    dispatch(updateResidentFailed(error.response.data.error.errors[0]));
   }
 };
