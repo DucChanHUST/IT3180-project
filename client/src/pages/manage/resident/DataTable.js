@@ -45,6 +45,7 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
 
   useEffect(() => {
     if (!filteredResident) return;
+
     setUpdatedResident(
       filteredResident.map(item => ({
         ...item,
@@ -52,6 +53,7 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
       })),
     );
   }, [filteredResident]);
+
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -80,7 +82,7 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
                           value
                         ) : (
                           <Tooltip title="Lỗi">
-                            <IconButton edge="end" color="error">
+                            <IconButton edge="end" color="error" >
                               <ErrorOutlineRoundedIcon />
                             </IconButton>
                           </Tooltip>

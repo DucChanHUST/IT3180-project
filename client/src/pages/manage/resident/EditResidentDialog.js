@@ -83,6 +83,17 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
     setResidentValues(INIT_RESIDENT_VALUES);
   }, [INIT_RESIDENT_VALUES]);
 
+  useEffect(() => {
+    const filteredRelationship = handleFilterRelationship(
+      INIT_RESIDENT_VALUES.registrationId,
+      INIT_RESIDENT_VALUES.gender,
+      INIT_RESIDENT_VALUES.dob,
+      flattenedResident,
+      INIT_RESIDENT_VALUES.relationship,
+    );
+    setPossibleRelationship(filteredRelationship);
+  }, [INIT_RESIDENT_VALUES, flattenedResident])
+
   return (
     <Dialog open={isEditDialogOpen} onClose={handleCloseEditDialog} fullWidth>
       <DialogTitle>Chỉnh sửa nhân khẩu</DialogTitle>
@@ -107,6 +118,7 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
                     residentValues.gender,
                     value,
                     flattenedResident,
+                    INIT_RESIDENT_VALUES.relationship,
                   );
                   setPossibleRelationship(filteredRelationship);
                   handleResidentValueChange("relationship")("");
@@ -134,6 +146,7 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
                     value,
                     residentValues.dob,
                     flattenedResident,
+                    INIT_RESIDENT_VALUES.relationship,
                   );
                   setPossibleRelationship(filteredRelationship);
                   handleResidentValueChange("relationship")("");
@@ -169,6 +182,7 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
                   residentValues.gender,
                   residentValues.dob,
                   flattenedResident,
+                  INIT_RESIDENT_VALUES.relationship,
                 );
                 setPossibleRelationship(filteredRelationship);
                 handleResidentValueChange("relationship")("");

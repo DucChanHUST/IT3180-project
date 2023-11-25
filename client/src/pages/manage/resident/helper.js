@@ -21,7 +21,13 @@ export const handleConvertDateFormat = inputDate => {
   }
 };
 
-export const handleFilterRelationship = (registrationIdInput, genderInput, yearInput, flattenedResident) => {
+export const handleFilterRelationship = (
+  registrationIdInput,
+  genderInput,
+  yearInput,
+  flattenedResident,
+  currentRelationship = "",
+) => {
   if (!registrationIdInput || !genderInput) return [];
 
   const uniqueRegistrationIdsSet = new Set(flattenedResident.map(item => item.registrationId));
@@ -43,6 +49,10 @@ export const handleFilterRelationship = (registrationIdInput, genderInput, yearI
       headGender = registrationResident[i].gender;
     }
     existedRelationship.push(registrationResident[i].relationship);
+  }
+
+  if (currentRelationship) {
+    existedRelationship = existedRelationship.filter(item => item !== currentRelationship);
   }
 
   const filteredRelationship = RelationshipConstant.RELATIONSHIP.filter(relationship => {

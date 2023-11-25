@@ -17,15 +17,16 @@ const DeleteResidentDialog = ({ isDeleteDialogOpen, handleCloseDeleteDialog, sel
   const handleDeleteResident = async () => {
     handleCloseDeleteDialog();
 
-    await deleteResident(user.token, dispatch, selectedResident.id);
+    console.log(selectedResident);
+    await deleteResident(user.token, dispatch, selectedResident);
 
     if (selectedResident.relationship === "Chủ hộ") {
-      const residentsToUpdate = allResident.filter(item => item.registration.id === selectedResident.registrationId);
-
+      const residentsToUpdate = allResident.filter(
+        item => item.registration.id === selectedResident.registrationId && item.id !== selectedResident.id,
+      );
+        
       residentsToUpdate.forEach(item => {
-        if (item.user) {
-          updateResident(user.token, dispatch, { relationship: "" }, item.id);
-        }
+        updateResident(user.token, dispatch, { relationship: "" }, item.id);
       });
     }
   };
