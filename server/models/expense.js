@@ -1,3 +1,32 @@
+// const { Model, DataTypes } = require('sequelize')
+// const { sequelize } = require('../util/db')
+
+// const Fee = require('./fee');
+// const Registration = require('./registration');
+
+// // class Expense extends Model {}
+// const Expense = sequelize.define('Expense', {
+//   date: {
+//     type: DataTypes.DATE,
+//   },
+// }, 
+// // {
+// //   // Define a composite primary key
+// //   primaryKey: true,
+// //   uniqueKeys: {
+// //     expense_unique: {
+// //       fields: ['fee_id', 'registration_id'],
+// //     },
+// //   },
+// // }
+// );
+
+// // // Define associations
+// // Expense.belongsTo(Fee);
+// // Expense.belongsTo(Registration);
+
+// module.exports = Expense;
+
 const { Model, DataTypes } = require('sequelize')
 
 const { sequelize } = require('../util/db')
@@ -5,22 +34,9 @@ const { sequelize } = require('../util/db')
 class Expense extends Model {}
 
 Expense.init({
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  nameExpense: {
-    type: DataTypes.STRING,
+  date: {
+    type: DataTypes.DATE,
     allowNull: false
-  },
-  amount: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  type: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
   },
 }, {
   sequelize,
