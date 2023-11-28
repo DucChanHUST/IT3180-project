@@ -2,32 +2,33 @@ const { Model, DataTypes } = require('sequelize')
 
 const { sequelize } = require('../util/db')
 
-class User extends Model {}
+class Expense extends Model {}
 
-User.init({
+Expense.init({
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  username: {
+  nameExpense: {
     type: DataTypes.STRING,
-    unique: true,
+    allowNull: false
+  },
+  amount: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  type: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
-  passwordHash: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  role: {
-    type: DataTypes.ENUM('leader', 'accountant', 'resident'),
-    allowNull: false,
-  }
 }, {
   sequelize,
   underscored: true,
   timestamps: false,
-  modelName: 'user'
+  modelName: 'expense'
 })
 
-module.exports = User
+Expense.sync({ alter: true })
+
+module.exports = Expense
