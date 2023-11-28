@@ -258,7 +258,7 @@ export const addNewResident = async (accessToken, dispatch, residentValues) => {
 
     getAllResident(accessToken, dispatch);
   } catch (error) {
-    dispatch(addResidentFailed(error.response.data.error.errors[0]));
+    dispatch(addResidentFailed(error.response.data));
     return;
   }
 };

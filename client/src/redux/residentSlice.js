@@ -53,10 +53,6 @@ const residentSlice = createSlice({
       state.isLoading = false;
       state.errorMsg = action.payload.message;
     },
-
-    clearResidentError: state => {
-      state.errorMsg = "";
-    },
   },
 });
 
@@ -73,7 +69,6 @@ export const {
   updateResidentStart,
   updateResidentSuccess,
   updateResidentFailed,
-  clearResidentError,
 } = residentSlice.actions;
 
 export default residentSlice.reducer;

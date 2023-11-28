@@ -35,7 +35,7 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
 
   const handleCancelAdd = () => {
     handleCloseAddDialog();
-    setErrorDialogContent('');
+    setErrorDialogContent("");
     setErrors(INIT_ERRORS_VALUES);
     setResidentValues(INIT_RESIDENT_VALUES);
   };
@@ -60,12 +60,27 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
       return;
     }
 
+    // Không được thêm `Nhân khẩu` có idNumber đã tồn tại
+    const allResidentIdNumber = flattenedResident.map(item => item.idNumber);
+    if (allResidentIdNumber.includes(residentValues.idNumber)) {
+      setErrorDialogContent(`Số CCCD "${residentValues.idNumber}" đã tồn tại`);
+      return;
+    }
+
+    // `Nhân khẩu` mới phải có `Mã hộ` đã tồn tại
+    const uniqueRegistrationIdsSet = new Set(flattenedResident.map(item => item.registrationId));
+    const allRegistrationId = [...uniqueRegistrationIdsSet];
+    if (!allRegistrationId.includes(residentValues.registrationId)) {
+      setErrorDialogContent(`Mã hộ "${residentValues.registrationId}" chưa tồn tại`);
+      return;
+    }
+
     // `Chủ hộ` bắt buộc phải có `Số CCCD`
     if (residentValues.relationship === "Chủ hộ" && !residentValues.idNumber) {
       setErrorDialogContent(`Vui lòng nhập ${FIELD_MAPPING.idNumber} cho Chủ hộ`);
       return;
     }
-    
+
     residentValues.idNumber = residentValues.idNumber || null;
     handleCloseAddDialog();
     setResidentValues(INIT_RESIDENT_VALUES);
@@ -115,9 +130,9 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
               />
             </LocalizationProvider>
             <FormControl style={{ width: "60%" }}>
-              <InputLabel>{FIELD_MAPPING.gender + "*"}</InputLabel>
+              <InputLabel>{FIELD_MAPPING.gender + " *"}</InputLabel>
               <Select
-                label={FIELD_MAPPING.gender + "*"}
+                label={FIELD_MAPPING.gender + " *"}
                 value={residentValues.gender}
                 onChange={event => {
                   const value = event.target.value;
@@ -169,9 +184,9 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
               error={errors.registrationId}
             />
             <FormControl fullWidth>
-              <InputLabel>{FIELD_MAPPING.relationship + "*"}</InputLabel>
+              <InputLabel>{FIELD_MAPPING.relationship + " *"}</InputLabel>
               <Select
-                label={FIELD_MAPPING.relationship + "*"}
+                label={FIELD_MAPPING.relationship + " *"}
                 value={residentValues.relationship}
                 onChange={event => {
                   const value = event.target.value;
