@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo, useMemo } from "react";
+import React, { useState, memo } from "react";
 import {
   Button,
   Dialog,
@@ -13,30 +13,18 @@ import {
   InputLabel,
   FormHelperText,
 } from "@mui/material";
-import { NumberTextField, TextOnlyTextField } from "../../../components";
-import { useSelector, useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { NumberTextField, TextOnlyTextField } from "../../../components";
 import { RelationshipConstant } from "../../../const";
+import { addNewResident } from "../../../redux/apiRequest";
+import { useSelector, useDispatch } from "react-redux";
 import { INIT_ERRORS_VALUES, FIELD_MAPPING } from "./const";
-import { handleFilterRelationship, handleConvertDateFormat } from "./helper";
-import { updateResident } from "../../../redux/apiRequest";
+import { handleFilterRelationship } from "./helper";
 
-const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattenedResident, selectedResident }) => {
-  const INIT_RESIDENT_VALUES = useMemo(() => {
-    return {
-      name: selectedResident.name,
-      dob: dayjs(handleConvertDateFormat(selectedResident.dob)),
-      gender: selectedResident.gender,
-      idNumber: selectedResident.idNumber,
-      phoneNumber: selectedResident.phoneNumber,
-      registrationId: selectedResident.registrationId,
-      relationship: selectedResident.relationship,
-    };
-  }, [selectedResident]);
-
+const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedResident }) => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const dispatch = useDispatch();
 
@@ -45,12 +33,14 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
   const [errorDialogContent, setErrorDialogContent] = useState("");
   const [possibleRelationship, setPossibleRelationship] = useState(ALL_RESIDENT_ROLE);
 
-  const handleCancelEdit = () => {
-    handleCloseEditDialog();
+  const handleCancelAdd = () => {
+    handleCloseAddDialog();
+    setErrorDialogContent('');
+    setErrors(INIT_ERRORS_VALUES);
     setResidentValues(INIT_RESIDENT_VALUES);
   };
 
-  const handleEdit = () => {
+  const handleAdd = () => {
     let hasErrors = false;
     let errorContent = [];
     const newErrors = Object.keys(errors).reduce((acc, field) => {
@@ -67,36 +57,28 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
 
     if (hasErrors) {
       setErrorDialogContent(`Vui lòng nhập ${errorContent.join(", ")}`);
-    } else {
-      handleCloseEditDialog();
-      setResidentValues(INIT_RESIDENT_VALUES);
-      residentValues.idNumber = residentValues.idNumber || null;
-      updateResident(user.token, dispatch, residentValues, selectedResident.id);
+      return;
     }
+
+    // `Chủ hộ` bắt buộc phải có `Số CCCD`
+    if (residentValues.relationship === "Chủ hộ" && !residentValues.idNumber) {
+      setErrorDialogContent(`Vui lòng nhập ${FIELD_MAPPING.idNumber} cho Chủ hộ`);
+      return;
+    }
+    
+    residentValues.idNumber = residentValues.idNumber || null;
+    handleCloseAddDialog();
+    setResidentValues(INIT_RESIDENT_VALUES);
+    addNewResident(user.token, dispatch, residentValues);
   };
 
   const handleResidentValueChange = field => value => {
     setResidentValues(prevValue => ({ ...prevValue, [field]: value }));
   };
 
-  useEffect(() => {
-    setResidentValues(INIT_RESIDENT_VALUES);
-  }, [INIT_RESIDENT_VALUES]);
-
-  useEffect(() => {
-    const filteredRelationship = handleFilterRelationship(
-      INIT_RESIDENT_VALUES.registrationId,
-      INIT_RESIDENT_VALUES.gender,
-      INIT_RESIDENT_VALUES.dob,
-      flattenedResident,
-      INIT_RESIDENT_VALUES.relationship,
-    );
-    setPossibleRelationship(filteredRelationship);
-  }, [INIT_RESIDENT_VALUES, flattenedResident])
-
   return (
-    <Dialog open={isEditDialogOpen} onClose={handleCloseEditDialog} fullWidth>
-      <DialogTitle>Chỉnh sửa nhân khẩu</DialogTitle>
+    <Dialog open={isAddDialogOpen} onClose={handleCloseAddDialog} fullWidth>
+      <DialogTitle>Thêm nhân khẩu</DialogTitle>
       <DialogContent>
         <DialogContentText>{errorDialogContent}</DialogContentText>
         <Stack spacing={2} mt={1.5}>
@@ -118,7 +100,6 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
                     residentValues.gender,
                     value,
                     flattenedResident,
-                    INIT_RESIDENT_VALUES.relationship,
                   );
                   setPossibleRelationship(filteredRelationship);
                   handleResidentValueChange("relationship")("");
@@ -146,7 +127,6 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
                     value,
                     residentValues.dob,
                     flattenedResident,
-                    INIT_RESIDENT_VALUES.relationship,
                   );
                   setPossibleRelationship(filteredRelationship);
                   handleResidentValueChange("relationship")("");
@@ -182,7 +162,6 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
                   residentValues.gender,
                   residentValues.dob,
                   flattenedResident,
-                  INIT_RESIDENT_VALUES.relationship,
                 );
                 setPossibleRelationship(filteredRelationship);
                 handleResidentValueChange("relationship")("");
@@ -207,7 +186,7 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
                   </MenuItem>
                 ))}
               </Select>
-              {!residentValues.registrationId && (
+              {(!residentValues.registrationId || !residentValues.gender || !residentValues.dob) && (
                 <FormHelperText>
                   Vui lòng nhập {FIELD_MAPPING.dob}, {FIELD_MAPPING.gender}, {FIELD_MAPPING.registrationId} trước
                 </FormHelperText>
@@ -217,11 +196,11 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button variant="outlined" onClick={handleCancelEdit}>
+        <Button variant="outlined" onClick={handleCancelAdd}>
           Hủy bỏ
         </Button>
-        <Button variant="contained" onClick={handleEdit}>
-          Thay đổi
+        <Button variant="contained" onClick={handleAdd}>
+          Thêm
         </Button>
       </DialogActions>
     </Dialog>
@@ -231,6 +210,16 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
 const TODAY = dayjs();
 const START_OF_1900 = dayjs("1900-01-01T00:00:00.000");
 
+const INIT_RESIDENT_VALUES = {
+  name: "",
+  dob: TODAY,
+  gender: "",
+  idNumber: "",
+  phoneNumber: "",
+  registrationId: "",
+  relationship: "",
+};
+
 const ALL_RESIDENT_ROLE = RelationshipConstant.RELATIONSHIP.map(item => item.role);
 
-export default memo(EditResidentDialog);
+export default memo(AddResidentDialog);
