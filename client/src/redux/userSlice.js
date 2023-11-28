@@ -27,7 +27,7 @@ const userSlice = createSlice({
     },
     addUserSuccess: (state, action) => {
       state.users.isFetching = false;
-      console.log("user added", action.payload);
+      console.log("added user", action.payload);
     },
     addUserFailed: state => {
       state.users.isFetching = false;
@@ -39,13 +39,11 @@ const userSlice = createSlice({
     },
     deleteUserSuccess: (state, action) => {
       state.users.isFetching = false;
-      // state.msg = action.payload;
-      console.log("deleted", action.payload);
+      console.log(action.payload);
     },
     deleteUserFailed: (state, action) => {
       state.users.isFetching = false;
       state.users.error = true;
-      // state.msg = action.payload;
     },
   },
 });

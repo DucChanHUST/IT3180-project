@@ -74,7 +74,7 @@ const Resident = () => {
 
   useEffect(() => {
     handleFetchResident();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -97,6 +97,7 @@ const Resident = () => {
           relationship,
         };
       });
+
       setFlattenedResident(flattenedData);
       setFilteredResident(flattenedData);
     } else {
@@ -114,8 +115,6 @@ const Resident = () => {
         setErrorAlertMsg(errorMsg);
     }
   }, [errorMsg]);
-
-  console.log(allResident);
 
   return (
     <>

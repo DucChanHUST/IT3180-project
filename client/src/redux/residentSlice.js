@@ -36,7 +36,7 @@ const residentSlice = createSlice({
     },
     deleteResidentSuccess: (state, action) => {
       state.isLoading = false;
-      console.log("deleted resident", action.payload);
+      console.log(action.payload);
     },
     deleteResidentFailed: state => {
       state.isLoading = false;

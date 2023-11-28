@@ -45,6 +45,7 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
 
   useEffect(() => {
     if (!filteredResident) return;
+
     setUpdatedResident(
       filteredResident.map(item => ({
         ...item,
