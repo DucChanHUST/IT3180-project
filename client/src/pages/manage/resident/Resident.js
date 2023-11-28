@@ -3,13 +3,12 @@ import { SideBar, NavBar } from "../../../components";
 import { getAllResident, getRegistrationResident } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Box, Grid, Snackbar, Alert } from "@mui/material";
+import { Button, Box, Grid } from "@mui/material";
 import DataTable from "./DataTable";
 import EditResidentDialog from "./EditResidentDialog";
 import AddResidentDialog from "./AddResidentDialog";
 import DeleteResidentDialog from "./DeleteResidentDialog";
 import SearchBar from "./SearchBar";
-import { clearResidentError } from "../../../redux/residentSlice";
 
 const Resident = () => {
   const dispatch = useDispatch();
@@ -17,7 +16,6 @@ const Resident = () => {
 
   const user = useSelector(state => state.auth.login?.currentUser);
   const allResident = useSelector(state => state.resident.allResident);
-  const errorMsg = useSelector(state => state.resident.errorMsg);
 
   const [selectedResident, setSelectedResident] = useState({});
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -26,7 +24,6 @@ const Resident = () => {
   const [filteredResident, setFilteredResident] = useState([]);
   const [flattenedResident, setFlattenedResident] = useState([]);
   const [isLeader, setIsLeader] = useState(false);
-  const [errorAlertMsg, setErrorAlertMsg] = useState("");
 
   const handleOpenEditDialog = useCallback(resident => {
     setIsEditDialogOpen(true);
@@ -49,10 +46,6 @@ const Resident = () => {
   const handleCloseAddDialog = useCallback(() => {
     setIsAddDialogOpen(false);
   }, []);
-
-  const handleCloseAlert = () => {
-    dispatch(clearResidentError());
-  };
 
   const handleFetchResident = async () => {
     if (!user) {
@@ -106,16 +99,6 @@ const Resident = () => {
     }
   }, [user, allResident]);
 
-  useEffect(() => {
-    switch (errorMsg) {
-      case "id_number must be unique":
-        setErrorAlertMsg("Số CCCD đã tồn tại");
-        break;
-      default:
-        setErrorAlertMsg(errorMsg);
-    }
-  }, [errorMsg]);
-
   return (
     <>
       <NavBar />
@@ -163,12 +146,6 @@ const Resident = () => {
           flattenedResident={flattenedResident}
         />
       </Box>
-
-      <Snackbar open={Boolean(errorMsg)} autoHideDuration={5000} onClose={handleCloseAlert}>
-        <Alert onClose={handleCloseAlert} severity="error">
-          {errorAlertMsg}
-        </Alert>
-      </Snackbar>
     </>
   );
 };
