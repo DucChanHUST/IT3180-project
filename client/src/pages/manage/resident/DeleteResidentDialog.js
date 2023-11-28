@@ -17,14 +17,13 @@ const DeleteResidentDialog = ({ isDeleteDialogOpen, handleCloseDeleteDialog, sel
   const handleDeleteResident = async () => {
     handleCloseDeleteDialog();
 
-    console.log(selectedResident);
     await deleteResident(user.token, dispatch, selectedResident);
 
     if (selectedResident.relationship === "Chủ hộ") {
       const residentsToUpdate = allResident.filter(
         item => item.registration.id === selectedResident.registrationId && item.id !== selectedResident.id,
       );
-        
+
       residentsToUpdate.forEach(item => {
         updateResident(user.token, dispatch, { relationship: "" }, item.id);
       });

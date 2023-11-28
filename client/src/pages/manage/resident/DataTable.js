@@ -54,7 +54,6 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
     );
   }, [filteredResident]);
 
-
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
       <TableContainer sx={{ maxHeight: 510 }}>
@@ -82,7 +81,7 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
                           value
                         ) : (
                           <Tooltip title="Lỗi">
-                            <IconButton edge="end" color="error" >
+                            <IconButton edge="end" color="error">
                               <ErrorOutlineRoundedIcon />
                             </IconButton>
                           </Tooltip>
