@@ -79,13 +79,13 @@ const Registration = () => {
   const handleDelete = id => {
     if (user.userRole === "leader") {
       deleteRegistration(user?.token, dispatch, id);
-    } else alert("You haven't permission");
+    } else alert("You don't have permission");
   };
 
   const handleOpenAddForm = () => {
     if (user.userRole === "leader") {
       setOpenForm(true);
-    } else alert("You haven't permission");
+    } else alert("You don't have permission");
   };
   const handleEnterKeyPress = event => {
     if (event.key === "Enter") {
@@ -240,7 +240,7 @@ const Registration = () => {
         <DialogContent sx={{ width: "500px", height: "100px" }}>
           <TextField
             sx={{ marginTop: "10px" }}
-            label={editAddress}
+            label={Address}
             fullWidth
             value={editAddress}
             onChange={e => setEditAddress(e.target.value)}
