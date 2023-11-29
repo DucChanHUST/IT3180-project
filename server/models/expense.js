@@ -34,6 +34,18 @@ const { sequelize } = require('../util/db')
 class Expense extends Model {}
 
 Expense.init({
+  registrationId:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    references: { model: 'registrations', key: 'id' },
+  },
+  feeId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    references: { model: 'fees', key: 'id' },
+  },
   date: {
     type: DataTypes.DATE,
     allowNull: false
