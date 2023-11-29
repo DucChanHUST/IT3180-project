@@ -111,13 +111,14 @@ export const getAllRegistrations = async (accessToken, dispatch) => {
     const res = await axios.get("http://localhost:3001/api/registration", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
+    console.log(res.data);
     dispatch(getRegistrationsSuccess(res.data));
   } catch (err) {
     dispatch(getRegistrationsFailed());
   }
 };
 
-//Hàm deleteRegistration
+//Hàm deleteRegistration--------------------------------------------------
 export const deleteRegistration = async (accessToken, dispatch, id) => {
   dispatch(deleteRegistrationStart());
 
@@ -134,21 +135,25 @@ export const deleteRegistration = async (accessToken, dispatch, id) => {
   }
 };
 
-//Hàm getRegistrationID
+//Hàm getRegistrationID----------------------------------------------------------------------
+
 export const getRegistrationID = async (accessToken, dispatch, id) => {
   if (!accessToken) {
-    // Handle the case when 'token' is missing or null
+    console.log("accessToken");
     return;
   }
 
   dispatch(getRegistrationsStart());
   try {
-    const res = await axios.get(`http://localhost:3001/api/registration/${id}`, {
+    const res = await axios.get(`http://localhost:3001/api/users/${id}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    dispatch(getRegistrationsSuccess(res.data));
+    // const array = [res.data.resident.registration];
+    console.log([res.data.resident.registration]);
+    dispatch(getRegistrationsSuccess([res.data.resident.registration]));
   } catch (err) {
     dispatch(getRegistrationsFailed());
+    console.log(err);
   }
 };
 
@@ -163,23 +168,17 @@ export const addNewRegistration = async (accessToken, dispatch, data) => {
     });
 
     if (res.data.success) {
-      // Registration created successfully
       dispatch(addRegistrationsSuccess(res.data));
     } else {
-      // Handle specific error cases
       if (res.data.message === "Duplicate Identity Card Number") {
-        // Handle the case where identity card number already exists
         dispatch(addRegistrationsFailed("This Identity Card Number already exists."));
       } else if (res.data.message === "Duplicate Address") {
-        // Handle the case where the address already exists
         dispatch(addRegistrationsFailed("This Address already exists."));
       } else {
-        // Handle other error cases
         dispatch(addRegistrationsFailed("An error occurred while creating the registration."));
       }
     }
   } catch (err) {
-    // Handle other errors like network issues
     dispatch(addRegistrationsFailed("An error occurred while creating the registration."));
   }
 };

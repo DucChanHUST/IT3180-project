@@ -3,8 +3,6 @@ import { Login, HomePage, Resident, Registration, Fee, PayFee, Statistic, Settin
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PathConstant } from "./const";
 import { Navigate } from "react-router-dom";
-import CreateNewRegis from "./pages/manage/registration/CreateNewRegis"; // Correct import statement
-import RegistrationDetails from "./pages/manage/registration/RegistrationDetails";
 
 const App = () => {
   return (
@@ -18,8 +16,6 @@ const App = () => {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path={PathConstant.RESIDENT} element={<Resident />} />
         <Route path={PathConstant.REGISTRATION} element={<Registration />} />
-        <Route path="/CreateNewRegistration" element={<CreateNewRegis />} />
-        <Route path="/RegistrationDetails" element={<RegistrationDetails />}></Route>
         <Route path={PathConstant.FEE} element={<Fee />} />
         <Route path={PathConstant.PAY_FEE} element={<PayFee />} />
         <Route path={PathConstant.STATISTIC} element={<Statistic />} />
