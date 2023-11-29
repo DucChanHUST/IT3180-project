@@ -1,4 +1,7 @@
-const e = require("express")
+const expenseRouter = require('express').Router()
+const { Expense } = require('../models/associations')
+const { checkUserRole } = require('../util/checkUserRole')
+const { tokenExtractor } = require('../util/tokenExtractor')
 
 expenseRouter.use(tokenExtractor)
 
