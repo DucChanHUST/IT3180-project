@@ -69,7 +69,9 @@ const NavBar = () => {
       <MenuItem>
         <NavLink to="/Profile/userid">My account</NavLink>
       </MenuItem>
-      <MenuItem>Log out</MenuItem>
+      <MenuItem>
+        <NavLink to="/Login">Log out</NavLink>
+      </MenuItem>
     </Menu>
   );
 

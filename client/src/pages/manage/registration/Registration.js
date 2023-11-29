@@ -26,11 +26,11 @@ import { useNavigate, Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import "./Registration.css";
-import Resident from "./../resident/Resident";
 
 const Registration = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const listRegistrations = useSelector(state => state.registration.registrations.allRegistrations);
+  console.log("listRegistrations", listRegistrations);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openForm, setOpenForm] = useState(false);
@@ -40,33 +40,36 @@ const Registration = () => {
   const [editFormOpen, setEditFormOpen] = useState(false);
   const [editAddress, setEditAddress] = useState("");
   const [selectedRegistrationId, setSelectedRegistrationId] = useState(null);
-  const [listRegistrationsID, setListRegistrationsID] = useState([]);
+  const [registrationID, setRegistrationID] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) {
-        navigate("/Login");
-        return;
-      }
-
-      if (user?.token) {
-        const accessToken = user?.token;
-        getAllRegistrations(accessToken, dispatch);
-      }
-
-      if (resetPage) {
-        navigate("/Registration");
-        setResetPage(false);
-      }
-
       try {
-        const id = user.id;
-        const accessToken = user.token;
-        const res = await getRegistrationID(accessToken, dispatch, id);
-        setListRegistrationsID(res);
+        if (!user) {
+          navigate("/Login");
+          return;
+        }
+
+        if (user?.token && (user.userRole === "leader" || user.userRole === "accountant")) {
+          const accessToken = user.token;
+          // Fetch all registrations or perform any necessary action with the token
+          getAllRegistrations(accessToken, dispatch);
+        }
+        if (user?.token && user.userRole === "resident") {
+          const accessToken = user.token;
+          const id = user.userId;
+          console.log("user", user);
+          // setRegistrationID = await getRegistrationID(accessToken, dispatch, id);
+          getRegistrationID(accessToken, dispatch, id);
+        }
+
+        if (resetPage) {
+          navigate("/Registration");
+          setResetPage(false);
+        }
       } catch (error) {
         console.error(error);
-        // Xử lý lỗi ở đây nếu cần thiết
+        // Handle errors here
       }
     };
 
@@ -74,11 +77,15 @@ const Registration = () => {
   }, [dispatch, user, resetPage, navigate]);
 
   const handleDelete = id => {
-    deleteRegistration(user?.token, dispatch, id);
+    if (user.userRole === "leader") {
+      deleteRegistration(user?.token, dispatch, id);
+    } else alert("You haven't permission");
   };
 
-  const handleOpenForm = () => {
-    setOpenForm(true);
+  const handleOpenAddForm = () => {
+    if (user.userRole === "leader") {
+      setOpenForm(true);
+    } else alert("You haven't permission");
   };
   const handleEnterKeyPress = event => {
     if (event.key === "Enter") {
@@ -96,29 +103,46 @@ const Registration = () => {
   };
 
   const handleAddNewRegistration = () => {
-    const data = {
-      address,
-    };
+    let addressExists = false;
 
-    if (user?.token) {
-      addNewRegistration(user.token, dispatch, data)
-        .then(() => {
-          setAddress(""); // Reset address field
-          setErrorMessage(null); // Clear error message
-          setOpenForm(false);
-          setResetPage(true);
-        })
-        .catch(error => {
-          console.log(error);
-          setErrorMessage(error.message);
-        });
+    // Check if the address already exists in listRegistrations
+    listRegistrations.forEach(regis => {
+      if (regis.address === address) {
+        addressExists = true;
+        alert("This address already exists, please check your address again");
+      }
+    });
+
+    if (!addressExists) {
+      const data = {
+        address,
+      };
+
+      if (user?.token) {
+        addNewRegistration(user.token, dispatch, data)
+          .then(() => {
+            setAddress(""); // Reset address field
+            setErrorMessage(null); // Clear error message
+            setOpenForm(false);
+            alert("Add new registration successfully");
+            setResetPage(true);
+          })
+          .catch(error => {
+            console.log(error);
+            setErrorMessage(error.message);
+          });
+      }
     }
   };
 
   const handleEditRegistration = regis => {
-    setSelectedRegistrationId(regis.id);
-    setEditAddress(regis.address);
-    setEditFormOpen(true);
+    if (user.userRole === "leader") {
+      setSelectedRegistrationId(regis.id);
+      setEditAddress(regis.address);
+      setEditFormOpen(true);
+    } else {
+      alert("You haven't permission");
+    }
   };
 
   const handleEditFormClose = () => {
@@ -153,55 +177,42 @@ const Registration = () => {
       <SideBar />
       <main className="home-container">
         <div>
-          {user?.userRole === "resident" ? (
-            <div>
-              {Array.isArray(listRegistrationsID) && listRegistrationsID.length > 0 ? (
-                listRegistrations.map(regis => (
-                  <ul key={regis.id}>
-                    <li className="line-family">
-                      <div>{regis.address}</div>
-                    </li>
-                  </ul>
-                ))
-              ) : (
-                <p>No registrations found.</p>
-              )}
-            </div>
-          ) : user?.userRole === "accountant" ? (
-            <div>2</div> // Hiển thị nội dung khi vai trò là "accountant"
-          ) : user?.userRole === "leader" ? (
-            <div>
-              <div className="home-title">Danh sách các hộ gia đình:</div>
-              <div className="List_family">
-                {Array.isArray(listRegistrations) && listRegistrations.length > 0 ? (
-                  listRegistrations.map(regis => (
-                    <ul key={regis.id}>
-                      <li className="line-family">
-                        <div>{regis.address}</div>
-                        <div>
-                          <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(regis.id)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </div>
-                        <div>
-                          <IconButton edge="end" aria-label="edit" onClick={() => handleEditRegistration(regis)}>
-                            <EditIcon />
-                          </IconButton>
-                        </div>
-                      </li>
-                    </ul>
-                  ))
-                ) : (
-                  <p>No registrations found.</p>
-                )}
-              </div>
-              <Button variant="contained" style={styles.button} onClick={handleOpenForm}>
-                Add New Registration
-              </Button>
-            </div>
-          ) : (
-            <div>Vai trò không xác định</div> // Hiển thị thông báo khi vai trò không khớp
-          )}
+          <div className="home-title">Danh sách các hộ gia đình:</div>
+          <div className="List_family">
+            {Array.isArray(listRegistrations) && listRegistrations.length > 0 ? (
+              <table className="table-content">
+                <thead className="header-table">
+                  <tr>
+                    <th>ID</th>
+                    <th className="address-cell">Địa chỉ</th>
+                    <th className="thaotac">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {listRegistrations.map(regis => (
+                    <tr key={regis.id}>
+                      <td className="id">{regis.id}</td>
+                      <td className="address-cell">{regis.address}</td>
+                      <td className="align-right">
+                        <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(regis.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                        <IconButton edge="end" aria-label="edit" onClick={() => handleEditRegistration(regis)}>
+                          <EditIcon />
+                        </IconButton>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No registrations found.</p>
+            )}
+          </div>
+
+          <Button variant="contained" style={styles.button} onClick={handleOpenAddForm}>
+            Add New Registration
+          </Button>
         </div>
       </main>
       <Dialog open={openForm} onClose={handleCloseForm}>
