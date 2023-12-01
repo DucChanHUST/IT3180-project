@@ -2,85 +2,49 @@ const expenseRouter = require('express').Router()
 const { Expense } = require('../models/associations')
 const { checkUserRole } = require('../util/checkUserRole')
 const { tokenExtractor } = require('../util/tokenExtractor')
+const { verifyResident } = require('../util/verifyUser')
 
 expenseRouter.use(tokenExtractor)
 
-expenseRouter.get('/', async (req, res) => {
-  const expenses = await Expense.findAll()
-  res.json(expenses)
+expenseRouter.get('/',checkUserRole(['accountant']), async (req, res) => {
+    const expenses = await Expense.findAll()
+    res.json(expenses)
 })
 
 expenseRouter.post('/',checkUserRole(['accountant']), async (req, res) => {
-  const { nameExpense, amount, type } = req.body;
-  try {
-    const newExpense = await Expense.create({
-      nameExpense,
-      amount,
-      type
-    });
-
-    res.status(201).json(newExpense);
-  } catch (error) {
-    return res.status(400).json({ error })
-  }
-})
-
-expenseRouter.put('/:id',checkUserRole(['accountant']), async (req, res) => {
-  const { nameExpense, amount, type } = req.body;
-  try {
-    const expense = await Expense.findByPk(req.params.id);
-    if (!expense) {
-      return res.status(404).json({ error: 'Expense not found' });
+    var { registrationId, feeId, date } = req.body;
+    if (!date) {
+        date = new Date();
     }
+    try {
+        const newExpense = await Expense.create({
+            registrationId,
+            feeId,
+            date
+        });
 
-    expense.nameExpense = nameExpense;
-    expense.amount = amount;
-    expense.type = type;
-    await expense.save();
-
-    res.status(200).json(expense);
-  } catch (error) {
-    return res.status(400).json({ error })
-  }
-})
-
-expenseRouter.delete('/:id',checkUserRole(['accountant']), async (req, res) => {
-  try {
-    const expense = await Expense.findByPk(req.params.id);
-    if (!expense) {
-      return res.status(404).json({ error: 'Expense not found' });
+        res.status(201).json(newExpense);
+    } catch (error) {
+        return res.status(400).json({ error })
     }
-
-    await expense.destroy();
-
-    res.status(204).end();
-  } catch (error) {
-    return res.status(400).json({ error })
-  }
 })
 
-// search for expense by name, amount, type
-expenseRouter.get('/search', async (req, res) => {
-  const { nameExpense, amount, type } = req.query;
-  const where = {}
-  if (nameExpense) where.nameExpense = nameExpense
-  if (amount) where.amount = amount
-  if (type) where.type = type
-  const expenses = await Expense.findAll({ where })
-  res.json(expenses)
+expenseRouter.get('/registration/:registrationId', verifyResident, async (req, res) => {
+    const expenses = await Expense.findAll({
+        where: {
+            registrationId: req.params.registrationId
+        }
+    })
+    res.json(expenses)
 })
 
-// TODO upgrade search by name: regex
-expenseRouter.get('/search', async (req, res) => {
-  const { nameExpense } = req.params
-  const expenses = await Expense.findAll({
-    where: {
-      nameExpense: {
-        [Op.like]: `%${nameExpense}%`
-      }
-    }
-  })
-  res.json(expenses)
+expenseRouter.get('/fee/:feeId',checkUserRole(['accountant']), async (req, res) => {
+    const expenses = await Expense.findAll({
+        where: {
+            feeId: req.params.feeId
+        }
+    })
+    res.json(expenses)
 })
 
 module.exports = expenseRouter

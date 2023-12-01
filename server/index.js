@@ -9,6 +9,7 @@ const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const regRouter = require('./controllers/registration')
 const resRouter = require('./controllers/resident')
+const feeRouter = require('./controllers/fee')
 const expenseRouter = require('./controllers/expense')
 // const logoutRouter = require("./controllers/logout"); // Your logout route
 
@@ -21,6 +22,7 @@ app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/registration', regRouter)
 app.use('/api/resident', resRouter)
+app.use('/api/fee', feeRouter)
 app.use('/api/expense', expenseRouter)
 // app.use("/api/logout", logoutRouter); // Mount logout route
 
