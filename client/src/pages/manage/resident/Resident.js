@@ -91,6 +91,7 @@ const Resident = () => {
         };
       });
 
+
       setFlattenedResident(flattenedData);
       setFilteredResident(flattenedData);
     } else {
