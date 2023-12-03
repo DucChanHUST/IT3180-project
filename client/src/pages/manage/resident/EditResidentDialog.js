@@ -221,7 +221,7 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
           Hủy bỏ
         </Button>
         <Button variant="contained" onClick={handleEdit}>
-          Thay đổi
+          Chỉnh sửa
         </Button>
       </DialogActions>
     </Dialog>

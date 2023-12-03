@@ -22,7 +22,7 @@ import {
   updateRegistration,
 } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import "./Registration.css";
@@ -30,7 +30,6 @@ import "./Registration.css";
 const Registration = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const listRegistrations = useSelector(state => state.registration.registrations.allRegistrations);
-  console.log("listRegistrations", listRegistrations);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openForm, setOpenForm] = useState(false);
@@ -240,7 +239,7 @@ const Registration = () => {
         <DialogContent sx={{ width: "500px", height: "100px" }}>
           <TextField
             sx={{ marginTop: "10px" }}
-            label={Address}
+            label="Address"
             fullWidth
             value={editAddress}
             onChange={e => setEditAddress(e.target.value)}

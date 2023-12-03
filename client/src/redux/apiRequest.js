@@ -39,6 +39,8 @@ import {
   updateResidentSuccess,
   updateResidentFailed,
 } from "./residentSlice";
+import { getAllFeeSuccess, feeFailed } from "./feeSlice";
+import { getAllExpenseSuccess, expenseFailed } from "./expenseSlice";
 
 //Hàm đăng nhập -------------------------------------------------------------
 export const loginUser = async (user, dispatch, navigate) => {
@@ -222,7 +224,7 @@ export const getRegistrationResident = async (accessToken, dispatch, userId) => 
     });
     dispatch(getResidentSuccess(response.data.resident.registration.residents));
   } catch (error) {
-    dispatch(getResidentFailed());
+    dispatch(getResidentFailed(error));
   }
 };
 
@@ -301,5 +303,101 @@ export const updateResident = async (accessToken, dispatch, data, id) => {
     getAllResident(accessToken, dispatch);
   } catch (error) {
     dispatch(updateResidentFailed(error.response.data.error.errors[0]));
+  }
+};
+
+// Fee
+export const getAllFee = async (accessToken, dispatch) => {
+  try {
+    const response = await axios.get("http://localhost:3001/api/fee", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    dispatch(getAllFeeSuccess(response.data));
+  } catch (error) {
+    dispatch(feeFailed(error));
+  }
+};
+
+export const addFee = async (accessToken, dispatch, feeData) => {
+  try {
+    await axios.post("http://localhost:3001/api/fee", feeData, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+    getAllFee(accessToken, dispatch);
+  } catch (error) {
+    dispatch(feeFailed(error));
+  }
+};
+
+export const deleteFee = async (accessToken, dispatch, feeId) => {
+  try {
+    await axios.delete(`http://localhost:3001/api/fee/${feeId}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    getAllFee(accessToken, dispatch);
+  } catch (error) {
+    dispatch(feeFailed(error));
+  }
+};
+
+export const updateFee = async (accessToken, dispatch, feeData, feeId) => {
+  try {
+    await axios.put(`http://localhost:3001/api/fee/${feeId}`, feeData, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    getAllFee(accessToken, dispatch);
+  } catch (error) {
+    dispatch(feeFailed(error));
+  }
+};
+
+// Expense 
+export const getAllExpense = async (accessToken, dispatch) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/api/expense`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    dispatch(getAllExpenseSuccess(response.data));
+  } catch (error) {
+    dispatch(expenseFailed(error));
+  }
+};
+
+export const addExpense = async (accessToken, dispatch, feeData) => {
+  try {
+    await axios.post(`http://localhost:3001/api/expense`, feeData, {
+      headers: { Authorization: `Bearer $(accessToken)` },
+    });
+    
+    getAllExpense(accessToken, dispatch);
+  } catch (error) {
+    dispatch(expenseFailed(error));
+  }
+};
+
+export const deleteExpense = async (accessToken, dispatch, expenseId) => {
+  try {
+    await axios.delete(`http://localhost:3001/api/expense/${expenseId}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    dispatch(getAllExpense(accessToken, dispatch));
+  } catch (error) {
+    dispatch(expenseFailed(error));
+  }
+};
+
+export const updateExpense = async (accessToken, dispatch, expenseData, expenseId) => {
+  try {
+    await axios.put(`http://localhost:3001/api/expense/${expenseId}`, expenseData, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    dispatch(getAllExpense(accessToken, dispatch));
+  } catch (error) {
+    dispatch(expenseFailed(error));
   }
 };
