@@ -64,10 +64,10 @@ const Profile = () => {
         await changePassword(User.token, dispatch, data, User.userId);
         setOpenPasswordDialog(false);
       } catch (error) {
-        console.error("Password update failed:", error);
+        console.error("Đổi mật khẩu thất bại", error);
         // Handle the error here or provide feedback to the user
         // For instance, show an alert/message to the user
-        alert("Password update failed. Please try again.");
+        alert("Đổi mật khẩu thất bại, hãy thử lại!");
       }
   };
 
