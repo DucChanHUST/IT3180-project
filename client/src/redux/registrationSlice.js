@@ -80,7 +80,7 @@ export const {
   addRegistrationsFailed,
   updateRegistrationsStart,
   updateRegistrationsSuccess,
-  updateRegistrationsFailed
+  updateRegistrationsFailed,
 } = registrationSlice.actions;
 
 export default registrationSlice.reducer;

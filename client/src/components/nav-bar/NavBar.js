@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
+import { Box, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
-import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
@@ -13,8 +11,9 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useAppStore } from "../../stores";
 import { NavLink, useNavigate } from "react-router-dom";
 import { PathConstant } from "../../const";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import "./Navbar.css";
+
 
 // Cấu hình
 const AppBar = styled(
@@ -27,15 +26,12 @@ const AppBar = styled(
 ///Hàm chính
 const NavBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const user = useSelector(state => state.auth.login?.currentUser);
   const navigate = useNavigate();
   const updateOpen = useAppStore(state => state.updateOpen);
   const dopen = useAppStore(state => state.dopen);
   const isMenuOpen = Boolean(anchorEl);
-
-  // user
-  const user = useSelector(state => state.auth.login.currentUser);
-
-  //-----------------------------------------
+  
 
   const handleProfileMenuOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -64,7 +60,7 @@ const NavBar = () => {
       onClose={handleMenuClose}
     >
       <MenuItem>
-        <NavLink to="/Profile/userid">Profile</NavLink>
+        <NavLink to="/myprofile">Profile</NavLink>
       </MenuItem>
       <MenuItem>
         <NavLink to="/Profile/userid">My account</NavLink>
@@ -130,7 +126,7 @@ const NavBar = () => {
                 },
               }}
             >
-              <NavLink to="/Login" sx={{ color: "white" }}>
+              <NavLink to="/login" sx={{ color: "white" }}>
                 Login
               </NavLink>
             </Button>
@@ -138,6 +134,7 @@ const NavBar = () => {
         </Toolbar>
       </AppBar>
       {renderMenu}
+      
     </Box>
   );
 };
