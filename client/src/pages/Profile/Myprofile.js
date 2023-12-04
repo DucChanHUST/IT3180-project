@@ -78,71 +78,78 @@ const Profile = () => {
       <Box sx={{ display: "flex" }}>
         <SideBar />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          {/* {currentUser.map( user => ( */}
-          <div className="container">
-            <div class="my-5">
-              <h3>My Profile</h3>
+          {selectCurrentUser ? (
+            <div className="container">
+              <div className="my-5">
+                <h3>My Profile</h3>
+              </div>
+              <form className="file-upload">
+                {/* Contact detail */}
+                <div className="row mb-5 gx-5">
+                  {/* First Name */}
+                  <div className="col-md-6">
+                    <label className="form-label">Full Name *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="firstName"
+                      disabled={true}
+                      value={selectCurrentUser.resident ? selectCurrentUser.resident.name : ""}
+                    />
+                  </div>
+                  {/* Last name */}
+                  <div className="col-md-6">
+                    <label className="form-label">Ngày tháng năm sinh *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="lastName"
+                      disabled={true}
+                      value={
+                        selectCurrentUser.resident && selectCurrentUser.resident.dob
+                          ? new Date(selectCurrentUser.resident.dob).toISOString().split("T")[0]
+                          : ""
+                      }
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label">Số CCCD/CMND *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="idNumber"
+                      disabled={true}
+                      value={selectCurrentUser.resident ? selectCurrentUser.resident.idNumber : ""}
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Số điện thoại *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="phoneNumber"
+                      disabled={true}
+                      value={selectCurrentUser.resident ? selectCurrentUser.resident.phoneNumber : ""}
+                    />
+                  </div>
+                </div>
+
+                <div className="gap-3 d-md-flex justify-content-md-end text-center">
+                  <button type="button" className="btn btn-danger btn-lg" onClick={handleOpenPasswordDialog}>
+                    Đổi mật khẩu
+                  </button>
+                </div>
+              </form>
             </div>
-            <form className="file-upload">
-              {/* Contact detail */}
-              <div className="row mb-5 gx-5">
-                {/* First Name */}
-                <div className="col-md-6">
-                  <label className="form-label">Full Name *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="firstName"
-                    disabled={true}
-                    value={selectCurrentUser.resident.name}
-                  />
-                </div>
-                {/* Last name */}
-                <div className="col-md-6">
-                  <label className="form-label">Ngày tháng năm sinh *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="lastName"
-                    disabled={true}
-                    value={
-                      selectCurrentUser.resident.dob
-                        ? new Date(selectCurrentUser.resident.dob).toISOString().split("T")[0]
-                        : ""
-                    }
-                  />
-                </div>
+          ) : (
+            <div className="gap-3 d-md-flex justify-content-md-end text-center">
+              <button type="button" className="btn btn-danger btn-lg" onClick={handleOpenPasswordDialog}>
+                Đổi mật khẩu
+              </button>
+            </div>
+          )}
 
-                <div className="col-md-6">
-                  <label className="form-label">Số CCCD/CMND *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="lastName"
-                    disabled={true}
-                    value={selectCurrentUser.resident.idNumber}
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">Số điện thoại *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="lastName"
-                    disabled={true}
-                    value={selectCurrentUser.resident.phoneNumber}
-                  />
-                </div>
-              </div>
-
-              <div className="gap-3 d-md-flex justify-content-md-end text-center">
-                <button type="button" className="btn btn-danger btn-lg" onClick={handleOpenPasswordDialog}>
-                  Đổi mật khẩu
-                </button>
-              </div>
-            </form>
-          </div>
-          {/* ))} */}
           <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog}>
             <DialogTitle>Đổi mật khẩu</DialogTitle>
             <DialogContent sx={{ width: "500px", height: "300px" }}>
