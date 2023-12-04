@@ -156,6 +156,7 @@ const Profile = () => {
               <TextField
                 sx={{ marginTop: "20px" }}
                 label="Nhập mật khẩu cũ:"
+                type="password"
                 fullWidth
                 value={oldPassword}
                 onChange={e => setOldPassword(e.target.value)}
@@ -164,6 +165,7 @@ const Profile = () => {
               <TextField
                 sx={{ marginTop: "20px" }}
                 label="Nhập mật khẩu mới:"
+                type="password"
                 fullWidth
                 value={newPassword1}
                 onChange={e => setNewPassword1(e.target.value)}
@@ -173,6 +175,7 @@ const Profile = () => {
                 sx={{ marginTop: "20px" }}
                 label="Nhập lại mật khẩu mới 1 lần nữa để xác nhận:"
                 fullWidth
+                type="password"
                 value={newPassword2}
                 onChange={e => setNewPassword2(e.target.value)}
                 onKeyPress={handleEnterEditKeyPress}
