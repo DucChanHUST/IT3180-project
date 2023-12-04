@@ -6,7 +6,7 @@ const expenseSlice = createSlice({
       allExpense: [],
       errorMsg: "",
     },
-    reducer: {
+    reducers: {
       getAllExpenseSuccess: (state, action) => {
         state.allExpense = action.payload;
         state.errorMsg = "";

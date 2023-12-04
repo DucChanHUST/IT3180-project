@@ -1,8 +1,14 @@
 export const FIELD_MAPPING = [
-    {id: "id", label: "ID", minWidth: 20},
-    {id: "payerName", label: "Tên người nộp", minWidth: 150, align: "left"},
-    {id: "registrationId", label: "Mã hộ", minWidth: 20},
-    {id: "feeName", label: "Tên khoản phí", minWidth: 150, align: "left"},
-    {id: "payDay", label: "Ngày nộp", minWidth: 90},
-    {id: "action", label: "Thao tác", minWidth: 80},
-]
+  { id: "id", label: "ID", minWidth: 20 },
+  { id: "registrationId", label: "Mã hộ nộp", minWidth: 30 },
+  { id: "feeId", label: "ID khoản phí", minWidth: 20 },
+  { id: "amount", label: "Số tiền nộp", minWidth: 100 },
+  { id: "payDay", label: "Ngày nộp", minWidth: 90 },
+  { id: "action", label: "Thao tác", minWidth: 80 },
+];
+
+export const INIT_ERRORS_VALUES = {
+  registrationId: false,
+  feeId: false,
+  amount: false,
+};

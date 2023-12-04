@@ -13,9 +13,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import { FIELD_MAPPING } from "./const";
-import { formatAmount } from "./helper";
+import { formatAmount } from "../helper";
 
-const DataTable = ({ allFee, isAccountant, handleOpenEditDialog, handleOpenDeleteDialog }) => {
+const DataTable = ({ filteredFee, isAccountant, handleOpenEditDialog, handleOpenDeleteDialog }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -47,32 +47,20 @@ const DataTable = ({ allFee, isAccountant, handleOpenEditDialog, handleOpenDelet
           </TableHead>
 
           <TableBody>
-            {allFee?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(fee => {
+            {filteredFee?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(fee => {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={fee.id}>
-                  <TableCell align={FIELD_MAPPING[0].align}>
-                    {fee[FIELD_MAPPING[0].id]}
-                  </TableCell>
+                  <TableCell align={FIELD_MAPPING[0].align}>{fee[FIELD_MAPPING[0].id]}</TableCell>
 
-                  <TableCell align={FIELD_MAPPING[1].align}>
-                    {fee[FIELD_MAPPING[1].id]}
-                  </TableCell>
+                  <TableCell align={FIELD_MAPPING[1].align}>{fee[FIELD_MAPPING[1].id]}</TableCell>
 
-                  <TableCell align={FIELD_MAPPING[2].align}>
-                    {fee[FIELD_MAPPING[2].id] ? "Bắt buộc" : "Tự nguyện"}
-                  </TableCell>
+                  <TableCell align={FIELD_MAPPING[2].align}>{fee[FIELD_MAPPING[2].id]}</TableCell>
 
-                  <TableCell align={FIELD_MAPPING[3].align}>
-                    {formatAmount(fee[FIELD_MAPPING[3].id])}
-                  </TableCell>
+                  <TableCell align={FIELD_MAPPING[3].align}>{formatAmount(fee[FIELD_MAPPING[3].id])}</TableCell>
 
-                  <TableCell align={FIELD_MAPPING[4].align}>
+                  <TableCell align={FIELD_MAPPING[4].align}>{fee[FIELD_MAPPING[4].id]}</TableCell>
 
-                  </TableCell>
-
-                  <TableCell align={FIELD_MAPPING[5].align}>
-
-                  </TableCell>
+                  <TableCell align={FIELD_MAPPING[5].align}></TableCell>
 
                   {isAccountant ? (
                     <TableCell>
@@ -101,7 +89,7 @@ const DataTable = ({ allFee, isAccountant, handleOpenEditDialog, handleOpenDelet
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={allFee?.length}
+        count={filteredFee?.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

@@ -22,7 +22,7 @@ import { RelationshipConstant } from "../../../const";
 import { addNewResident } from "../../../redux/apiRequest";
 import { useSelector, useDispatch } from "react-redux";
 import { INIT_ERRORS_VALUES, FIELD_MAPPING } from "./const";
-import { handleFilterRelationship } from "./helper";
+import { handleFilterRelationship } from "../helper";
 
 const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedResident }) => {
   const user = useSelector(state => state.auth.login?.currentUser);

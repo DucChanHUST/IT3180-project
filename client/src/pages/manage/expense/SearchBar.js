@@ -44,7 +44,7 @@ const SearchBar = ({ allFee, setFilteredFee }) => {
           <MenuItem value="all">Tất cả</MenuItem>
           {FIELD_MAPPING.slice(0, -1).map(field => (
             <MenuItem key={field.id} value={field.id}>
-              {field.name}
+              {field.label}
             </MenuItem>
           ))}
         </Select>

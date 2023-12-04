@@ -6,33 +6,32 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Stack, Typography } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteFee } from "../../../redux/apiRequest";
+import { deleteExpense } from "../../../redux/apiRequest";
 
-const DeleteFeeDialog = ({ selectedFee, isDeleteDialogOpen, handleCloseDeleteDialog }) => {
+const DeleteExpenseDialog = ({ selectedExpense, isDeleteDialogOpen, handleCloseDeleteDialog }) => {
   const dispatch = useDispatch();
 
   const user = useSelector(state => state.auth.login?.currentUser);
 
-  const handleDeleteFee = async () => {
+  const handleDeleteExpense = async () => {
     handleCloseDeleteDialog();
 
-    await deleteFee(user.token, dispatch, selectedFee.id);
-
+    await deleteExpense(user.token, dispatch, selectedExpense.id);
   };
 
   return (
     <Dialog open={isDeleteDialogOpen} onClose={handleCloseDeleteDialog} fullWidth>
-      <DialogTitle>Xóa khoản phí</DialogTitle>
+      <DialogTitle>Xóa khoản nộp</DialogTitle>
       <DialogContent>
         <Stack spacing={2} mt={1}>
-          <Typography>Bạn có chắc chắn rằng bạn muốn xóa khoản phí này chứ</Typography>
+          <Typography>Bạn có chắc chắn rằng bạn muốn xóa khoản nộp này chứ</Typography>
         </Stack>
       </DialogContent>
       <DialogActions>
         <Button variant="outlined" onClick={handleCloseDeleteDialog}>
           Hủy bỏ
         </Button>
-        <Button variant="contained" color="error" onClick={handleDeleteFee}>
+        <Button variant="contained" color="error" onClick={handleDeleteExpense}>
           Xóa
         </Button>
       </DialogActions>
@@ -40,4 +39,4 @@ const DeleteFeeDialog = ({ selectedFee, isDeleteDialogOpen, handleCloseDeleteDia
   );
 };
 
-export default memo(DeleteFeeDialog);
+export default memo(DeleteExpenseDialog);

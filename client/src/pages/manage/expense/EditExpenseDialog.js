@@ -18,25 +18,26 @@ import { useSelector, useDispatch } from "react-redux";
 import { INIT_ERRORS_VALUES, FIELD_MAPPING } from "./const";
 import { convertToVietnameseWords, formatAmount } from "../helper";
 
-const EditFeeDialog = ({ selectedFee, isEditDialogOpen, handleCloseEditDialog }) => {
-  const INIT_FEE_VALUES = useMemo(() => {
+const EditExpenseDialog = ({ selectedExpense, isEditDialogOpen, handleCloseEditDialog }) => {
+  const INIT_EXPENSE_VALUES = useMemo(() => {
     return {
-      nameFee: selectedFee.nameFee,
-      type: selectedFee.type,
-      amount: selectedFee.amount,
+      registrationId: selectedExpense.registrationId,
+      feeId: selectedExpense.feeId,
+      amount: selectedExpense.amount,
+      date: selectedExpense.date,
     };
-  }, [selectedFee]);
+  }, [selectedExpense]);
 
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.login?.currentUser);
 
   const [errors, setErrors] = useState(INIT_ERRORS_VALUES);
-  const [feeValues, setFeeValues] = useState(INIT_FEE_VALUES);
+  const [expenseValues, setExpenseValues] = useState(INIT_EXPENSE_VALUES);
   const [errorDialogContent, setErrorDialogContent] = useState("");
 
   const handleCancelEdit = () => {
     handleCloseEditDialog();
-    setFeeValues(INIT_FEE_VALUES);
+    setExpenseValues(INIT_EXPENSE_VALUES);
     setErrors(INIT_ERRORS_VALUES);
     setErrorDialogContent("");
   };
@@ -45,7 +46,7 @@ const EditFeeDialog = ({ selectedFee, isEditDialogOpen, handleCloseEditDialog })
     let hasErrors = false;
     let errorContent = [];
     const newErrors = Object.keys(errors).reduce((acc, field) => {
-      if (!feeValues[field] && feeValues[field] !== 0) {
+      if (!expenseValues[field] && expenseValues[field] !== 0) {
         acc[field] = true;
         hasErrors = true;
         const fieldMappingItem = FIELD_MAPPING.find(item => item.id === field);
@@ -61,17 +62,17 @@ const EditFeeDialog = ({ selectedFee, isEditDialogOpen, handleCloseEditDialog })
       setErrorDialogContent(`Vui lòng nhập ${errorContent.join(", ")}`);
     } else {
       handleCloseEditDialog();
-      updateFee(user.token, dispatch, feeValues, selectedFee.id);
+      updateFee(user.token, dispatch, expenseValues, selectedExpense.id);
     }
   };
 
   const handleFeeValueChange = field => value => {
-    setFeeValues(prevValue => ({ ...prevValue, [field]: value }));
+    setExpenseValues(prevValue => ({ ...prevValue, [field]: value }));
   };
 
   useEffect(() => {
-    setFeeValues(INIT_FEE_VALUES);
-  }, [INIT_FEE_VALUES]);
+    setExpenseValues(INIT_EXPENSE_VALUES);
+  }, [INIT_EXPENSE_VALUES]);
 
   return (
     <Dialog open={isEditDialogOpen} onClose={handleCloseEditDialog} fullWidth>
@@ -83,7 +84,7 @@ const EditFeeDialog = ({ selectedFee, isEditDialogOpen, handleCloseEditDialog })
           <TextField
             required
             error={errors.nameFee}
-            value={feeValues.nameFee}
+            value={expenseValues.nameFee}
             label={FIELD_MAPPING[1].label}
             onChange={event => {
               const value = event.target.value;
@@ -96,7 +97,7 @@ const EditFeeDialog = ({ selectedFee, isEditDialogOpen, handleCloseEditDialog })
               <InputLabel>{`${FIELD_MAPPING[2].label} *`}</InputLabel>
               <Select
                 error={errors.type}
-                value={feeValues.type}
+                value={expenseValues.type}
                 label={`${FIELD_MAPPING[2].label} *`}
                 onChange={event => {
                   const value = event.target.value;
@@ -117,17 +118,17 @@ const EditFeeDialog = ({ selectedFee, isEditDialogOpen, handleCloseEditDialog })
             <NumberTextField
               fullWidth
               error={errors.amount}
-              disabled={!feeValues.type}
+              disabled={!expenseValues.type}
               label={FIELD_MAPPING[3].label}
-              value={formatAmount(feeValues.amount)}
+              value={formatAmount(expenseValues.amount)}
               onChange={handleFeeValueChange("amount")}
               helperText={
-                feeValues.type === 0
+                expenseValues.type === 0
                   ? `Phí Tự nguyện không được đặt ${FIELD_MAPPING[3].label}`
-                  : !feeValues.type
+                  : !expenseValues.type
                   ? `Vui lòng nhập ${FIELD_MAPPING[2].label} trước`
-                  : feeValues.amount
-                  ? convertToVietnameseWords(feeValues.amount)
+                  : expenseValues.amount
+                  ? convertToVietnameseWords(expenseValues.amount)
                   : ""
               }
               InputProps={{
@@ -149,4 +150,4 @@ const EditFeeDialog = ({ selectedFee, isEditDialogOpen, handleCloseEditDialog })
   );
 };
 
-export default memo(EditFeeDialog);
+export default memo(EditExpenseDialog);

@@ -4,8 +4,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import { FIELD_MAPPING } from "./const";
 
 const SearchBar = ({ flattenedResident, setFilteredResident }) => {
-  const [searchCategory, setSearchCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchCategory, setSearchCategory] = useState("all");
 
   const handleCategoryChange = event => {
     const category = event.target.value;

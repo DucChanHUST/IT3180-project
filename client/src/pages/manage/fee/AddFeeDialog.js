@@ -16,7 +16,7 @@ import { addFee } from "../../../redux/apiRequest";
 import { NumberTextField } from "../../../components";
 import { useSelector, useDispatch } from "react-redux";
 import { INIT_ERRORS_VALUES, FIELD_MAPPING } from "./const";
-import { convertToVietnameseWords, formatAmount } from "./helper";
+import { convertToVietnameseWords, formatAmount } from "../helper";
 
 const AddFeeDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
   const dispatch = useDispatch();

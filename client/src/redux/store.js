@@ -4,6 +4,7 @@ import userReducer from "./userSlice";
 import registrationReducer from "./registrationSlice";
 import residentReducer from "./residentSlice";
 import feeReducer from "./feeSlice";
+import expenseReducer from "./expenseSlice";
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 // import { PersistGate } from "redux-persist/integration/react";
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   registration: registrationReducer,
   resident: residentReducer,
   fee: feeReducer,
+  expense: expenseReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

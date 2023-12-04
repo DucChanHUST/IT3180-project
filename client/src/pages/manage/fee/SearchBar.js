@@ -3,9 +3,9 @@ import { FormControl, MenuItem, Select, Stack, TextField, InputAdornment } from 
 import SearchIcon from "@mui/icons-material/Search";
 import { FIELD_MAPPING } from "./const";
 
-const SearchBar = ({ allFee, setFilteredFee }) => {
-  const [searchCategory, setSearchCategory] = useState("all");
+const SearchBar = ({ feeData, setFilteredFee }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchCategory, setSearchCategory] = useState("all");
 
   const handleCategoryChange = event => {
     const category = event.target.value;
@@ -21,7 +21,23 @@ const SearchBar = ({ allFee, setFilteredFee }) => {
     filterFee(term, searchCategory);
   };
 
-  const filterFee = () => {};
+  const filterFee = (term, searchCategory) => {
+    const filteredFee = feeData.filter(item => {
+      if (!item) {
+        return false;
+      }
+
+      const value = item[searchCategory];
+
+      if (searchCategory === "all") {
+        return Object.values(item).some(val => val && val.toString().toLowerCase().includes(term.toLowerCase()));
+      } else {
+        return value && value.toString().toLowerCase().includes(term.toLowerCase());
+      }
+    });
+
+    setFilteredFee(filteredFee);
+  };
 
   return (
     <Stack direction="row" spacing={2} style={{ width: "100%" }}>

@@ -17,6 +17,7 @@ const Fee = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const allFee = useSelector(state => state.fee.allFee);
 
+  const [feeData, setFeeData] = useState([]);
   const [selectedFee, setSelectedFee] = useState({});
   const [filteredFee, setFilteredFee] = useState([]);
   const [isAccountant, setIsAccountant] = useState(false);
@@ -59,6 +60,23 @@ const Fee = () => {
     handleFetchFee();
   }, []);
 
+  console.log(allFee);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const feeData = allFee.map(item => {
+      let { id, nameFee, type, amount, paid} = item;
+
+      (type) ? (type = "Bắt buộc") : (type = "Tự nguyện");
+
+      return { id, nameFee, type, amount, paid};
+    });
+    
+    setFeeData(feeData);
+    setFilteredFee(feeData);
+  }, [allFee, user]);
+
   return (
     <>
       <NavBar />
@@ -68,7 +86,7 @@ const Fee = () => {
         <Grid container direction="column" sx={{ margin: 3, gap: 2 }}>
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item xs={9}>
-              <SearchBar setFilteredFee={setFilteredFee} />
+              <SearchBar feeData={feeData} setFilteredFee={setFilteredFee} />
             </Grid>
             {isAccountant ? (
               <Grid item>
@@ -82,7 +100,7 @@ const Fee = () => {
           </Grid>
 
           <DataTable
-            allFee={allFee}
+            filteredFee={filteredFee}
             isAccountant={isAccountant}
             handleOpenEditDialog={handleOpenEditDialog}
             handleOpenDeleteDialog={handleOpenDeleteDialog}
