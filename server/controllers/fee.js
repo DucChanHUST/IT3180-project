@@ -11,7 +11,15 @@ feeRouter.get('/', async (req, res) => {
 })
 
 feeRouter.post('/',checkUserRole(['accountant']), async (req, res) => {
-  const { nameFee, amount, type } = req.body;
+  var { nameFee, amount, type } = req.body;
+  if (!amount) {
+    if (type === 1) {
+      return res.status(422).json({ error: 'Amount is required' })
+    }
+    else {
+      amount = 0;
+    }
+  }
   try {
     const newFee = await Fee.create({
       nameFee,
