@@ -5,7 +5,7 @@ const { checkUserRole } = require('../util/checkUserRole');
 
 residentRouter.use(tokenExtractor);
 
-residentRouter.get('/',checkUserRole(['leader']), async (req, res) => {
+residentRouter.get('/',checkUserRole(['leader', 'accountant']), async (req, res) => {
   const listRes = await Resident.findAll({
     attributes: { exclude: ['registrationId'] },
     include: [
@@ -21,7 +21,7 @@ residentRouter.get('/',checkUserRole(['leader']), async (req, res) => {
   res.json(listRes)
 });
 
-residentRouter.get('/:id',checkUserRole(['leader']), async (req, res) => {
+residentRouter.get('/:id',checkUserRole(['leader', 'accountant']), async (req, res) => {
   try {
     const resident = await Resident.findByPk(req.params.id, {
       attributes: { exclude: ['registrationId'] },
@@ -69,7 +69,7 @@ residentRouter.put('/update/:id', checkUserRole(['leader']), async (req, res) =>
     });
     if (updateRes) {
       await updateRes.update(req.body)
-      await updateRes.reload({ // Tải lại đối tượng để đảm bảo dữ liệu đã được cập nhật đầy đủ
+      await updateRes.reload({ 
         include: [
           {
             model: User,
