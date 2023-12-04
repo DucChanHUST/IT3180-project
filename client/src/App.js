@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Login, HomePage, Resident, Registration, Fee, PayFee, Statistic, Setting } from "./pages";
+import { Login, Profile, HomePage, Resident, Registration, Fee, PayFee, Statistic, Setting } from "./pages";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PathConstant } from "./const";
 import { Navigate } from "react-router-dom";
@@ -10,10 +10,10 @@ const App = () => {
       <Routes>
         {/* LOGIN */}
         <Route path="/login" element={<Login />} />
-
         {/* MANAGE */}
         <Route path={PathConstant.ROOT} element={<HomePage />} />
         <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/myprofile" element={<Profile />} />
         <Route path={PathConstant.RESIDENT} element={<Resident />} />
         <Route path={PathConstant.REGISTRATION} element={<Registration />} />
         <Route path={PathConstant.FEE} element={<Fee />} />

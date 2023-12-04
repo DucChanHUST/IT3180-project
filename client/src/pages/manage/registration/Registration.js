@@ -1,18 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-} from "@mui/material";
+import { Box, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
 import { SideBar, NavBar } from "../../../components";
 import {
   getAllRegistrations,
@@ -22,7 +9,7 @@ import {
   updateRegistration,
 } from "../../../redux/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import "./Registration.css";
@@ -36,11 +23,9 @@ const Registration = () => {
   const [openForm, setOpenForm] = useState(false);
   const [address, setAddress] = useState("");
   const [resetPage, setResetPage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const [editFormOpen, setEditFormOpen] = useState(false);
   const [editAddress, setEditAddress] = useState("");
   const [selectedRegistrationId, setSelectedRegistrationId] = useState(null);
-  const [registrationID, setRegistrationID] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -122,14 +107,12 @@ const Registration = () => {
         addNewRegistration(user.token, dispatch, data)
           .then(() => {
             setAddress(""); // Reset address field
-            setErrorMessage(null); // Clear error message
             setOpenForm(false);
             alert("Add new registration successfully");
             setResetPage(true);
           })
           .catch(error => {
             console.log(error);
-            setErrorMessage(error.message);
           });
       }
     }
@@ -137,6 +120,12 @@ const Registration = () => {
 
   const handleEditRegistration = regis => {
     if (user.userRole === "leader") {
+      listRegistrations.forEach(registration => {
+        if (registration.address === editAddress) {
+          alert("This address has already existed, please check your address again");
+        }
+        setEditFormOpen(true);
+      });
       setSelectedRegistrationId(regis.id);
       setEditAddress(regis.address);
       setEditFormOpen(true);
@@ -164,7 +153,6 @@ const Registration = () => {
         })
         .catch(error => {
           console.log(error);
-          setErrorMessage(error.message);
         });
     }
   };
@@ -240,7 +228,7 @@ const Registration = () => {
         <DialogContent sx={{ width: "500px", height: "100px" }}>
           <TextField
             sx={{ marginTop: "10px" }}
-            label={Address}
+            label="Address"
             fullWidth
             value={editAddress}
             onChange={e => setEditAddress(e.target.value)}

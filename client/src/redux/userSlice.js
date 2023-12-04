@@ -47,6 +47,20 @@ const userSlice = createSlice({
       state.users.error = true;
       // state.msg = action.payload;
     },
+
+    changePasswordStart: state => {
+      state.users.isFetching = true;
+      state.users.error = false; // Reset error state
+    },
+    changePasswordSuccess: (state, action) => {
+      state.users.isFetching = false;
+      state.msg = action.payload; // Store success message or updated data
+    },
+    changePasswordFailed: state => {
+      state.users.isFetching = false;
+      state.users.error = true; // Set error flag
+      // Additional error handling logic if needed
+    },
   },
 });
 
@@ -60,6 +74,9 @@ export const {
   addUserStart,
   addUserSuccess,
   addUserFailed,
+  changePasswordStart,
+  changePasswordSuccess,
+  changePasswordFailed,
 } = userSlice.actions;
 
 export default userSlice.reducer;
