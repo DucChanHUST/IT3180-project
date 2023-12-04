@@ -5,7 +5,7 @@ const { checkUserRole } = require('../util/checkUserRole');
 
 regRouter.use(tokenExtractor);
 
-regRouter.get('/',checkUserRole(['leader']), async(req, res) => {
+regRouter.get('/',checkUserRole(['leader', 'accountant']), async(req, res) => {
     const listReg = await Registration.findAll({
         include: {
             model: Resident,
@@ -14,7 +14,7 @@ regRouter.get('/',checkUserRole(['leader']), async(req, res) => {
     res.json(listReg)
 })
 
-regRouter.get('/:regId',checkUserRole(['leader']), async(req, res) => {
+regRouter.get('/:regId',checkUserRole(['leader', 'accountant']), async(req, res) => {
     try {
         const reg = await Registration.findByPk(req.params.regId,{
             include: {

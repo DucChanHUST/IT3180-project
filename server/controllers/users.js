@@ -7,7 +7,7 @@ const { verifyUser } = require('../util/verifyUser');
 
 usersRouter.use(tokenExtractor);
 
-usersRouter.get('/',checkUserRole(['leader']), async (req, res) => {
+usersRouter.get('/',checkUserRole(['leader', 'accountant']), async (req, res) => {
   const users = await User.findAll({
     attributes: { exclude: ['passwordHash', 'residentId'] },
     include: {
@@ -69,7 +69,7 @@ usersRouter.put('/:id',verifyUser, async (req, res) => {
 });
 
 // GET user 's info
-usersRouter.get('/:id', checkUserRole(['leader', 'resident']), verifyUser, async (req, res) => {
+usersRouter.get('/:id', checkUserRole(['leader', 'resident', 'accountant']), verifyUser, async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id, {
       attributes: { exclude: ['passwordHash', 'residentId'] },
@@ -93,7 +93,7 @@ usersRouter.get('/:id', checkUserRole(['leader', 'resident']), verifyUser, async
   }
 });
 
-usersRouter.delete('/:id', async (req, res) => {
+usersRouter.delete('/:id', checkUserRole(['leader']), async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) {
