@@ -1,5 +1,5 @@
 const expenseRouter = require('express').Router()
-const { Expense } = require('../models/associations')
+const { Fee, Expense, Registration } = require('../models/associations')
 const { checkUserRole } = require('../util/checkUserRole')
 const { tokenExtractor } = require('../util/tokenExtractor')
 const { verifyResident } = require('../util/verifyUser')
@@ -16,9 +16,17 @@ expenseRouter.post('/',checkUserRole(['accountant']), async (req, res) => {
     if (!date) {
         date = new Date();
     }
+    // handle null
     const fee = await Fee.findByPk(feeId);
+    if (!fee) {
+        return res.status(404).json({ error: 'Fee not found' });
+    }
     if (fee.type === 1) {
         amount = fee.amount;
+    }
+    const registration = await Registration.findByPk(registrationId);
+    if (!registration) {
+        return res.status(404).json({ error: 'Registration not found' });
     }
     try {
         const newExpense = await Expense.create({
