@@ -10,6 +10,9 @@ import {
   addUserStart,
   addUserSuccess,
   addUserFailed,
+  changePasswordStart,
+  changePasswordSuccess,
+  changePasswordFailed,
 } from "./userSlice";
 import {
   getRegistrationsStart,
@@ -56,18 +59,6 @@ export const loginUser = async (user, dispatch, navigate) => {
   }
 };
 
-// Ham logout ------------------------------------------------------------------
-
-// export const logOut = async (dispatch, navigate, token, axiosJWT) => {
-//   dispatch(loginStart())
-
-//   try
-//   {
-//     await axiosJWT.post("")
-//   }
-// }
-// Hàm getuser ----------------------------------------------------------------
-
 export const getAllUsers = async (accessToken, dispatch) => {
   if (!accessToken) {
     // Handle the case when 'token' is missing or null
@@ -85,7 +76,27 @@ export const getAllUsers = async (accessToken, dispatch) => {
   }
 };
 
-//Hàm xóa user
+//Ham getUserID------------------------------------------------------------------------------------------------
+export const getUserID = async (accessToken, dispatch, id) => {
+  if (!accessToken) {
+    console.log("accessToken");
+    return;
+  }
+
+  dispatch(getUsersStart());
+  try {
+    const res = await axios.get(`http://localhost:3001/api/users/${id}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    // const array = [res.data.resident.registration];
+    dispatch(getUsersSuccess(res.data));
+  } catch (err) {
+    dispatch(getUsersFailed());
+    console.log(err);
+  }
+};
+
+//Hàm xóa user-------------------------------------------------------------------------------------------------------------
 export const deleteUser = async (accessToken, dispatch, id) => {
   dispatch(deleteUserStart());
 
@@ -101,7 +112,27 @@ export const deleteUser = async (accessToken, dispatch, id) => {
   }
 };
 
-// Hàm getAllRegistrations
+//Hàm đổi password-----------------------------------------------------------------------------------------
+export const changePassword = async (accessToken, dispatch, data, id) => {
+  dispatch(changePasswordStart());
+
+  try {
+    const res = await axios.put(`http://localhost:3001/api/users/${id}`, data, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (res.data.success) {
+      console.log(res.data);
+      alert("Đổi mật khẩu thành công");
+      dispatch(changePasswordSuccess(res.data));
+    }
+  } catch (err) {
+    alert("Có lỗi xảy ra, hãy thử nhập lại");
+    dispatch(changePasswordFailed("An error occurred while changing password"));
+  }
+};
+
+// Hàm getAllRegistrations------------------------------------------------------------------------------------------
 export const getAllRegistrations = async (accessToken, dispatch) => {
   if (!accessToken) {
     // Handle the case when 'token' is missing or null

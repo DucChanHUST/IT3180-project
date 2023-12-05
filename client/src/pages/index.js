@@ -6,5 +6,6 @@ import Fee from "./manage/fee/Fee";
 import Expense from "./manage/expense/Expense";
 import Statistic from "./manage/statistic/Statistic";
 import Setting from "./manage/setting/Setting";
+import Profile from "./Profile/Myprofile";
 
-export { Login, HomePage, Resident, Registration, Fee, Expense, Statistic, Setting };
+export { Login, Profile, HomePage, Resident, Registration, Fee, Expense, Statistic, Setting };
