@@ -8,6 +8,8 @@ import DataTable from "./DataTable";
 import AddExpenseDialog from "./AddExpenseDialog";
 import EditExpenseDialog from "./EditExpenseDialog";
 import DeleteExpenseDialog from "./DeleteExpenseDialog";
+import { getAllExpense } from "../../../redux/apiRequest";
+import { handleFormatDate } from "../helper";
 
 const Expense = () => {
   const dispatch = useDispatch();
@@ -45,18 +47,34 @@ const Expense = () => {
     setIsAddDialogOpen(false);
   }, []);
 
-  const handleFetchFee = async () => {
+  const handleFetchExpense = async () => {
     if (!user) {
       navigate("/Login");
       return;
     }
 
     user.userRole === "accountant" ? setIsAccountant(true) : setIsAccountant(false);
+    await getAllExpense(user.token, dispatch);
   };
 
   useEffect(() => {
-    handleFetchFee();
+    handleFetchExpense();
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const expenseData = allExpense.map(item => {
+      let { registrationId, feeId, amount, date} = item;
+
+      date = handleFormatDate(date);
+
+      return { registrationId, feeId, amount, date };
+    });
+
+    setFilteredExpense(expenseData);
+  }, [user, allExpense]);
+
 
   return (
     <>
@@ -81,7 +99,7 @@ const Expense = () => {
           </Grid>
 
           <DataTable
-            allExpense={allExpense}
+            filteredExpense={filteredExpense}
             isAccountant={isAccountant}
             handleOpenEditDialog={handleOpenEditDialog}
             handleOpenDeleteDialog={handleOpenDeleteDialog}
@@ -89,12 +107,12 @@ const Expense = () => {
 
           <AddExpenseDialog isAddDialogOpen={isAddDialogOpen} handleCloseAddDialog={handleCloseAddDialog} />
           <EditExpenseDialog
-            selectedFee={selectedExpense}
+            selectedExpense={selectedExpense}
             isEditDialogOpen={isEditDialogOpen}
             handleCloseEditDialog={handleCloseEditDialog}
           />
           <DeleteExpenseDialog
-            selectedFee={selectedExpense}
+            selectedExpense={selectedExpense}
             isDeleteDialogOpen={isDeleteDialogOpen}
             handleCloseDeleteDialog={handleCloseDeleteDialog}
           />

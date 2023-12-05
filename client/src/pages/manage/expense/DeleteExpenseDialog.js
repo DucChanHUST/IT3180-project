@@ -16,7 +16,7 @@ const DeleteExpenseDialog = ({ selectedExpense, isDeleteDialogOpen, handleCloseD
   const handleDeleteExpense = async () => {
     handleCloseDeleteDialog();
 
-    await deleteExpense(user.token, dispatch, selectedExpense.id);
+    await deleteExpense(user.token, dispatch, selectedExpense);
   };
 
   return (

@@ -3,7 +3,7 @@ import { FormControl, MenuItem, Select, Stack, TextField, InputAdornment } from 
 import SearchIcon from "@mui/icons-material/Search";
 import { FIELD_MAPPING } from "./const";
 
-const SearchBar = ({ allFee, setFilteredFee }) => {
+const SearchBar = ({ expenseData, setFilterExpense }) => {
   const [searchCategory, setSearchCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 

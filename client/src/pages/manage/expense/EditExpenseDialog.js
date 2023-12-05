@@ -1,22 +1,21 @@
-import React, { useState, useMemo, memo, useEffect } from "react";
+import React, { useState, memo, useMemo, useEffect } from "react";
+import dayjs from "dayjs";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
 import DialogTitle from "@mui/material/DialogTitle";
-import FormControl from "@mui/material/FormControl";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import InputAdornment from "@mui/material/InputAdornment";
 import DialogContentText from "@mui/material/DialogContentText";
-import { updateFee } from "../../../redux/apiRequest";
 import { NumberTextField } from "../../../components";
 import { useSelector, useDispatch } from "react-redux";
+import { updateExpense } from "../../../redux/apiRequest";
 import { INIT_ERRORS_VALUES, FIELD_MAPPING } from "./const";
-import { convertToVietnameseWords, formatAmount } from "../helper";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { convertToVietnameseWords, formatAmount, handleConvertDateFormat } from "../helper";
 
 const EditExpenseDialog = ({ selectedExpense, isEditDialogOpen, handleCloseEditDialog }) => {
   const INIT_EXPENSE_VALUES = useMemo(() => {
@@ -24,22 +23,23 @@ const EditExpenseDialog = ({ selectedExpense, isEditDialogOpen, handleCloseEditD
       registrationId: selectedExpense.registrationId,
       feeId: selectedExpense.feeId,
       amount: selectedExpense.amount,
-      date: selectedExpense.date,
+      date: dayjs(handleConvertDateFormat(selectedExpense.date)),
     };
   }, [selectedExpense]);
 
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.login?.currentUser);
+  const allFee = useSelector(state => state.fee.allFee.map(fee => ({ id: fee.id, amount: fee.amount })));
 
   const [errors, setErrors] = useState(INIT_ERRORS_VALUES);
-  const [expenseValues, setExpenseValues] = useState(INIT_EXPENSE_VALUES);
+  const [isDisableAmount, setIsDisableAmount] = useState(true);
   const [errorDialogContent, setErrorDialogContent] = useState("");
+  const [expenseValues, setExpenseValues] = useState(INIT_EXPENSE_VALUES);
 
   const handleCancelEdit = () => {
     handleCloseEditDialog();
-    setExpenseValues(INIT_EXPENSE_VALUES);
     setErrors(INIT_ERRORS_VALUES);
-    setErrorDialogContent("");
+    setExpenseValues(INIT_EXPENSE_VALUES);
   };
 
   const handleEdit = () => {
@@ -60,13 +60,15 @@ const EditExpenseDialog = ({ selectedExpense, isEditDialogOpen, handleCloseEditD
 
     if (hasErrors) {
       setErrorDialogContent(`Vui lòng nhập ${errorContent.join(", ")}`);
-    } else {
-      handleCloseEditDialog();
-      updateFee(user.token, dispatch, expenseValues, selectedExpense.id);
+      return;
     }
+
+    // OK
+    handleCloseEditDialog();
+    updateExpense(user.token, dispatch, expenseValues);
   };
 
-  const handleFeeValueChange = field => value => {
+  const handleExpenseValueChange = field => value => {
     setExpenseValues(prevValue => ({ ...prevValue, [field]: value }));
   };
 
@@ -74,67 +76,79 @@ const EditExpenseDialog = ({ selectedExpense, isEditDialogOpen, handleCloseEditD
     setExpenseValues(INIT_EXPENSE_VALUES);
   }, [INIT_EXPENSE_VALUES]);
 
+  useEffect(() => {
+    const intValue = parseInt(expenseValues.feeId);
+    const matchingFee = allFee.find(fee => fee.id === intValue && fee.amount);
+    if (matchingFee) {
+      handleExpenseValueChange(FIELD_MAPPING[2].id)(matchingFee.amount);
+      setIsDisableAmount(true);
+    } else {
+      setIsDisableAmount(false);
+    }
+  }, [expenseValues.feeId]);
+
   return (
     <Dialog open={isEditDialogOpen} onClose={handleCloseEditDialog} fullWidth>
-      <DialogTitle>Chỉnh sửa khoản phí</DialogTitle>
+      <DialogTitle>Thêm khoản nộp</DialogTitle>
       <DialogContent>
         <DialogContentText>{errorDialogContent}</DialogContentText>
 
         <Stack spacing={2} mt={1}>
-          <TextField
-            required
-            error={errors.nameFee}
-            value={expenseValues.nameFee}
-            label={FIELD_MAPPING[1].label}
-            onChange={event => {
-              const value = event.target.value;
-              handleFeeValueChange("nameFee")(value);
-            }}
-          />
-
-          <Stack direction="row" spacing={2}>
-            <FormControl style={{ width: "40%" }}>
-              <InputLabel>{`${FIELD_MAPPING[2].label} *`}</InputLabel>
-              <Select
-                error={errors.type}
-                value={expenseValues.type}
-                label={`${FIELD_MAPPING[2].label} *`}
-                onChange={event => {
-                  const value = event.target.value;
-                  handleFeeValueChange("type")(value);
-                  if (!value) {
-                    handleFeeValueChange("amount")(0);
-                  } else {
-                    handleFeeValueChange("amount")("");
-                  }
-                }}
-                fullWidth
-              >
-                <MenuItem value={0}>Tự nguyện</MenuItem>
-                <MenuItem value={1}>Bắt buộc</MenuItem>
-              </Select>
-            </FormControl>
+          <Stack direction="row" spacing={1}>
+            <NumberTextField
+              disabled
+              fullWidth
+              error={errors[FIELD_MAPPING[0].id]}
+              label={FIELD_MAPPING[0].label}
+              value={expenseValues[FIELD_MAPPING[0].id]}
+            />
 
             <NumberTextField
+              disabled
               fullWidth
-              error={errors.amount}
-              disabled={!expenseValues.type}
-              label={FIELD_MAPPING[3].label}
-              value={formatAmount(expenseValues.amount)}
-              onChange={handleFeeValueChange("amount")}
+              error={errors[FIELD_MAPPING[1].id]}
+              label={FIELD_MAPPING[1].label}
+              value={expenseValues[FIELD_MAPPING[1].id]}
+            />
+          </Stack>
+
+          <Stack direction="row" spacing={1}>
+            <NumberTextField
+              fullWidth
+              error={errors[FIELD_MAPPING[2].id]}
+              disabled={isDisableAmount}
+              label={FIELD_MAPPING[2].label}
+              value={formatAmount(expenseValues[FIELD_MAPPING[2].id])}
+              onChange={handleExpenseValueChange(FIELD_MAPPING[2].id)}
               helperText={
-                expenseValues.type === 0
-                  ? `Phí Tự nguyện không được đặt ${FIELD_MAPPING[3].label}`
-                  : !expenseValues.type
-                  ? `Vui lòng nhập ${FIELD_MAPPING[2].label} trước`
-                  : expenseValues.amount
-                  ? convertToVietnameseWords(expenseValues.amount)
+                !expenseValues.feeId
+                  ? "Vui lòng nhập Mã khoản phí trước"
+                  : expenseValues[FIELD_MAPPING[2].id]
+                  ? convertToVietnameseWords(expenseValues[FIELD_MAPPING[2].id])
                   : ""
               }
               InputProps={{
                 startAdornment: <InputAdornment position="start">VND</InputAdornment>,
               }}
             />
+
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label={FIELD_MAPPING[3].label}
+                value={expenseValues[FIELD_MAPPING[3].id]}
+                onChange={value => {
+                  handleExpenseValueChange(FIELD_MAPPING[3].id)(value.$d);
+                }}
+                maxDate={TODAY}
+                minDate={START_OF_1900}
+                slotProps={{
+                  textField: {
+                    variant: "outlined",
+                    error: !!errors.date,
+                  },
+                }}
+              />
+            </LocalizationProvider>
           </Stack>
         </Stack>
       </DialogContent>
@@ -143,7 +157,7 @@ const EditExpenseDialog = ({ selectedExpense, isEditDialogOpen, handleCloseEditD
           Hủy bỏ
         </Button>
         <Button variant="contained" onClick={handleEdit}>
-          Chỉnh sửa
+          Thêm
         </Button>
       </DialogActions>
     </Dialog>
@@ -151,3 +165,6 @@ const EditExpenseDialog = ({ selectedExpense, isEditDialogOpen, handleCloseEditD
 };
 
 export default memo(EditExpenseDialog);
+
+const TODAY = dayjs();
+const START_OF_1900 = dayjs("1900-01-01T00:00:00.000");
