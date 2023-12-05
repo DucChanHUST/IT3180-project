@@ -35,11 +35,7 @@ const DataTable = ({ filteredFee, isAccountant, handleOpenEditDialog, handleOpen
           <TableHead>
             <TableRow>
               {(isAccountant ? FIELD_MAPPING : FIELD_MAPPING.slice(0, -1)).map(column => (
-                <TableCell
-                  key={column.id}
-                  align={column.align ? column.align : "center"}
-                  style={{ minWidth: column.minWidth }}
-                >
+                <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
                   {column.label}
                 </TableCell>
               ))}

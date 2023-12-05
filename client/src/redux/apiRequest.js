@@ -211,7 +211,7 @@ export const getAllResident = async (accessToken, dispatch) => {
     });
     dispatch(getResidentSuccess(response.data));
   } catch (error) {
-    dispatch(getResidentFailed());
+    dispatch(getResidentFailed(error));
   }
 };
 
@@ -378,7 +378,7 @@ export const getAllExpense = async (accessToken, dispatch) => {
 export const addExpense = async (accessToken, dispatch, expenseData) => {
   try {
     await axios.post(`http://localhost:3001/api/expense`, expenseData, {
-      headers: { Authorization: `bearer $(accessToken)` },
+      headers: { Authorization: `bearer ${accessToken}` },
     });
 
     getAllExpense(accessToken, dispatch);

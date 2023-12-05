@@ -60,8 +60,6 @@ const Fee = () => {
     handleFetchFee();
   }, []);
 
-  console.log(allFee);
-
   useEffect(() => {
     if (!user) return;
 
