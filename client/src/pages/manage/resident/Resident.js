@@ -63,6 +63,21 @@ const Resident = () => {
     } catch (error) {
       console.error(error);
     }
+
+    switch (user.userRole) {
+      case "resident":
+        setIsLeader(false);
+        await getRegistrationResident(user.token, dispatch, user.userId);
+        break;
+      case "accountant":
+        setIsLeader(false);
+        await getAllResident(user.token, dispatch);
+        break;
+      default:
+        setIsLeader(true);
+        await getAllResident(user.token, dispatch);
+        break;
+    }
   };
 
   useEffect(() => {
@@ -71,7 +86,7 @@ const Resident = () => {
 
   useEffect(() => {
     if (!user) return;
-    if (user.userRole === "leader") {
+    if (user.userRole === "leader" || user.userRole === "accountant") {
       const flattenedData = allResident.map(item => {
         const { id, idNumber, name, dob, gender, phoneNumber, registration, user, relationship } = item;
 

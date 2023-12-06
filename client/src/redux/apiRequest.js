@@ -348,11 +348,40 @@ export const getAllFee = async (accessToken, dispatch) => {
         const expenseResponse = await axios.get(`http://localhost:3001/api/expense/fee/${item.id}`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
-        // console.log(">>", expenseResponse);
         feeResponse.data[index].paid = expenseResponse.data.length;
+        feeResponse.data[index].total = expenseResponse.data.reduce((accumulator, currentValue) => {
+          return accumulator + currentValue.amount;
+        }, 0);
       }),
     );
 
+    dispatch(getAllFeeSuccess(feeResponse.data));
+  } catch (error) {
+    dispatch(feeFailed(error));
+  }
+};
+
+export const getRegistrationFee = async (accessToken, dispatch, registrationId) => {
+  try {
+    let feeResponse = await axios.get("http://localhost:3001/api/fee", {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    let registrationExpense = await axios.get(`http://localhost:3001/api/expense/registration/${registrationId}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    const feeData = feeResponse.data;
+    const registrationExpenseData = registrationExpense.data;
+
+    feeData.map((fee, index) => {
+      registrationExpenseData.forEach(expense => {
+        feeResponse.data[index].status = fee.id === expense.feeId ? "Đã nộp" : "Chưa nộp";
+      });
+    });
+
+    console.log("registrationExpense", registrationExpense);
+    console.log("feeResponse> ", feeResponse);
     dispatch(getAllFeeSuccess(feeResponse.data));
   } catch (error) {
     dispatch(feeFailed(error));

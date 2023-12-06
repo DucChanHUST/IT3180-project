@@ -50,7 +50,7 @@ expenseRouter.get('/registration/:registrationId', verifyResident, async (req, r
     res.json(expenses)
 })
 
-expenseRouter.get('/fee/:feeId',checkUserRole(['accountant']), async (req, res) => {
+expenseRouter.get('/fee/:feeId',checkUserRole(['accountant', 'leader']), async (req, res) => {
     const expenses = await Expense.findAll({
         where: {
             feeId: req.params.feeId
