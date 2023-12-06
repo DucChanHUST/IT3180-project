@@ -14,14 +14,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { INIT_ERRORS_VALUES, FIELD_MAPPING } from "./const";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { convertToVietnameseWords, formatAmount } from "../helper";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 const AddExpenseDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.login?.currentUser);
-  const allFee = useSelector(state => state.fee.allFee.map(fee => ({ id: fee.id, amount: fee.amount })));
-  const allRegistrationId = useSelector(state => state.registration.registrations.allRegistrations).map(
+  const allFee = useSelector(state => state.fee.allFee?.map(fee => ({ id: fee.id, amount: fee.amount })));
+  const allRegistrationId = useSelector(state => state.registration.registrations.allRegistrations)?.map(
     registration => registration.id,
   );
 

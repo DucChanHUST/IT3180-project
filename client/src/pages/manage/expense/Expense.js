@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useCallback, Fragment } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Grid, Button } from "@mui/material";
-import { SideBar, NavBar } from "../../../components";
-import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import SearchBar from "./SearchBar";
 import DataTable from "./DataTable";
 import AddExpenseDialog from "./AddExpenseDialog";
 import EditExpenseDialog from "./EditExpenseDialog";
 import DeleteExpenseDialog from "./DeleteExpenseDialog";
-import { getAllExpense } from "../../../redux/apiRequest";
 import { handleFormatDate } from "../helper";
+import { useNavigate } from "react-router-dom";
+import { Box, Grid, Button } from "@mui/material";
+import { SideBar, NavBar } from "../../../components";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllExpense, getRegistrationExpense } from "../../../redux/apiRequest";
 
 const Expense = () => {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const Expense = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const allExpense = useSelector(state => state.expense.allExpense);
 
+  const [expenseData, setExpenseData] = useState([]);
   const [isAccountant, setIsAccountant] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState({});
   const [filteredExpense, setFilteredExpense] = useState([]);
@@ -53,8 +55,24 @@ const Expense = () => {
       return;
     }
 
-    user.userRole === "accountant" ? setIsAccountant(true) : setIsAccountant(false);
-    await getAllExpense(user.token, dispatch);
+    switch (user.userRole) {
+      case "resident":
+        setIsAccountant(false);
+        const registrationResponse = await axios.get(`http://localhost:3001/api/users/${user.userId}`, {
+          headers: { Authorization: `bearer ${user.token}` },
+        });
+        const registrationId = registrationResponse.data.resident.registration.id;
+        await getRegistrationExpense(user.token, dispatch, registrationId);
+        break;
+      case "leader":
+        setIsAccountant(false);
+        await getAllExpense(user.token, dispatch);
+        break;
+      default:
+        setIsAccountant(true);
+        await getAllExpense(user.token, dispatch);
+        break;
+    }
   };
 
   useEffect(() => {
@@ -65,16 +83,16 @@ const Expense = () => {
     if (!user) return;
 
     const expenseData = allExpense.map(item => {
-      let { registrationId, feeId, amount, date} = item;
+      let { registrationId, feeId, amount, date } = item;
 
       date = handleFormatDate(date);
 
       return { registrationId, feeId, amount, date };
     });
 
+    setExpenseData(expenseData);
     setFilteredExpense(expenseData);
   }, [user, allExpense]);
-
 
   return (
     <>
@@ -85,7 +103,7 @@ const Expense = () => {
         <Grid container direction="column" sx={{ margin: 3, gap: 2 }}>
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item xs={9}>
-              <SearchBar />
+              <SearchBar expenseData={expenseData} setFilteredExpense={setFilteredExpense} />
             </Grid>
             {isAccountant ? (
               <Grid item>

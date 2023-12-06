@@ -408,6 +408,18 @@ export const getAllExpense = async (accessToken, dispatch) => {
   }
 };
 
+export const getRegistrationExpense = async (accessToken, dispatch, registrationId) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/api/expense/registration/${registrationId}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    dispatch(getAllExpenseSuccess(response.data));
+  } catch (error) {
+    dispatch(expenseFailed(error));
+  }
+};
+
 export const addExpense = async (accessToken, dispatch, expenseData) => {
   try {
     await axios.post(`http://localhost:3001/api/expense`, expenseData, {
