@@ -1,4 +1,4 @@
-const { Model, DataTypes } = require('sequelize')
+const { Model, DataTypes, INTEGER } = require('sequelize')
 
 const { sequelize } = require('../util/db')
 
@@ -22,6 +22,10 @@ User.init({
   role: {
     type: DataTypes.ENUM('leader', 'accountant', 'resident'),
     allowNull: false,
+  },
+  residentId: {
+    type: DataTypes.INTEGER,
+    unique: true,
   }
 }, {
   sequelize,
