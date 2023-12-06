@@ -14,8 +14,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import { FIELD_MAPPING } from "./const";
 import { formatAmount } from "../helper";
+import { useSelector } from "react-redux";
 
 const DataTable = ({ filteredFee, isAccountant, handleOpenEditDialog, handleOpenDeleteDialog }) => {
+  const user = useSelector(state => state.auth.login?.currentUser);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -34,11 +37,28 @@ const DataTable = ({ filteredFee, isAccountant, handleOpenEditDialog, handleOpen
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {(isAccountant ? FIELD_MAPPING : FIELD_MAPPING.slice(0, -1)).map(column => (
-                <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
-                  {column.label}
-                </TableCell>
-              ))}
+              {user.userRole === "resident" ? (
+                <>
+                  {FIELD_MAPPING.slice(0, -1).map((field, index) => {
+                    if (field.isResident) {
+                      return (
+                        <TableCell key={index} align={field.align}>
+                          {field.label}
+                        </TableCell>
+                      );
+                    }
+                    return null; // Skip non-resident fields
+                  })}
+                </>
+              ) : (
+                <>
+                  {FIELD_MAPPING.slice(0, -2).map((field, index) => (
+                    <TableCell key={index} align={field.align}>
+                      {field.label}
+                    </TableCell>
+                  ))}
+                </>
+              )}
             </TableRow>
           </TableHead>
 
@@ -46,17 +66,28 @@ const DataTable = ({ filteredFee, isAccountant, handleOpenEditDialog, handleOpen
             {filteredFee?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(fee => {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={fee.id}>
-                  <TableCell align={FIELD_MAPPING[0].align}>{fee[FIELD_MAPPING[0].id]}</TableCell>
-
-                  <TableCell align={FIELD_MAPPING[1].align}>{fee[FIELD_MAPPING[1].id]}</TableCell>
-
-                  <TableCell align={FIELD_MAPPING[2].align}>{fee[FIELD_MAPPING[2].id]}</TableCell>
-
-                  <TableCell align={FIELD_MAPPING[3].align}>{formatAmount(fee[FIELD_MAPPING[3].id])}</TableCell>
-
-                  <TableCell align={FIELD_MAPPING[4].align}>{fee[FIELD_MAPPING[4].id]}</TableCell>
-
-                  <TableCell align={FIELD_MAPPING[5].align}>{formatAmount(fee[FIELD_MAPPING[5].id])}</TableCell>
+                  {user.userRole === "resident" ? (
+                    <>
+                      {FIELD_MAPPING.slice(0, -1).map((field, index) => {
+                        if (field.isResident) {
+                          return (
+                            <TableCell key={index} align={field.align}>
+                              {index === 3 ? formatAmount(fee[field.id]) : fee[field.id]}
+                            </TableCell>
+                          );
+                        }
+                        return null; // Skip non-resident fields
+                      })}
+                    </>
+                  ) : (
+                    <>
+                      {FIELD_MAPPING.slice(0, -2).map((field, index) => (
+                        <TableCell key={index} align={field.align}>
+                          {index === 3 || index === 5 ? formatAmount(fee[field.id]) : fee[field.id]}
+                        </TableCell>
+                      ))}
+                    </>
+                  )}
 
                   {isAccountant ? (
                     <TableCell>
