@@ -21,7 +21,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { RelationshipConstant } from "../../../const";
 import { INIT_ERRORS_VALUES, FIELD_MAPPING } from "./const";
-import { handleFilterRelationship, handleConvertDateFormat } from "./helper";
+import { handleFilterRelationship, handleConvertDateFormat } from "../helper";
 import { updateResident } from "../../../redux/apiRequest";
 
 const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattenedResident, selectedResident }) => {
@@ -221,7 +221,7 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
           Hủy bỏ
         </Button>
         <Button variant="contained" onClick={handleEdit}>
-          Thay đổi
+          Chỉnh sửa
         </Button>
       </DialogActions>
     </Dialog>

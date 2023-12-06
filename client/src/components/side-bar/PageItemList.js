@@ -26,8 +26,8 @@ const PAGE_ITEM_LIST = [
     icon: <CreditCardRoundedIcon />,
   },
   {
-    name: "Đóng phí",
-    path: PathConstant.PAY_FEE,
+    name: "Khoản nộp",
+    path: PathConstant.EXPENSE,
     icon: <SavingsRoundedIcon />,
   },
   {

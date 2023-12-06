@@ -13,7 +13,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
-import { handleFormatDate } from "./helper";
+import { handleFormatDate } from "../helper";
 
 const RESIDENT_COLUMNS = [
   { id: "id", label: "ID", minWidth: 30 },

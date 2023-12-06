@@ -14,23 +14,23 @@ import {
   FormHelperText,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { NumberTextField, TextOnlyTextField } from "../../../components";
+import { handleFilterRelationship } from "../helper";
 import { RelationshipConstant } from "../../../const";
-import { addNewResident } from "../../../redux/apiRequest";
 import { useSelector, useDispatch } from "react-redux";
+import { addNewResident } from "../../../redux/apiRequest";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { INIT_ERRORS_VALUES, FIELD_MAPPING } from "./const";
-import { handleFilterRelationship } from "./helper";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { NumberTextField, TextOnlyTextField } from "../../../components";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedResident }) => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const dispatch = useDispatch();
 
-  const [residentValues, setResidentValues] = useState(INIT_RESIDENT_VALUES);
   const [errors, setErrors] = useState(INIT_ERRORS_VALUES);
   const [errorDialogContent, setErrorDialogContent] = useState("");
+  const [residentValues, setResidentValues] = useState(INIT_RESIDENT_VALUES);
   const [possibleRelationship, setPossibleRelationship] = useState(ALL_RESIDENT_ROLE);
 
   const handleCancelAdd = () => {
@@ -70,7 +70,8 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
     // `Nhân khẩu` mới phải có `Mã hộ` đã tồn tại
     const uniqueRegistrationIdsSet = new Set(flattenedResident.map(item => item.registrationId));
     const allRegistrationId = [...uniqueRegistrationIdsSet];
-    if (!allRegistrationId.includes(residentValues.registrationId)) {
+
+    if (!allRegistrationId.includes(parseInt(residentValues.registrationId))) {
       setErrorDialogContent(`Mã hộ "${residentValues.registrationId}" chưa tồn tại`);
       return;
     }
@@ -222,6 +223,8 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
   );
 };
 
+export default memo(AddResidentDialog);
+
 const TODAY = dayjs();
 const START_OF_1900 = dayjs("1900-01-01T00:00:00.000");
 
@@ -236,5 +239,3 @@ const INIT_RESIDENT_VALUES = {
 };
 
 const ALL_RESIDENT_ROLE = RelationshipConstant.RELATIONSHIP.map(item => item.role);
-
-export default memo(AddResidentDialog);

@@ -17,7 +17,6 @@ import "./Registration.css";
 const Registration = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const listRegistrations = useSelector(state => state.registration.registrations.allRegistrations);
-  console.log("listRegistrations", listRegistrations);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openForm, setOpenForm] = useState(false);
