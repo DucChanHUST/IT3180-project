@@ -56,7 +56,7 @@ const DataTable = ({ filteredFee, isAccountant, handleOpenEditDialog, handleOpen
 
                   <TableCell align={FIELD_MAPPING[4].align}>{fee[FIELD_MAPPING[4].id]}</TableCell>
 
-                  <TableCell align={FIELD_MAPPING[5].align}></TableCell>
+                  <TableCell align={FIELD_MAPPING[5].align}>{formatAmount(fee[FIELD_MAPPING[5].id])}</TableCell>
 
                   {isAccountant ? (
                     <TableCell>

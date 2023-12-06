@@ -348,8 +348,10 @@ export const getAllFee = async (accessToken, dispatch) => {
         const expenseResponse = await axios.get(`http://localhost:3001/api/expense/fee/${item.id}`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
-        // console.log(">>", expenseResponse);
         feeResponse.data[index].paid = expenseResponse.data.length;
+        feeResponse.data[index].total = expenseResponse.data.reduce((accumulator, currentValue) => {
+          return accumulator + currentValue.amount;
+        }, 0)
       }),
     );
 

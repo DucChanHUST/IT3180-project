@@ -64,11 +64,11 @@ const Fee = () => {
     if (!user) return;
 
     const feeData = allFee.map(item => {
-      let { id, nameFee, type, amount, paid} = item;
+      let { id, nameFee, type, amount, paid, total} = item;
 
       (type) ? (type = "Bắt buộc") : (type = "Tự nguyện");
 
-      return { id, nameFee, type, amount, paid};
+      return { id, nameFee, type, amount, paid, total};
     });
     
     setFeeData(feeData);
