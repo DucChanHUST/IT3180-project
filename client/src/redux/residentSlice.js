@@ -15,8 +15,9 @@ const residentSlice = createSlice({
       state.isLoading = false;
       state.allResident = action.payload;
     },
-    getResidentFailed: state => {
+    getResidentFailed: (state, action) => {
       state.isLoading = false;
+      console.log(action.payload);
     },
 
     addResidentStart: state => {

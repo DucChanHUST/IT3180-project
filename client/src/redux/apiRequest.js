@@ -10,6 +10,9 @@ import {
   addUserStart,
   addUserSuccess,
   addUserFailed,
+  changePasswordStart,
+  changePasswordSuccess,
+  changePasswordFailed,
 } from "./userSlice";
 import {
   getRegistrationsStart,
@@ -39,6 +42,8 @@ import {
   updateResidentSuccess,
   updateResidentFailed,
 } from "./residentSlice";
+import { getAllFeeSuccess, feeFailed } from "./feeSlice";
+import { getAllExpenseSuccess, expenseFailed } from "./expenseSlice";
 
 //Hàm đăng nhập -------------------------------------------------------------
 export const loginUser = async (user, dispatch, navigate) => {
@@ -53,18 +58,6 @@ export const loginUser = async (user, dispatch, navigate) => {
     alert("Lỗi khi đăng nhập");
   }
 };
-
-// Ham logout ------------------------------------------------------------------
-
-// export const logOut = async (dispatch, navigate, token, axiosJWT) => {
-//   dispatch(loginStart())
-
-//   try
-//   {
-//     await axiosJWT.post("")
-//   }
-// }
-// Hàm getuser ----------------------------------------------------------------
 
 export const getAllUsers = async (accessToken, dispatch) => {
   if (!accessToken) {
@@ -83,7 +76,27 @@ export const getAllUsers = async (accessToken, dispatch) => {
   }
 };
 
-//Hàm xóa user
+//Ham getUserID------------------------------------------------------------------------------------------------
+export const getUserID = async (accessToken, dispatch, id) => {
+  if (!accessToken) {
+    console.log("accessToken");
+    return;
+  }
+
+  dispatch(getUsersStart());
+  try {
+    const res = await axios.get(`http://localhost:3001/api/users/${id}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    // const array = [res.data.resident.registration];
+    dispatch(getUsersSuccess(res.data));
+  } catch (err) {
+    dispatch(getUsersFailed());
+    console.log(err);
+  }
+};
+
+//Hàm xóa user-------------------------------------------------------------------------------------------------------------
 export const deleteUser = async (accessToken, dispatch, id) => {
   dispatch(deleteUserStart());
 
@@ -99,7 +112,27 @@ export const deleteUser = async (accessToken, dispatch, id) => {
   }
 };
 
-// Hàm getAllRegistrations
+//Hàm đổi password-----------------------------------------------------------------------------------------
+export const changePassword = async (accessToken, dispatch, data, id) => {
+  dispatch(changePasswordStart());
+
+  try {
+    const res = await axios.put(`http://localhost:3001/api/users/${id}`, data, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (res.data.success) {
+      console.log(res.data);
+      alert("Đổi mật khẩu thành công");
+      dispatch(changePasswordSuccess(res.data));
+    }
+  } catch (err) {
+    alert("Có lỗi xảy ra, hãy thử nhập lại");
+    dispatch(changePasswordFailed("An error occurred while changing password"));
+  }
+};
+
+// Hàm getAllRegistrations------------------------------------------------------------------------------------------
 export const getAllRegistrations = async (accessToken, dispatch) => {
   if (!accessToken) {
     // Handle the case when 'token' is missing or null
@@ -149,7 +182,6 @@ export const getRegistrationID = async (accessToken, dispatch, id) => {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     // const array = [res.data.resident.registration];
-    console.log([res.data.resident.registration]);
     dispatch(getRegistrationsSuccess([res.data.resident.registration]));
   } catch (err) {
     dispatch(getRegistrationsFailed());
@@ -210,7 +242,7 @@ export const getAllResident = async (accessToken, dispatch) => {
     });
     dispatch(getResidentSuccess(response.data));
   } catch (error) {
-    dispatch(getResidentFailed());
+    dispatch(getResidentFailed(error));
   }
 };
 
@@ -222,7 +254,7 @@ export const getRegistrationResident = async (accessToken, dispatch, userId) => 
     });
     dispatch(getResidentSuccess(response.data.resident.registration.residents));
   } catch (error) {
-    dispatch(getResidentFailed());
+    dispatch(getResidentFailed(error));
   }
 };
 
@@ -301,5 +333,141 @@ export const updateResident = async (accessToken, dispatch, data, id) => {
     getAllResident(accessToken, dispatch);
   } catch (error) {
     dispatch(updateResidentFailed(error.response.data.error.errors[0]));
+  }
+};
+
+// Fee
+export const getAllFee = async (accessToken, dispatch) => {
+  try {
+    let feeResponse = await axios.get("http://localhost:3001/api/fee", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    await Promise.all(
+      feeResponse.data?.map(async (item, index) => {
+        const expenseResponse = await axios.get(`http://localhost:3001/api/expense/fee/${item.id}`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        // console.log(">>", expenseResponse);
+        feeResponse.data[index].paid = expenseResponse.data.length;
+      }),
+    );
+
+    dispatch(getAllFeeSuccess(feeResponse.data));
+  } catch (error) {
+    dispatch(feeFailed(error));
+  }
+};
+
+export const addFee = async (accessToken, dispatch, feeData) => {
+  try {
+    await axios.post("http://localhost:3001/api/fee", feeData, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+    getAllFee(accessToken, dispatch);
+  } catch (error) {
+    dispatch(feeFailed(error));
+  }
+};
+
+export const deleteFee = async (accessToken, dispatch, feeId) => {
+  try {
+    await axios.delete(`http://localhost:3001/api/fee/${feeId}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    // TODO: Delete all expense ...
+    getAllFee(accessToken, dispatch);
+  } catch (error) {
+    dispatch(feeFailed(error));
+  }
+};
+
+export const updateFee = async (accessToken, dispatch, feeData, feeId) => {
+  try {
+    await axios.put(`http://localhost:3001/api/fee/${feeId}`, feeData, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    getAllFee(accessToken, dispatch);
+  } catch (error) {
+    dispatch(feeFailed(error));
+  }
+};
+
+// Expense
+export const getAllExpense = async (accessToken, dispatch) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/api/expense`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    dispatch(getAllExpenseSuccess(response.data));
+  } catch (error) {
+    dispatch(expenseFailed(error));
+  }
+};
+
+export const getRegistrationExpense = async (accessToken, dispatch, registrationId) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/api/expense/registration/${registrationId}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    dispatch(getAllExpenseSuccess(response.data));
+  } catch (error) {
+    dispatch(expenseFailed(error));
+  }
+};
+
+export const addExpense = async (accessToken, dispatch, expenseData) => {
+  try {
+    await axios.post(`http://localhost:3001/api/expense`, expenseData, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    getAllExpense(accessToken, dispatch);
+  } catch (error) {
+    dispatch(expenseFailed(error));
+  }
+};
+
+export const deleteExpense = async (accessToken, dispatch, expense) => {
+  try {
+    await axios.delete(`http://localhost:3001/api/expense/`, {
+      data: {
+        registrationId: expense.registrationId,
+        feeId: expense.feeId,
+      },
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    getAllExpense(accessToken, dispatch);
+  } catch (error) {
+    dispatch(expenseFailed(error));
+  }
+};
+
+export const updateExpense = async (accessToken, dispatch, expenseData) => {
+  try {
+    await axios.put(`http://localhost:3001/api/expense`, expenseData, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    getAllExpense(accessToken, dispatch);
+  } catch (error) {
+    dispatch(expenseFailed(error));
+  }
+};
+
+export const getExpenseByRegistrationId = async (accessToken, dispatch, registrationId) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/api/expense/registration/${registrationId}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    dispatch(getAllExpenseSuccess(response.data));
+  } catch (error) {
+    dispatch(expenseFailed());
   }
 };
