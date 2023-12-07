@@ -19,34 +19,33 @@ import { useSelector } from "react-redux";
 Chart.register(BarController, CategoryScale, LinearScale, BarElement);
 
 const BarChart = () => {
-  const [selectedMonth, setSelectedMonth] = useState(dayjs());
+  const [selectedYear, setSelectedYear] = useState(dayjs().year());
   const [barChartData, setBarChartData] = useState({ labels: [], values: [] });
   const expenseData = useSelector(state => state.expense.allExpense);
-  const handleMonthChange = (date) => {
-    setSelectedMonth(date);
+  
+  const handleYearChange = (date) => {
+    setSelectedYear(date.year());
   };
 
   const handleGenerateChart = () => {
-    // Filter the expense data for the selected month
+    // Filter the expense data for the selected year
     const filteredData = expenseData.filter(
       (expense) =>
-        dayjs(expense.date).format("YYYY-MM") ===
-        selectedMonth.format("YYYY-MM")
+        dayjs(expense.date).year() === selectedYear
     );
 
-    // Process the filtered data to get totals per household
-    const householdTotals = {};
-    filteredData.forEach((expense) => {
-      if (householdTotals[expense.registrationId]) {
-        householdTotals[expense.registrationId] += expense.amount;
-      } else {
-        householdTotals[expense.registrationId] = expense.amount;
-      }
+    // Process the filtered data to get totals per month
+    const monthlyTotals = Array.from({ length: 12 }, (_, monthIndex) => {
+      const monthExpenses = filteredData.filter(
+        (expense) => dayjs(expense.date).month() === monthIndex
+      );
+
+      return monthExpenses.reduce((total, expense) => total + expense.amount, 0);
     });
 
-    // Convert the totals object to labels and values arrays for the chart
-    const labels = Object.keys(householdTotals);
-    const values = Object.values(householdTotals);
+    // Convert the totals array to labels and values arrays for the chart
+    const labels = Array.from({ length: 12 }, (_, index) => (index + 1).toString());
+    const values = monthlyTotals;
 
     setBarChartData({ labels, values });
 
@@ -79,7 +78,7 @@ const BarChart = () => {
           x: {
             title: {
               display: true,
-              text: "Mã hộ",
+              text: "Tháng",
             },
           },
           y: {
@@ -91,7 +90,7 @@ const BarChart = () => {
         },
         title: {
           display: true,
-          text: `Thống kê số tiền đã nộp tháng ${selectedMonth.format("MMMM YYYY")}`,
+          text: `Thống kê số tiền đã nộp năm ${selectedYear}`,
           fontSize: 20,
         },
         legend: {
@@ -109,21 +108,21 @@ const BarChart = () => {
 
   useEffect(() => {
     handleGenerateChart();
-  }, [expenseData, selectedMonth]);
+  }, [expenseData, selectedYear]);
 
   return (
     <Container>
       <Card>
         <CardHeader
-          title={`Số tiền đã nộp tháng ${selectedMonth.format("MM/YYYY")}`}
+          title={`Số tiền đã nộp năm ${selectedYear}`}
         />
         <CardContent>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              label="Chọn tháng"
-              views={["year", "month"]}
-              value={selectedMonth}
-              onChange={handleMonthChange}
+              label="Chọn năm"
+              views={["year"]}
+              value={dayjs(selectedYear.toString())}
+              onChange={handleYearChange}
               renderInput={(params) => (
                 <TextField {...params} variant="standard" fullWidth />
               )}
