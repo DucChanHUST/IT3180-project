@@ -1,4 +1,4 @@
-export const ROOT = "/";
+export const HOMEPAGE = "/home-page";
 
 // Login
 export const LOGIN = "/login";
@@ -10,3 +10,6 @@ export const FEE = "/fee";
 export const EXPENSE = "/expense";
 export const STATISTIC = "/statistic";
 export const SETTING = "/setting";
+
+// Profile
+export const PROFILE = "/profile";
