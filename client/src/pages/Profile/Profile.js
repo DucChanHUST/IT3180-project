@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Box } from "@mui/material";
+import { PathConstant } from "../../const";
+import { useNavigate } from "react-router-dom";
 import { SideBar, NavBar } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
-import "./profile.css";
 import { changePassword, getUserID } from "../../redux/apiRequest";
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
+import "./profile.css";
 const Profile = () => {
   const User = useSelector(state => state.auth.login?.currentUser);
   const selectCurrentUser = useSelector(state => state.user.users.allUsers);
@@ -26,7 +26,7 @@ const Profile = () => {
         }
 
         if (resetPage) {
-          navigate("/myprofile");
+          navigate(PathConstant.PROFILE);
         }
       } catch (error) {
         console.error(error);

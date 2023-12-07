@@ -44,6 +44,7 @@ import {
 } from "./residentSlice";
 import { getAllFeeSuccess, feeFailed } from "./feeSlice";
 import { getAllExpenseSuccess, expenseFailed } from "./expenseSlice";
+import { PathConstant } from "../const";
 
 //Hàm đăng nhập -------------------------------------------------------------
 export const loginUser = async (user, dispatch, navigate) => {
@@ -51,7 +52,7 @@ export const loginUser = async (user, dispatch, navigate) => {
   try {
     const res = await axios.post("http://localhost:3001/api/login", user);
     dispatch(loginSuccess(res.data));
-    navigate("/");
+    navigate(PathConstant.HOMEPAGE);
   } catch (error) {
     dispatch(loginFailed());
     console.error("Lỗi khi gửi yêu cầu đăng nhập:", error);
