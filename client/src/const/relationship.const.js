@@ -36,5 +36,4 @@ export const RELATIONSHIP = [
   { role: "Cùng ở nhờ" },
   { role: "Cùng ở thuê" },
   { role: "Cùng ở mượn" },
-  // { undefined }
 ];

@@ -7,15 +7,12 @@ import MuiAppBar from "@mui/material/AppBar";
 import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import { useSelector } from "react-redux";
 import { useAppStore } from "../../stores";
 import { PathConstant } from "../../const";
 import { styled } from "@mui/material/styles";
 import { NavLink, useNavigate } from "react-router-dom";
 
-// Cấu hình
 const AppBar = styled(
   MuiAppBar,
   {},
@@ -23,7 +20,6 @@ const AppBar = styled(
   zIndex: theme.zIndex.drawer + 1,
 }));
 
-///Hàm chính
 const NavBar = () => {
   const navigate = useNavigate();
   const dopen = useAppStore(state => state.dopen);
