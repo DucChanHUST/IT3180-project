@@ -9,16 +9,6 @@ const expect = chai.expect;
 
 describe('Resident API', () => {
 
-    //Truncate - xóa toàn bộ dữ liệu trong bảng, id bắt đầu lại từ 1
-    // Nếu không dùng truncate -> dùng after để xóa dữ liệu đã thêm vào trong quá trình test -> tránh lỗi not unique khi chạy lại
-    // before(async () => {
-    //     try {
-    //         await sequelize.query('TRUNCATE TABLE "residents" RESTART IDENTITY CASCADE;');
-    //     } catch (error) {
-    //         console.error('Error truncating tables:', error);
-    //     }
-    // });
-
     //Create resident for testing
     let testId;
     let testRegId;
@@ -28,13 +18,13 @@ describe('Resident API', () => {
         });
         testRegId = testReg.id;
         const testRes = await Resident.create({
-            idNumber: "1234",
+            idNumber: "0343008910",
             name: "Nguyen Mai Phuong",
             dob: new Date(Date.UTC(2023, 11, 23)),
             phoneNumber: "0974223591",
-            relationship: "child",
+            relationship: "Con đẻ",
             registrationId: testRegId,
-            gender: "female"
+            gender: "Nữ"
         });
         testId = testRes.id;
     })
@@ -43,7 +33,7 @@ describe('Resident API', () => {
         // Delete registration inserted in POST
         await Resident.destroy({
             where: {
-                idNumber: '1236'
+                idNumber: '0343008911'
             }
         });
         await Registration.destroy({
@@ -94,13 +84,13 @@ describe('Resident API', () => {
     describe('/POST resident', () => {
         it('should POST a resident', async () => {
             let resident = {
-                idNumber: "1236",
+                idNumber: "0343008911",
                 name: "Nguyen Mai Phuong",
                 dob: new Date(Date.UTC(2023, 11, 23)),
                 phoneNumber: "0974223591",
-                relationship: "child",
+                relationship: "Chủ hộ",
                 registrationId: testRegId,
-                gender: "female"
+                gender: "Nữ"
             };
             const res = await chai.request(app)
                 .post('/api/resident/add')
@@ -118,8 +108,8 @@ describe('Resident API', () => {
             let resident = {
                 dob: new Date(Date.UTC(2023, 11, 23)),
                 phoneNumber: "0974223591",
-                relationship: "child",
-                gender: "female"
+                relationship: "Con đẻ",
+                gender: "Nữ"
             };
             const res = await chai.request(app)
                 .post('/api/resident/add')
