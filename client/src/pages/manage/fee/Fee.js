@@ -6,6 +6,7 @@ import AddFeeDialog from "./AddFeeDialog";
 import EditFeeDialog from "./EditFeeDialog";
 import DeleteFeeDialog from "./DeleteFeeDialog";
 import { useNavigate } from "react-router-dom";
+import { PathConstant } from "../../../const";
 import { Box, Grid, Button } from "@mui/material";
 import { SideBar, NavBar } from "../../../components";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,7 +51,7 @@ const Fee = () => {
 
   const handleFetchFee = async () => {
     if (!user) {
-      navigate("/Login");
+      navigate(PathConstant.LOGIN);
       return;
     }
 

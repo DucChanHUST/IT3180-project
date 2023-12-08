@@ -123,7 +123,6 @@ export const changePassword = async (accessToken, dispatch, data, id) => {
     });
 
     if (res.data.success) {
-      console.log(res.data);
       alert("Đổi mật khẩu thành công");
       dispatch(changePasswordSuccess(res.data));
     }
@@ -145,7 +144,6 @@ export const getAllRegistrations = async (accessToken, dispatch) => {
     const res = await axios.get("http://localhost:3001/api/registration", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    console.log(res.data);
     dispatch(getRegistrationsSuccess(res.data));
   } catch (err) {
     dispatch(getRegistrationsFailed());
@@ -161,10 +159,10 @@ export const deleteRegistration = async (accessToken, dispatch, id) => {
       headers: { Authorization: `bearer ${accessToken}` },
     });
 
+    getAllRegistrations(accessToken, dispatch);
     dispatch(deleteRegistrationSuccess(id)); // Send the ID of the deleted registration
   } catch (err) {
     dispatch(deleteRegistrationFailed());
-    alert("Deleting failed");
     console.log(err);
   }
 };
@@ -182,7 +180,7 @@ export const getRegistrationID = async (accessToken, dispatch, id) => {
     const res = await axios.get(`http://localhost:3001/api/users/${id}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    // const array = [res.data.resident.registration];
+    
     dispatch(getRegistrationsSuccess([res.data.resident.registration]));
   } catch (err) {
     dispatch(getRegistrationsFailed());
@@ -200,17 +198,8 @@ export const addNewRegistration = async (accessToken, dispatch, data) => {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    if (res.data.success) {
-      dispatch(addRegistrationsSuccess(res.data));
-    } else {
-      if (res.data.message === "Duplicate Identity Card Number") {
-        dispatch(addRegistrationsFailed("This Identity Card Number already exists."));
-      } else if (res.data.message === "Duplicate Address") {
-        dispatch(addRegistrationsFailed("This Address already exists."));
-      } else {
-        dispatch(addRegistrationsFailed("An error occurred while creating the registration."));
-      }
-    }
+    dispatch(addRegistrationsSuccess(res.data));
+    getAllRegistrations(accessToken, dispatch);
   } catch (err) {
     dispatch(addRegistrationsFailed("An error occurred while creating the registration."));
   }
@@ -219,15 +208,13 @@ export const addNewRegistration = async (accessToken, dispatch, data) => {
 //Hàm updateRegistration
 export const updateRegistration = async (accessToken, dispatch, data, id) => {
   dispatch(updateRegistrationsStart());
-
   try {
     const res = await axios.put(`http://localhost:3001/api/registration/update/${id}`, data, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    if (res.data.success) {
-      dispatch(updateRegistrationsSuccess(res.data));
-    }
+    dispatch(updateRegistrationsSuccess(res.data));
+    getAllRegistrations(accessToken, dispatch);
   } catch (err) {
     dispatch(updateRegistrationsFailed("An error occurred while updating the registration."));
   }

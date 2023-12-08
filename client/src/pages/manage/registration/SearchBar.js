@@ -3,7 +3,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { FIELD_MAPPING } from "./const";
 import { FormControl, MenuItem, Select, Stack, TextField, InputAdornment } from "@mui/material";
 
-const SearchBar = ({ expenseData, setFilteredExpense }) => {
+const SearchBar = ({ registrationData, setFilteredRegistration }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("all");
 
@@ -11,18 +11,18 @@ const SearchBar = ({ expenseData, setFilteredExpense }) => {
     const category = event.target.value;
     setSearchCategory(category);
 
-    filterFee(searchTerm, category);
+    filterRegistration(searchTerm, category);
   };
 
   const handleSearchChange = event => {
     const term = event.target.value;
     setSearchTerm(term);
 
-    filterFee(term, searchCategory);
+    filterRegistration(term, searchCategory);
   };
 
-  const filterFee = (term, searchCategory) => {
-    const filteredExpense = expenseData.filter(item => {
+  const filterRegistration = (term, searchCategory) => {
+    const filteredRegistration = registrationData.filter(item => {
       const value = item[searchCategory];
 
       if (searchCategory === "all") {
@@ -32,7 +32,7 @@ const SearchBar = ({ expenseData, setFilteredExpense }) => {
       }
     });
 
-    setFilteredExpense(filteredExpense);
+    setFilteredRegistration(filteredRegistration);
   };
 
   return (
