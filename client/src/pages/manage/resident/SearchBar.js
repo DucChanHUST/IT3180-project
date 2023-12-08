@@ -23,16 +23,12 @@ const SearchBar = ({ flattenedResident, setFilteredResident }) => {
 
   const filterResident = (term, searchCategory) => {
     const filteredResident = flattenedResident.filter(item => {
-      if (!item || item === 0) {
-        return false;
-      }
-
       const value = item[searchCategory];
 
       if (searchCategory === "all") {
         return Object.values(item).some(val => val && val.toString().toLowerCase().includes(term.toLowerCase()));
       } else {
-        return value && value.toString().toLowerCase().includes(term.toLowerCase());
+        return value.toString().toLowerCase().includes(term.toLowerCase());
       }
     });
 

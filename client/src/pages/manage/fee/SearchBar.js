@@ -23,16 +23,12 @@ const SearchBar = ({ feeData, setFilteredFee }) => {
 
   const filterFee = (term, searchCategory) => {
     const filteredFee = feeData.filter(item => {
-      if (!item || item === 0) {
-        return false;
-      }
-
       const value = item[searchCategory];
 
       if (searchCategory === "all") {
         return Object.values(item).some(val => val && val.toString().toLowerCase().includes(term.toLowerCase()));
       } else {
-        return value && value.toString().toLowerCase().includes(term.toLowerCase());
+        return value.toString().toLowerCase().includes(term.toLowerCase());
       }
     });
 

@@ -23,16 +23,12 @@ const SearchBar = ({ registrationData, setFilteredRegistration }) => {
 
   const filterRegistration = (term, searchCategory) => {
     const filteredRegistration = registrationData.filter(item => {
-      if (!item || item === 0) {
-        return false;
-      }
-
       const value = item[searchCategory];
 
       if (searchCategory === "all") {
         return Object.values(item).some(val => val && val.toString().includes(term.toLowerCase()));
       } else {
-        return value && value.toString().toLowerCase().includes(term.toLowerCase());
+        return value.toString().toLowerCase().includes(term.toLowerCase());
       }
     });
 
