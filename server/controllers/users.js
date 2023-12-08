@@ -7,7 +7,7 @@ const { verifyUser } = require('../util/verifyUser');
 
 usersRouter.use(tokenExtractor);
 
-usersRouter.get('/',checkUserRole(['leader', 'accountant']), async (req, res) => {
+usersRouter.get('/', checkUserRole(['leader', 'accountant']), async (req, res) => {
   const users = await User.findAll({
     attributes: { exclude: ['passwordHash', 'residentId'] },
     include: {
@@ -17,7 +17,7 @@ usersRouter.get('/',checkUserRole(['leader', 'accountant']), async (req, res) =>
   res.json(users)
 })
 
-usersRouter.post('/',checkUserRole(['leader']), async (req, res) => {
+usersRouter.post('/', checkUserRole(['leader']), async (req, res) => {
   const { username, password, role, residentId } = req.body;
   try {
     const saltRounds = 10;
@@ -36,7 +36,7 @@ usersRouter.post('/',checkUserRole(['leader']), async (req, res) => {
   }
 });
 
-usersRouter.put('/:id',verifyUser, async (req, res) => {
+usersRouter.put('/:id', verifyUser, async (req, res) => {
   const { password, newPassword } = req.body;
   try {
     const user = await User.findByPk(req.params.id);
@@ -106,6 +106,23 @@ usersRouter.delete('/:id', checkUserRole(['leader']), async (req, res) => {
     res.status(202).json("Delete successfully")
   } catch (error) {
     return res.status(400).json({ error });
+  }
+});
+
+usersRouter.post('/isCorrectPassword/:id', verifyUser, async (req, res) => {
+  const password = req.body.password;
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (password) {
+      const passwordMatch = await bcrypt.compare(password, user.passwordHash);
+      if (!passwordMatch) {
+        return res.status(200).json(0);
+      } else {
+        return res.status(200).json(1);
+      }
+    }
+  } catch (error) {
+    res.status(400).json({ error });
   }
 });
 
