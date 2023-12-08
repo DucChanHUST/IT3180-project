@@ -6,6 +6,7 @@ import AddExpenseDialog from "./AddExpenseDialog";
 import EditExpenseDialog from "./EditExpenseDialog";
 import DeleteExpenseDialog from "./DeleteExpenseDialog";
 import { handleFormatDate } from "../helper";
+import { PathConstant } from "../../../const";
 import { useNavigate } from "react-router-dom";
 import { Box, Grid, Button } from "@mui/material";
 import { SideBar, NavBar } from "../../../components";
@@ -51,7 +52,7 @@ const Expense = () => {
 
   const handleFetchExpense = async () => {
     if (!user) {
-      navigate("/Login");
+      navigate(PathConstant.LOGIN);
       return;
     }
 
@@ -80,7 +81,9 @@ const Expense = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      navigate(PathConstant.LOGIN)
+    }
 
     const expenseData = allExpense.map(item => {
       let { registrationId, feeId, amount, date } = item;

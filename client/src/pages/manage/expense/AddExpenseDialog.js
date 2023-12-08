@@ -21,7 +21,7 @@ const AddExpenseDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.login?.currentUser);
   const allFee = useSelector(state => state.fee.allFee?.map(fee => ({ id: fee.id, amount: fee.amount })));
-  const allRegistrationId = useSelector(state => state.registration.registrations.allRegistrations)?.map(
+  const allRegistrationId = useSelector(state => state.registration.allRegistration)?.map(
     registration => registration.id,
   );
 

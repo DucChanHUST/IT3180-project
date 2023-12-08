@@ -1,12 +1,12 @@
 import React, { memo } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 import { Stack, Typography } from "@mui/material";
-import { deleteResident, updateResident } from "../../../redux/apiRequest";
 import { useSelector, useDispatch } from "react-redux";
+import { deleteResident, updateResident } from "../../../redux/apiRequest";
 
 const DeleteResidentDialog = ({ isDeleteDialogOpen, handleCloseDeleteDialog, selectedResident }) => {
   const dispatch = useDispatch();

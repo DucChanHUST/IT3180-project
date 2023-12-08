@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useCallback, Fragment } from "react";
-import { SideBar, NavBar } from "../../../components";
-import { getAllResident, getRegistrationResident } from "../../../redux/apiRequest";
-import { useDispatch, useSelector } from "react-redux";
+import DataTable from "./DataTable";
+import SearchBar from "./SearchBar";
+import AddResidentDialog from "./AddResidentDialog";
+import EditResidentDialog from "./EditResidentDialog";
+import DeleteResidentDialog from "./DeleteResidentDialog";
+import { PathConstant } from "../../../const";
 import { useNavigate } from "react-router-dom";
 import { Button, Box, Grid } from "@mui/material";
-import DataTable from "./DataTable";
-import EditResidentDialog from "./EditResidentDialog";
-import AddResidentDialog from "./AddResidentDialog";
-import DeleteResidentDialog from "./DeleteResidentDialog";
-import SearchBar from "./SearchBar";
+import { SideBar, NavBar } from "../../../components";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllResident, getRegistrationResident } from "../../../redux/apiRequest";
 
 const Resident = () => {
   const dispatch = useDispatch();
@@ -49,7 +50,7 @@ const Resident = () => {
 
   const handleFetchResident = async () => {
     if (!user) {
-      navigate("/Login");
+      navigate(PathConstant.LOGIN);
       return;
     }
     try {

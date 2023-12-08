@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { FormControl, MenuItem, Select, Stack, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { FIELD_MAPPING } from "./const";
+import { FormControl, MenuItem, Select, Stack, TextField, InputAdornment } from "@mui/material";
 
 const SearchBar = ({ flattenedResident, setFilteredResident }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,7 +23,7 @@ const SearchBar = ({ flattenedResident, setFilteredResident }) => {
 
   const filterResident = (term, searchCategory) => {
     const filteredResident = flattenedResident.filter(item => {
-      if (!item) {
+      if (!item || item === 0) {
         return false;
       }
 
