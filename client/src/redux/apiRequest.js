@@ -132,6 +132,23 @@ export const changePassword = async (accessToken, dispatch, data, id) => {
   }
 };
 
+// Check Password
+export const checkPassword = async (accessToken, userId, inputPassword) => {
+  try {
+    const checkPasswordResponse = await axios.post(
+      `http://localhost:3001/api/users/isCorrectPassword/${userId}`,
+      { password: inputPassword },
+      {
+        headers: { Authorization: `bearer ${accessToken}` },
+      },
+    );
+
+    return checkPasswordResponse;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // Hàm getAllRegistrations------------------------------------------------------------------------------------------
 export const getAllRegistrations = async (accessToken, dispatch) => {
   if (!accessToken) {
@@ -180,7 +197,7 @@ export const getRegistrationID = async (accessToken, dispatch, id) => {
     const res = await axios.get(`http://localhost:3001/api/users/${id}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    
+
     dispatch(getRegistrationsSuccess([res.data.resident.registration]));
   } catch (err) {
     dispatch(getRegistrationsFailed());
