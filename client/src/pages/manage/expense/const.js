@@ -1,6 +1,6 @@
 export const FIELD_MAPPING = [
   { id: "registrationId", label: "Mã hộ nộp", minWidth: 30, align: "center" },
-  { id: "feeId", label: "ID khoản phí", minWidth: 20, align: "center" },
+  { id: "feeId", label: "Mã khoản phí", minWidth: 20, align: "center" },
   { id: "amount", label: "Số tiền nộp", minWidth: 80, align: "center" },
   { id: "date", label: "Ngày nộp", minWidth: 70, align: "center" },
   { id: "action", label: "Thao tác", minWidth: 70, align: "center" },

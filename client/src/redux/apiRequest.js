@@ -89,6 +89,7 @@ export const getUserID = async (accessToken, dispatch, id) => {
     const res = await axios.get(`http://localhost:3001/api/users/${id}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
+    console.log(res.data);
     // const array = [res.data.resident.registration];
     dispatch(getUsersSuccess(res.data));
   } catch (err) {
@@ -178,6 +179,21 @@ export const deleteRegistration = async (accessToken, dispatch, id) => {
 
     getAllRegistrations(accessToken, dispatch);
     dispatch(deleteRegistrationSuccess(id)); // Send the ID of the deleted registration
+
+    // Delete all resident in registration
+    const registrationResponse = await axios.get(`http://localhost:3001/api/registration/${id}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+    const residents = await registrationResponse.data.residents;
+
+    residents.forEach(async resident => {
+      const residentResponse = await axios.get(`http://localhost:3001/api/resident/${resident.id}`, {
+        headers: { Authorization: `bearer ${accessToken}` },
+      });
+
+      const selectedResident = {id: residentResponse.data.id, userId: residentResponse.data.user?.id};
+      deleteResident(accessToken, dispatch, selectedResident);
+    });
   } catch (err) {
     dispatch(deleteRegistrationFailed());
     console.log(err);

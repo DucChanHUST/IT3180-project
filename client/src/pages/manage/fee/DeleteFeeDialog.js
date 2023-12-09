@@ -26,6 +26,7 @@ const DeleteFeeDialog = ({ selectedFee, isDeleteDialogOpen, handleCloseDeleteDia
       <DialogTitle>Xóa khoản phí</DialogTitle>
       <DialogContent>
         <Stack spacing={2} mt={1}>
+          <Typography>Xóa khoản phí sẽ xóa luôn tất cả các khoản thu thuộc khoản phí này</Typography>
           <Typography>Bạn có chắc chắn rằng bạn muốn xóa khoản phí này chứ</Typography>
         </Stack>
       </DialogContent>

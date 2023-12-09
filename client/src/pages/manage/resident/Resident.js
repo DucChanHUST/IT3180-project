@@ -4,6 +4,7 @@ import SearchBar from "./SearchBar";
 import AddResidentDialog from "./AddResidentDialog";
 import EditResidentDialog from "./EditResidentDialog";
 import DeleteResidentDialog from "./DeleteResidentDialog";
+import { handleFormatDate } from "../helper";
 import { PathConstant } from "../../../const";
 import { useNavigate } from "react-router-dom";
 import { Button, Box, Grid } from "@mui/material";
@@ -78,10 +79,11 @@ const Resident = () => {
     if (!user) return;
     if (user.userRole === "leader" || user.userRole === "accountant") {
       const flattenedData = allResident.map(item => {
-        const { id, idNumber, name, dob, gender, phoneNumber, registration, user, relationship } = item;
+        let { id, idNumber, name, dob, gender, phoneNumber, registration, user, relationship } = item;
 
         const registrationId = registration ? registration.id : null;
         const userId = user ? user.id : null;
+        dob = handleFormatDate(dob);
 
         return {
           id,
