@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Paper, Typography, Grid } from "@mui/material";
 import { SideBar, NavBar } from "../../../components";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import BarChart from "./Barchart";
 import PieChart from "./Piechart";
 
@@ -14,11 +14,11 @@ const Statistic = () => {
   return (
     <>
       <NavBar />
-      <Box height={25} />
+      <Box height={64} />
       <Box sx={{ display: "flex" }}>
         <SideBar />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <h1>Thống kê</h1>
+          {/* <h1>Thống kê</h1> */}
 
           <Grid container spacing={2}>
             {/* Hộp tổng số hộ */}

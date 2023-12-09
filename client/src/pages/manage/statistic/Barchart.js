@@ -4,16 +4,14 @@ import {
   Card,
   CardHeader,
   CardContent,
-  FormControl,
   TextField,
-  Button,
 } from "@mui/material";
-import { Chart, BarController, CategoryScale, LinearScale, BarElement } from "chart.js";
+import { useSelector } from "react-redux";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { Chart, BarController, CategoryScale, LinearScale, BarElement } from "chart.js";
 import dayjs from "dayjs";
-import { useSelector } from "react-redux";
 
 // Register the necessary components with Chart.js
 Chart.register(BarController, CategoryScale, LinearScale, BarElement);
