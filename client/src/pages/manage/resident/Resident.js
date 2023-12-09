@@ -18,13 +18,13 @@ const Resident = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const allResident = useSelector(state => state.resident.allResident);
 
+  const [isLeader, setIsLeader] = useState(false);
   const [selectedResident, setSelectedResident] = useState({});
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [filteredResident, setFilteredResident] = useState([]);
   const [flattenedResident, setFlattenedResident] = useState([]);
-  const [isLeader, setIsLeader] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleOpenEditDialog = useCallback(resident => {
     setIsEditDialogOpen(true);
@@ -52,17 +52,6 @@ const Resident = () => {
     if (!user) {
       navigate(PathConstant.LOGIN);
       return;
-    }
-    try {
-      if (user.userRole === "leader") {
-        setIsLeader(true);
-        await getAllResident(user.token, dispatch);
-      } else {
-        setIsLeader(false);
-        await getRegistrationResident(user.token, dispatch, user.userId);
-      }
-    } catch (error) {
-      console.error(error);
     }
 
     switch (user.userRole) {
@@ -106,7 +95,6 @@ const Resident = () => {
           relationship,
         };
       });
-
 
       setFlattenedResident(flattenedData);
       setFilteredResident(flattenedData);

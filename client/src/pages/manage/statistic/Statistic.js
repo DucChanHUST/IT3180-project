@@ -7,7 +7,7 @@ import PieChart from "./Piechart";
 
 const Statistic = () => {
   const allResidents = useSelector(state => state.resident.allResident);
-  const allRegistrations = useSelector(state => state.registration.registrations.allRegistrations);
+  const allRegistrations = useSelector(state => state.registration.allRegistration);
   const numberOfResidents = allResidents.length;
   const numberOfRegistrations = allRegistrations.length;
 
