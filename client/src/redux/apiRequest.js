@@ -173,13 +173,6 @@ export const deleteRegistration = async (accessToken, dispatch, id) => {
   dispatch(deleteRegistrationStart());
 
   try {
-    await axios.delete(`http://localhost:3001/api/registration/delete/${id}`, {
-      headers: { Authorization: `bearer ${accessToken}` },
-    });
-
-    getAllRegistrations(accessToken, dispatch);
-    dispatch(deleteRegistrationSuccess(id)); // Send the ID of the deleted registration
-
     // Delete all resident in registration
     const registrationResponse = await axios.get(`http://localhost:3001/api/registration/${id}`, {
       headers: { Authorization: `bearer ${accessToken}` },
@@ -191,9 +184,16 @@ export const deleteRegistration = async (accessToken, dispatch, id) => {
         headers: { Authorization: `bearer ${accessToken}` },
       });
 
-      const selectedResident = {id: residentResponse.data.id, userId: residentResponse.data.user?.id};
-      deleteResident(accessToken, dispatch, selectedResident);
+      const selectedResident = residentResponse.data;
+      await deleteResident(accessToken, dispatch, selectedResident);
     });
+
+    await axios.delete(`http://localhost:3001/api/registration/delete/${id}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    getAllRegistrations(accessToken, dispatch);
+    dispatch(deleteRegistrationSuccess(id));
   } catch (err) {
     dispatch(deleteRegistrationFailed());
     console.log(err);
@@ -317,7 +317,6 @@ export const addNewResident = async (accessToken, dispatch, residentValues) => {
 
 // deleteResident
 export const deleteResident = async (accessToken, dispatch, selectedResident) => {
-  console.log("selectedResident", selectedResident);
   dispatch(deleteResidentStart());
   try {
     const residentResponse = await axios.delete(`http://localhost:3001/api/resident/delete/${selectedResident.id}`, {
@@ -327,18 +326,6 @@ export const deleteResident = async (accessToken, dispatch, selectedResident) =>
     getAllResident(accessToken, dispatch);
   } catch (error) {
     dispatch(deleteResidentFailed());
-  }
-
-  if (!selectedResident.userId) return;
-
-  dispatch(deleteUserStart());
-  try {
-    const userResponse = await axios.delete(`http://localhost:3001/api/users/${selectedResident.userId}`, {
-      headers: { Authorization: `bearer ${accessToken}` },
-    });
-    dispatch(deleteUserSuccess(userResponse.data));
-  } catch (error) {
-    dispatch(deleteUserFailed());
   }
 };
 

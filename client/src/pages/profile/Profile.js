@@ -116,10 +116,10 @@ const Profile = () => {
   useEffect(() => {}, [isCheckedPassword]);
 
   useEffect(() => {
-    const userData = `${selectCurrentUser.resident.name} | ${selectCurrentUser.resident.idNumber} | ${
-      selectCurrentUser.resident.id
-    } | ${handleFormatDate(selectCurrentUser.resident.dob)} | ${selectCurrentUser.resident.gender} | ${
-      selectCurrentUser.resident.registration.address
+    const userData = `${selectCurrentUser?.resident.name} | ${selectCurrentUser?.resident.idNumber} | ${
+      selectCurrentUser?.resident.id
+    } | ${handleFormatDate(selectCurrentUser?.resident.dob)} | ${selectCurrentUser?.resident.gender} | ${
+      selectCurrentUser?.resident.registration.address
     }`;
     setQrData(`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${userData}`);
   }, [selectCurrentUser]);
