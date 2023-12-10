@@ -20,10 +20,11 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 const AddExpenseDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.login?.currentUser);
-  const allFee = useSelector(state => state.fee.allFee?.map(fee => ({ id: fee.id, amount: fee.amount })));
-  const allRegistrationId = useSelector(state => state.registration.allRegistration)?.map(
+  const allFee = useSelector(state => state.fee.allFee)?.map(fee => ({ id: fee.id, amount: fee.amount }));
+  const allRegistrationId = useSelector(state => state.registration?.allRegistration)?.map(
     registration => registration.id,
   );
+  const allExpense = useSelector(state => state.expense.allExpense);
 
   const [errors, setErrors] = useState(INIT_ERRORS_VALUES);
   const [isDisableAmount, setIsDisableAmount] = useState(true);
@@ -37,7 +38,27 @@ const AddExpenseDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
     setExpenseValues(INIT_EXPENSE_VALUES);
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
+    const registrationIdToCheck = parseInt(expenseValues.registrationId);
+    const feeIdToCheck = parseInt(expenseValues.feeId);
+
+    const isRegistrationIdValid = allRegistrationId.includes(registrationIdToCheck);
+    const isFeeIdValid = allFee.some(fee => fee.id === feeIdToCheck);
+    const isExpenseExists = allExpense.some(
+      expense => expense.registrationId === registrationIdToCheck && expense.feeId === feeIdToCheck,
+    );
+
+    if (!isRegistrationIdValid) {
+      setErrorDialogContent("Mã hộ không tồn tại");
+      return;
+    } else if (!isFeeIdValid) {
+      setErrorDialogContent("Mã khoản phí không tồn tại");
+      return;
+    } else if (isExpenseExists) {
+      setErrorDialogContent("Khoản nộp đã tồn tại");
+      return;
+    }
+
     let hasErrors = false;
     let errorContent = [];
     const newErrors = Object.keys(errors).reduce((acc, field) => {
@@ -58,23 +79,10 @@ const AddExpenseDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
       return;
     }
 
-    const registrationIdToCheck = parseInt(expenseValues.registrationId);
-    if (!allRegistrationId.includes(registrationIdToCheck)) {
-      setErrorDialogContent(`Mã hộ "${expenseValues.registrationId}" không tồn tại`);
-      return;
-    }
-
-    const feeIdToCheck = parseInt(expenseValues.feeId);
-    if (!allFee.some(fee => fee.id === feeIdToCheck)) {
-      setErrorDialogContent(`Mã khoản phí "${expenseValues.feeId}" không tồn tại`);
-      return;
-    }
-
-    // TODO: error when add existed feeId & registrationId
+    await addExpense(user.token, dispatch, expenseValues);
 
     // OK
     handleCloseAddDialog();
-    addExpense(user.token, dispatch, expenseValues);
     setExpenseValues(INIT_EXPENSE_VALUES);
   };
 

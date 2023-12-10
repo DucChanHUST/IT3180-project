@@ -426,7 +426,20 @@ export const deleteFee = async (accessToken, dispatch, feeId) => {
       headers: { Authorization: `bearer ${accessToken}` },
     });
 
-    // TODO: Delete all expense ...
+    const expenseResponse = await axios.get(`http://localhost:3001/api/expense/fee/${feeId}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    expenseResponse.data.forEach(async expense => {
+      await axios.delete(`http://localhost:3001/api/expense/`, {
+        data: {
+          registrationId: expense.registrationId,
+          feeId: expense.feeId,
+        },
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+    });
+
     getAllFee(accessToken, dispatch);
   } catch (error) {
     dispatch(feeFailed(error));
@@ -475,7 +488,6 @@ export const addExpense = async (accessToken, dispatch, expenseData) => {
     await axios.post(`http://localhost:3001/api/expense`, expenseData, {
       headers: { Authorization: `bearer ${accessToken}` },
     });
-
     getAllExpense(accessToken, dispatch);
   } catch (error) {
     dispatch(expenseFailed(error));
