@@ -7,8 +7,9 @@ class Expense extends Model {}
 Expense.init({
   registrationId:{
     type: DataTypes.INTEGER,
-    allowNull: false,
+    //allowNull: false,
     primaryKey: true,
+    onDelete: 'SET NULL',
     references: { model: 'registrations', key: 'id' },
   },
   feeId: {
