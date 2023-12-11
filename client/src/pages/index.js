@@ -1,5 +1,5 @@
 import Login from "./login/Login";
-import HomePage from "./manage/home-page/HomePage";
+import HomePage from "./home-page/HomePage";
 import Resident from "./manage/resident/Resident";
 import Registration from "./manage/registration/Registration";
 import Fee from "./manage/fee/Fee";

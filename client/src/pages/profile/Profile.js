@@ -39,6 +39,30 @@ const Profile = () => {
   const [newPassword2HelperText, setNewPassword2HelperText] = useState("");
   const [currentPasswordHelperText, setCurrentPasswordHelperText] = useState("");
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (user?.token) {
+          getUserID(user.token, dispatch, user.userId); // Pass all required parameter
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch, user, navigate]);
+
+  useEffect(() => {}, [isCheckedPassword]);
+
+  useEffect(() => {
+    const userData = `${selectCurrentUser.resident.name} | ${selectCurrentUser.resident.idNumber} | ${
+      selectCurrentUser.resident.id
+    } | ${handleFormatDate(selectCurrentUser.resident.dob)} | ${selectCurrentUser.resident.gender} | ${
+      selectCurrentUser.resident.registration.address
+    }`;
+    setQrData(`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${userData}`);
+  }, [selectCurrentUser]);
   // Function to handle opening the password change dialog
   const handleOpenPasswordDialog = () => {
     setOpenPasswordDialog(true);
@@ -132,7 +156,7 @@ const Profile = () => {
         <SideBar />
         <Grid container direction="column" sx={{ margin: 3, gap: 2 }}>
           <Stack alignItems="center">
-            <Typography variant="h4" fontWeight="bold">
+            <Typography variant="h4" fontWeight="bold" style={{ textDecoration: "underline" }}>
               Thông tin cá nhân
             </Typography>
           </Stack>
