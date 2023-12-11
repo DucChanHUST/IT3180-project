@@ -21,7 +21,7 @@ const DeleteResidentDialog = ({ isDeleteDialogOpen, handleCloseDeleteDialog, sel
 
     if (selectedResident.relationship === "Chủ hộ") {
       const residentsToUpdate = allResident.filter(
-        item => item.registration.id === selectedResident.registrationId && item.id !== selectedResident.id,
+        item => item.registration.id === selectedResident?.registrationId && item.id !== selectedResident.id,
       );
 
       residentsToUpdate.forEach(item => {

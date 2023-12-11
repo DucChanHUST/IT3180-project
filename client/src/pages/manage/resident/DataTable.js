@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect, Fragment } from "react";
+import React, { useState, memo, Fragment } from "react";
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -13,11 +13,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
-import { handleFormatDate } from "../helper";
 
 const RESIDENT_COLUMNS = [
-  { id: "id", label: "ID", minWidth: 30 },
-  { id: "name", label: "Họ và tên", minWidth: 160 },
+  { id: "id", label: "Mã nhân khẩu", minWidth: 30, align: "center" },
+  { id: "name", label: "Họ và tên", minWidth: 160, align: "left" },
   { id: "dob", label: "Ngày sinh", minWidth: 80, align: "center" },
   { id: "gender", label: "Giới tính", minWidth: 50, align: "center" },
   { id: "idNumber", label: "Số CCCD", minWidth: 150, align: "center" },
@@ -32,7 +31,6 @@ const NUMBER_OF_COLUMNS = RESIDENT_COLUMNS.length;
 const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDialog, isLeader }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [updatedResident, setUpdatedResident] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -42,18 +40,6 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
-  useEffect(() => {
-    if (!filteredResident) return;
-
-    setUpdatedResident(
-      filteredResident.map(item => ({
-        ...item,
-        dob: handleFormatDate(item.dob),
-      })),
-    );
-  }, [filteredResident]);
-
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -69,7 +55,7 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
             </TableRow>
           </TableHead>
           <TableBody>
-            {updatedResident?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(resident => {
+            {filteredResident?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(resident => {
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={resident.id}>
                   {RESIDENT_COLUMNS.slice(0, NUMBER_OF_COLUMNS - 1).map(column => {
@@ -82,7 +68,7 @@ const DataTable = ({ filteredResident, handleOpenEditDialog, handleOpenDeleteDia
                           value
                         ) : (
                           <Tooltip title="Lỗi">
-                            <IconButton edge="end" color="error" >
+                            <IconButton edge="end" color="error">
                               <ErrorOutlineRoundedIcon />
                             </IconButton>
                           </Tooltip>

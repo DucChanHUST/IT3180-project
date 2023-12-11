@@ -13,7 +13,7 @@ const expenseSlice = createSlice({
       },
       expenseFailed: (state, action) => {
         state.errorMsg = action.payload;
-        console.log("expense error: ", action.payload);
+        // console.log("expense error: ", action.payload);
       },
       clearExpenseError: state => {
         state.errorMsg = "";

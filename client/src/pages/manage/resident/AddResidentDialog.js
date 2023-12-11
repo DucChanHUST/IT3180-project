@@ -25,8 +25,11 @@ import { NumberTextField, TextOnlyTextField } from "../../../components";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedResident }) => {
-  const user = useSelector(state => state.auth.login?.currentUser);
   const dispatch = useDispatch();
+  const user = useSelector(state => state.auth.login?.currentUser);
+  const allRegistrationId = useSelector(state => state.registration.allRegistration)?.map(
+    registration => registration.id,
+  );
 
   const [errors, setErrors] = useState(INIT_ERRORS_VALUES);
   const [errorDialogContent, setErrorDialogContent] = useState("");
@@ -68,9 +71,6 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
     }
 
     // `Nhân khẩu` mới phải có `Mã hộ` đã tồn tại
-    const uniqueRegistrationIdsSet = new Set(flattenedResident.map(item => item.registrationId));
-    const allRegistrationId = [...uniqueRegistrationIdsSet];
-
     if (!allRegistrationId.includes(parseInt(residentValues.registrationId))) {
       setErrorDialogContent(`Mã hộ "${residentValues.registrationId}" chưa tồn tại`);
       return;

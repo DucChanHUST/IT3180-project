@@ -5,8 +5,8 @@ import DataTable from "./DataTable";
 import AddFeeDialog from "./AddFeeDialog";
 import EditFeeDialog from "./EditFeeDialog";
 import DeleteFeeDialog from "./DeleteFeeDialog";
-import { useNavigate } from "react-router-dom";
 import { PathConstant } from "../../../const";
+import { useNavigate } from "react-router-dom";
 import { Box, Grid, Button } from "@mui/material";
 import { SideBar, NavBar } from "../../../components";
 import { useDispatch, useSelector } from "react-redux";
@@ -82,26 +82,24 @@ const Fee = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
-    const mapFeeData = item => {
-      const { id, nameFee, type, amount, paid, total, status } = item;
-      const feeType = type ? "Bắt buộc" : "Tự nguyện";
+    const feeData = allFee.map(item => {
+      let {id, nameFee, type, amount, paid, total, status} = item;
 
-      return {
-        id,
-        nameFee,
-        type: feeType,
-        amount,
-        ...(isAccountant || user.userRole === "leader" ? { paid, total } : { status }),
-      };
-    };
+      type = type === 1 ? "Bắt buộc" : "Tự nguyện";
 
-    const feeData = allFee.map(mapFeeData);
+      return {id, nameFee, type, amount, paid, total, status};
+    })
+
+    // console.log(feeData);
+    
 
     setFeeData(feeData);
     setFilteredFee(feeData);
-  }, [allFee, user, isAccountant]);
+  }, [allFee, user]);
 
   return (
     <>
@@ -117,7 +115,7 @@ const Fee = () => {
             {isAccountant ? (
               <Grid item>
                 <Button onClick={() => setIsAddDialogOpen(true)} variant="contained">
-                  Thêm khoản thu
+                  Thêm khoản phí
                 </Button>
               </Grid>
             ) : (

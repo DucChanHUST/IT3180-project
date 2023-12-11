@@ -5,16 +5,20 @@ const { sequelize } = require('../util/db')
 class Expense extends Model {}
 
 Expense.init({
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
   registrationId:{
     type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true,
+    allowNull: true,
+    onDelete: 'SET NULL',
     references: { model: 'registrations', key: 'id' },
   },
   feeId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true,
+    allowNull: true,
     references: { model: 'fees', key: 'id' },
   },
   amount: {
