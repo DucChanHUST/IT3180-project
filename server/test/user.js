@@ -22,9 +22,9 @@ describe('User API', () => {
             name: "Nguyen Tri Dung",
             dob: new Date(Date.UTC(2023, 11, 23)),
             phoneNumber: "0974223591",
-            relationship: "child",
+            relationship: "Con đẻ",
             registrationId: testReg.id,
-            gender: "male"
+            gender: "Nam"
         });
 
         const testRes2 = await Resident.create({
@@ -32,9 +32,9 @@ describe('User API', () => {
             name: "Nguyen Mai Phuong",
             dob: new Date(Date.UTC(2023, 11, 23)),
             phoneNumber: "0974223591",
-            relationship: "child",
+            relationship: "Con đẻ",
             registrationId: testReg.id,
-            gender: "male"
+            gender: "Nam"
         });
 
         const testUser = await User.create({

@@ -1,5 +1,3 @@
-// process.env.NODE_ENV = 'test';
-
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../index');
@@ -24,7 +22,7 @@ describe('Registration API', () => {
   const validToken = generateToken(1, 'phuongnguyen', 'leader');
 
   after(async () => {
-    // Delete registration inserted in POST
+  // Delete registration inserted in POST
     await Registration.destroy({
       where: {
         address: 'Số 7, Tạ Quang Bửu'
