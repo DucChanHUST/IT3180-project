@@ -82,15 +82,16 @@ const Expense = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate(PathConstant.LOGIN)
+      return;
     }
 
     const expenseData = allExpense.map(item => {
-      let { registrationId, feeId, amount, date } = item;
+      let { id, registrationId, feeId, amount, date } = item;
 
       date = handleFormatDate(date);
+      registrationId = registrationId == null ? "-" : registrationId;
 
-      return { registrationId, feeId, amount, date };
+      return { id, registrationId, feeId, amount, date };
     });
 
     setExpenseData(expenseData);

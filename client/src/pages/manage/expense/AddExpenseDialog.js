@@ -100,28 +100,28 @@ const AddExpenseDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
           <Stack direction="row" spacing={1}>
             <NumberTextField
               fullWidth
-              error={errors[FIELD_MAPPING[0].id]}
-              label={FIELD_MAPPING[0].label}
-              value={expenseValues[FIELD_MAPPING[0].id]}
-              onChange={handleExpenseValueChange(FIELD_MAPPING[0].id)}
+              error={errors[FIELD_MAPPING[1].id]}
+              label={FIELD_MAPPING[1].label}
+              value={expenseValues[FIELD_MAPPING[1].id]}
+              onChange={handleExpenseValueChange(FIELD_MAPPING[1].id)}
             />
 
             <NumberTextField
               fullWidth
-              error={errors[FIELD_MAPPING[1].id]}
-              label={FIELD_MAPPING[1].label}
-              value={expenseValues[FIELD_MAPPING[1].id]}
+              error={errors[FIELD_MAPPING[2].id]}
+              label={FIELD_MAPPING[2].label}
+              value={expenseValues[FIELD_MAPPING[2].id]}
               onChange={value => {
                 const intValue = parseInt(value);
                 const matchingFee = allFee.find(fee => fee.id === intValue && fee.amount);
                 if (matchingFee) {
-                  handleExpenseValueChange(FIELD_MAPPING[2].id)(matchingFee.amount);
+                  handleExpenseValueChange(FIELD_MAPPING[3].id)(matchingFee.amount);
                   setIsDisableAmount(true);
                 } else {
-                  handleExpenseValueChange(FIELD_MAPPING[2].id)("");
+                  handleExpenseValueChange(FIELD_MAPPING[3].id)("");
                   setIsDisableAmount(false);
                 }
-                handleExpenseValueChange(FIELD_MAPPING[1].id)(value);
+                handleExpenseValueChange(FIELD_MAPPING[2].id)(value);
               }}
             />
           </Stack>
@@ -129,16 +129,16 @@ const AddExpenseDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
           <Stack direction="row" spacing={1}>
             <NumberTextField
               fullWidth
-              error={errors[FIELD_MAPPING[2].id]}
+              error={errors[FIELD_MAPPING[3].id]}
               disabled={isDisableAmount}
-              label={FIELD_MAPPING[2].label}
-              value={formatAmount(expenseValues[FIELD_MAPPING[2].id])}
-              onChange={handleExpenseValueChange(FIELD_MAPPING[2].id)}
+              label={FIELD_MAPPING[3].label}
+              value={formatAmount(expenseValues[FIELD_MAPPING[3].id])}
+              onChange={handleExpenseValueChange(FIELD_MAPPING[3].id)}
               helperText={
                 !expenseValues.feeId
                   ? "Vui lòng nhập Mã khoản phí trước"
-                  : expenseValues[FIELD_MAPPING[2].id]
-                  ? convertToVietnameseWords(expenseValues[FIELD_MAPPING[2].id])
+                  : expenseValues[FIELD_MAPPING[3].id]
+                  ? convertToVietnameseWords(expenseValues[FIELD_MAPPING[3].id])
                   : ""
               }
               InputProps={{
@@ -148,10 +148,10 @@ const AddExpenseDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                label={FIELD_MAPPING[3].label}
-                value={expenseValues[FIELD_MAPPING[3].id]}
+                label={FIELD_MAPPING[4].label}
+                value={expenseValues[FIELD_MAPPING[4].id]}
                 onChange={value => {
-                  handleExpenseValueChange(FIELD_MAPPING[3].id)(value.$d);
+                  handleExpenseValueChange(FIELD_MAPPING[4].id)(value.$d);
                 }}
                 maxDate={TODAY}
                 minDate={START_OF_1900}

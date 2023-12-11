@@ -57,6 +57,7 @@ const DataTable = ({ filteredFee, isAccountant, handleOpenEditDialog, handleOpen
                       {field.label}
                     </TableCell>
                   ))}
+                  {isAccountant && <TableCell align="center">{FIELD_MAPPING[7].label}</TableCell>}
                 </>
               )}
             </TableRow>

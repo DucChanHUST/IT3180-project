@@ -381,15 +381,16 @@ export const getRegistrationFee = async (accessToken, dispatch, registrationId) 
 
     const feeData = feeResponse.data;
     const registrationExpenseData = registrationExpense.data;
-
-    feeData.map((fee, index) => {
-      registrationExpenseData.forEach(expense => {
-        feeResponse.data[index].status = fee.id === expense.feeId ? "Đã nộp" : "Chưa nộp";
-      });
+    
+    feeData.forEach(fee => {
+      const expense = registrationExpenseData.find(expense => fee.id === expense.feeId);
+    
+      fee.status = expense ? "Đã nộp" : "Chưa nộp";
     });
+    
 
-    console.log("registrationExpense", registrationExpense);
-    console.log("feeResponse> ", feeResponse);
+    console.log("registrationExpenseData", registrationExpenseData);
+    console.log("feeData> ", feeData);
     dispatch(getAllFeeSuccess(feeResponse.data));
   } catch (error) {
     dispatch(feeFailed(error));
@@ -451,6 +452,8 @@ export const getAllExpense = async (accessToken, dispatch) => {
     const response = await axios.get(`http://localhost:3001/api/expense`, {
       headers: { Authorization: `bearer ${accessToken}` },
     });
+
+    console.log(">", response);
 
     dispatch(getAllExpenseSuccess(response.data));
   } catch (error) {
