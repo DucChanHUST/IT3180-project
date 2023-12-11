@@ -4,6 +4,7 @@ import SearchBar from "./SearchBar";
 import AddResidentDialog from "./AddResidentDialog";
 import EditResidentDialog from "./EditResidentDialog";
 import DeleteResidentDialog from "./DeleteResidentDialog";
+import { handleFormatDate } from "../helper";
 import { PathConstant } from "../../../const";
 import { useNavigate } from "react-router-dom";
 import { Button, Box, Grid } from "@mui/material";
@@ -76,12 +77,13 @@ const Resident = () => {
 
   useEffect(() => {
     if (!user) return;
+    let flattenedData = [];
     if (user.userRole === "leader" || user.userRole === "accountant") {
-      const flattenedData = allResident.map(item => {
-        const { id, idNumber, name, dob, gender, phoneNumber, registration, user, relationship } = item;
+      flattenedData = allResident.map(item => {
+        let { id, idNumber, name, dob, gender, phoneNumber, registration, relationship } = item;
 
         const registrationId = registration ? registration.id : null;
-        const userId = user ? user.id : null;
+        dob = handleFormatDate(dob);
 
         return {
           id,
@@ -91,17 +93,29 @@ const Resident = () => {
           gender,
           phoneNumber,
           registrationId,
-          userId,
           relationship,
         };
       });
-
-      setFlattenedResident(flattenedData);
-      setFilteredResident(flattenedData);
     } else {
-      setFlattenedResident(allResident);
-      setFilteredResident(allResident);
+      flattenedData = allResident.map(item => {
+        let { id, idNumber, name, dob, gender, phoneNumber, registrationId, relationship } = item;
+
+        dob = handleFormatDate(dob);
+
+        return {
+          id,
+          idNumber,
+          name,
+          dob,
+          gender,
+          phoneNumber,
+          registrationId,
+          relationship,
+        };
+      });
     }
+    setFlattenedResident(flattenedData);
+    setFilteredResident(flattenedData);
   }, [user, allResident]);
 
   return (

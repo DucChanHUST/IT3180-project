@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import VerifiedUserRoundedIcon from "@mui/icons-material/VerifiedUserRounded";
+import { PathConstant } from "../../const";
 import { useNavigate } from "react-router-dom";
 import { SideBar, NavBar } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,13 +22,13 @@ import {
 import { handleFormatDate } from "../manage/helper";
 
 const Profile = () => {
-  // const qrCodeApiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=Example";
-
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const user = useSelector(state => state.auth.login?.currentUser);
-  const selectCurrentUser = useSelector(state => state.user.users.allUsers);
+  const selectCurrentUser = useSelector(state => state.user.users?.allUsers);
+
+  console.log(user);
 
   const [qrData, setQrData] = useState("");
   const [newPassword1, setNewPassword1] = useState("");
@@ -37,27 +38,6 @@ const Profile = () => {
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
   const [newPassword2HelperText, setNewPassword2HelperText] = useState("");
   const [currentPasswordHelperText, setCurrentPasswordHelperText] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (user?.token) {
-          getUserID(user.token, dispatch, user.userId); // Pass all required parameter
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, [dispatch, user, navigate]);
-
-  useEffect(() => {}, [isCheckedPassword]);
-
-  useEffect(() => {
-    const userData = `${selectCurrentUser.resident.name} | ${selectCurrentUser.resident.idNumber} | ${selectCurrentUser.resident.id} | ${handleFormatDate(selectCurrentUser.resident.dob)} | ${selectCurrentUser.resident.gender} | ${selectCurrentUser.resident.registration.address}`;
-    setQrData(`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${userData}`);
-  }, [selectCurrentUser]);
 
   // Function to handle opening the password change dialog
   const handleOpenPasswordDialog = () => {
@@ -69,10 +49,10 @@ const Profile = () => {
     setNewPassword1("");
     setNewPassword2("");
     setCurrentPassword("");
+    setIsCheckedPassword(false);
     setOpenPasswordDialog(false);
     setNewPassword2HelperText("");
     setCurrentPasswordHelperText("");
-    setIsCheckedPassword(false);
   };
 
   const handleUpdatePassword = async () => {
@@ -108,6 +88,42 @@ const Profile = () => {
     }
   };
 
+  const handleFetchUser = async () => {
+    if (!user) {
+      navigate(PathConstant.LOGIN);
+      return;
+    }
+
+    await getUserID(user.token, dispatch, user.userId); 
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await getUserID(user.token, dispatch, user.userId);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    handleFetchUser();
+  }, []);
+
+  useEffect(() => {}, [isCheckedPassword]);
+
+  useEffect(() => {
+    const userData = `${selectCurrentUser?.resident.name} | ${selectCurrentUser?.resident.idNumber} | ${
+      selectCurrentUser?.resident.id
+    } | ${handleFormatDate(selectCurrentUser?.resident.dob)} | ${selectCurrentUser?.resident.gender} | ${
+      selectCurrentUser?.resident.registration.address
+    }`;
+    setQrData(`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${userData}`);
+  }, [selectCurrentUser]);
+
   return (
     <>
       <NavBar />
@@ -116,7 +132,9 @@ const Profile = () => {
         <SideBar />
         <Grid container direction="column" sx={{ margin: 3, gap: 2 }}>
           <Stack alignItems="center">
-            <Typography variant="h4" fontWeight="bold">Thông tin cá nhân</Typography>
+            <Typography variant="h4" fontWeight="bold">
+              Thông tin cá nhân
+            </Typography>
           </Stack>
 
           <Stack spacing={2} mb="55px">
@@ -124,28 +142,28 @@ const Profile = () => {
               <Stack spacing={2} width="75%">
                 <Paper sx={{ p: 2 }}>
                   <Typography variant="subtitle2">Họ và tên:</Typography>
-                  <Typography variant="h5">{selectCurrentUser.resident.name}</Typography>
+                  <Typography variant="h5">{selectCurrentUser?.resident.name}</Typography>
                 </Paper>
 
                 <Stack direction="row" spacing={4}>
                   <Paper sx={{ p: 2, width: "50%" }}>
                     <Typography variant="subtitle2">Số CCCD:</Typography>
-                    <Typography variant="h5">{selectCurrentUser.resident.idNumber}</Typography>
+                    <Typography variant="h5">{selectCurrentUser?.resident.idNumber}</Typography>
                   </Paper>
                   <Paper sx={{ p: 2, width: "50%" }}>
                     <Typography variant="subtitle2">Mã nhân khẩu:</Typography>
-                    <Typography variant="h5">{selectCurrentUser.resident.id}</Typography>
+                    <Typography variant="h5">{selectCurrentUser?.resident.id}</Typography>
                   </Paper>
                 </Stack>
 
                 <Stack direction="row" spacing={4}>
                   <Paper sx={{ p: 2, width: "50%" }}>
                     <Typography variant="subtitle2">Ngày sinh:</Typography>
-                    <Typography variant="h5">{handleFormatDate(selectCurrentUser.resident.dob)}</Typography>
+                    <Typography variant="h5">{handleFormatDate(selectCurrentUser?.resident.dob)}</Typography>
                   </Paper>
                   <Paper sx={{ p: 2, width: "50%" }}>
                     <Typography variant="subtitle2">Giới tính:</Typography>
-                    <Typography variant="h5">{selectCurrentUser.resident.gender}</Typography>
+                    <Typography variant="h5">{selectCurrentUser?.resident.gender}</Typography>
                   </Paper>
                 </Stack>
               </Stack>
@@ -159,7 +177,7 @@ const Profile = () => {
 
             <Paper sx={{ p: 2 }}>
               <Typography variant="subtitle2">Nơi thường trú:</Typography>
-              <Typography variant="h5">{selectCurrentUser.resident.registration.address}</Typography>
+              <Typography variant="h5">{selectCurrentUser?.resident.registration.address}</Typography>
             </Paper>
           </Stack>
 

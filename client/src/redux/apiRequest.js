@@ -89,6 +89,7 @@ export const getUserID = async (accessToken, dispatch, id) => {
     const res = await axios.get(`http://localhost:3001/api/users/${id}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
+    console.log(res.data);
     // const array = [res.data.resident.registration];
     dispatch(getUsersSuccess(res.data));
   } catch (err) {
@@ -172,12 +173,27 @@ export const deleteRegistration = async (accessToken, dispatch, id) => {
   dispatch(deleteRegistrationStart());
 
   try {
+    // Delete all resident in registration
+    const registrationResponse = await axios.get(`http://localhost:3001/api/registration/${id}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+    const residents = await registrationResponse.data.residents;
+
+    residents.forEach(async resident => {
+      const residentResponse = await axios.get(`http://localhost:3001/api/resident/${resident.id}`, {
+        headers: { Authorization: `bearer ${accessToken}` },
+      });
+
+      const selectedResident = residentResponse.data;
+      await deleteResident(accessToken, dispatch, selectedResident);
+    });
+
     await axios.delete(`http://localhost:3001/api/registration/delete/${id}`, {
       headers: { Authorization: `bearer ${accessToken}` },
     });
 
     getAllRegistrations(accessToken, dispatch);
-    dispatch(deleteRegistrationSuccess(id)); // Send the ID of the deleted registration
+    dispatch(deleteRegistrationSuccess(id));
   } catch (err) {
     dispatch(deleteRegistrationFailed());
     console.log(err);
@@ -301,7 +317,6 @@ export const addNewResident = async (accessToken, dispatch, residentValues) => {
 
 // deleteResident
 export const deleteResident = async (accessToken, dispatch, selectedResident) => {
-  console.log("selectedResident", selectedResident);
   dispatch(deleteResidentStart());
   try {
     const residentResponse = await axios.delete(`http://localhost:3001/api/resident/delete/${selectedResident.id}`, {
@@ -311,18 +326,6 @@ export const deleteResident = async (accessToken, dispatch, selectedResident) =>
     getAllResident(accessToken, dispatch);
   } catch (error) {
     dispatch(deleteResidentFailed());
-  }
-
-  if (!selectedResident.userId) return;
-
-  dispatch(deleteUserStart());
-  try {
-    const userResponse = await axios.delete(`http://localhost:3001/api/users/${selectedResident.userId}`, {
-      headers: { Authorization: `bearer ${accessToken}` },
-    });
-    dispatch(deleteUserSuccess(userResponse.data));
-  } catch (error) {
-    dispatch(deleteUserFailed());
   }
 };
 
@@ -378,15 +381,16 @@ export const getRegistrationFee = async (accessToken, dispatch, registrationId) 
 
     const feeData = feeResponse.data;
     const registrationExpenseData = registrationExpense.data;
-
-    feeData.map((fee, index) => {
-      registrationExpenseData.forEach(expense => {
-        feeResponse.data[index].status = fee.id === expense.feeId ? "Đã nộp" : "Chưa nộp";
-      });
+    
+    feeData.forEach(fee => {
+      const expense = registrationExpenseData.find(expense => fee.id === expense.feeId);
+    
+      fee.status = expense ? "Đã nộp" : "Chưa nộp";
     });
+    
 
-    console.log("registrationExpense", registrationExpense);
-    console.log("feeResponse> ", feeResponse);
+    console.log("registrationExpenseData", registrationExpenseData);
+    console.log("feeData> ", feeData);
     dispatch(getAllFeeSuccess(feeResponse.data));
   } catch (error) {
     dispatch(feeFailed(error));
@@ -410,7 +414,20 @@ export const deleteFee = async (accessToken, dispatch, feeId) => {
       headers: { Authorization: `bearer ${accessToken}` },
     });
 
-    // TODO: Delete all expense ...
+    const expenseResponse = await axios.get(`http://localhost:3001/api/expense/fee/${feeId}`, {
+      headers: { Authorization: `bearer ${accessToken}` },
+    });
+
+    expenseResponse.data.forEach(async expense => {
+      await axios.delete(`http://localhost:3001/api/expense/`, {
+        data: {
+          registrationId: expense.registrationId,
+          feeId: expense.feeId,
+        },
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+    });
+
     getAllFee(accessToken, dispatch);
   } catch (error) {
     dispatch(feeFailed(error));
@@ -436,6 +453,8 @@ export const getAllExpense = async (accessToken, dispatch) => {
       headers: { Authorization: `bearer ${accessToken}` },
     });
 
+    console.log(">", response);
+
     dispatch(getAllExpenseSuccess(response.data));
   } catch (error) {
     dispatch(expenseFailed(error));
@@ -459,7 +478,6 @@ export const addExpense = async (accessToken, dispatch, expenseData) => {
     await axios.post(`http://localhost:3001/api/expense`, expenseData, {
       headers: { Authorization: `bearer ${accessToken}` },
     });
-
     getAllExpense(accessToken, dispatch);
   } catch (error) {
     dispatch(expenseFailed(error));

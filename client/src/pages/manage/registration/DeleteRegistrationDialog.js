@@ -15,15 +15,16 @@ const DeleteRegistrationDialog = ({ selectedRegistration, isDeleteDialogOpen, ha
 
   const handleDeleteRegistration = async () => {
     handleCloseDeleteDialog();
-
+    // console.log(selectedRegistration);
     await deleteRegistration(user.token, dispatch, selectedRegistration.registrationId);
   };
 
   return (
     <Dialog open={isDeleteDialogOpen} onClose={handleCloseDeleteDialog} fullWidth>
-      <DialogTitle>Xóa khoản nộp</DialogTitle>
+      <DialogTitle>Xóa Hộ khẩu</DialogTitle>
       <DialogContent>
         <Stack spacing={2} mt={1}>
+          <Typography>Xóa hộ khẩu sẽ xóa luôn tất cả các nhân khẩu thuộc hộ khẩu này</Typography>
           <Typography>Bạn có chắc chắn rằng bạn muốn xóa hộ khẩu này chứ</Typography>
         </Stack>
       </DialogContent>

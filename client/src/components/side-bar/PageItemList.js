@@ -15,7 +15,7 @@ const PAGE_ITEM_LIST = [
     icon: <PersonRoundedIcon />,
   },
   {
-    name: "Gia đình",
+    name: "Hộ khẩu",
     path: PathConstant.REGISTRATION,
     icon: <HomeRoundedIcon />,
   },
@@ -30,7 +30,7 @@ const PAGE_ITEM_LIST = [
     icon: <SavingsRoundedIcon />,
   },
   {
-    name: "Báo cáo",
+    name: "Thống kê",
     path: PathConstant.STATISTIC,
     icon: <InsightsRoundedIcon />,
   },
