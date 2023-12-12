@@ -4,26 +4,16 @@ import {
   Card,
   CardHeader,
   CardContent,
-  TextField,
 } from "@mui/material";
-import { useSelector } from "react-redux";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Chart, BarController, CategoryScale, LinearScale, BarElement } from "chart.js";
 import dayjs from "dayjs";
 
 // Register the necessary components with Chart.js
 Chart.register(BarController, CategoryScale, LinearScale, BarElement);
 
-const BarChart = () => {
-  const [selectedYear, setSelectedYear] = useState(dayjs().year());
+const BarChart = ({ selectedYear }) => {
   const [barChartData, setBarChartData] = useState({ labels: [], values: [] });
   const expenseData = useSelector(state => state.expense.allExpense);
-  
-  const handleYearChange = (date) => {
-    setSelectedYear(date.year());
-  };
 
   const handleGenerateChart = () => {
     // Filter the expense data for the selected year
@@ -112,21 +102,9 @@ const BarChart = () => {
     <Container>
       <Card>
         <CardHeader
-          title={`Số tiền đã nộp năm ${selectedYear}`}
+          title={`Số tiền đã nộp năm ${selectedYear} theo tháng`}
         />
         <CardContent>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="Chọn năm"
-              views={["year"]}
-              value={dayjs(selectedYear.toString())}
-              onChange={handleYearChange}
-              renderInput={(params) => (
-                <TextField {...params} variant="standard" fullWidth />
-              )}
-            />
-          </LocalizationProvider>
-
           <canvas id="myChart" />
         </CardContent>
       </Card>
