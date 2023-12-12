@@ -22,7 +22,7 @@ const EditFeeDialog = ({ selectedFee, isEditDialogOpen, handleCloseEditDialog })
   const INIT_FEE_VALUES = useMemo(() => {
     return {
       nameFee: selectedFee.nameFee,
-      type: selectedFee.type,
+      type: selectedFee.type === "Bắt buộc" ? 1 : 0,
       amount: selectedFee.amount,
     };
   }, [selectedFee]);

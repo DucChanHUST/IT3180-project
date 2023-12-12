@@ -157,7 +157,7 @@ const EditExpenseDialog = ({ selectedExpense, isEditDialogOpen, handleCloseEditD
           Hủy bỏ
         </Button>
         <Button variant="contained" onClick={handleEdit}>
-          Thêm
+          Chỉnh sửa
         </Button>
       </DialogActions>
     </Dialog>

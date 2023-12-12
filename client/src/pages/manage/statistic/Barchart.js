@@ -7,7 +7,6 @@ import {
 } from "@mui/material";
 import { Chart, BarController, CategoryScale, LinearScale, BarElement } from "chart.js";
 import dayjs from "dayjs";
-import { useSelector } from "react-redux";
 
 // Register the necessary components with Chart.js
 Chart.register(BarController, CategoryScale, LinearScale, BarElement);

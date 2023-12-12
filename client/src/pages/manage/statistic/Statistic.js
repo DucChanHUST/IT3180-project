@@ -1,18 +1,19 @@
 import React, { useState } from "react";
-import { Box, Paper, Typography, Grid, TextField,} from "@mui/material";
-import { SideBar, NavBar } from "../../../components";
 import { useSelector } from "react-redux";
+import { SideBar, NavBar } from "../../../components";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Box, Paper, Typography, Grid, TextField,} from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
 import BarChart from "./Barchart";
 import PieChart from "./Piechart";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
 
 const Statistic = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const allResidents = useSelector(state => state.resident.allResident);
-  const allRegistrations = useSelector(state => state.registration.registrations.allRegistrations);
+  const allRegistrations = useSelector(state => state.registration.allRegistration);
+  
   const numberOfResidents = allResidents.length;
   const numberOfRegistrations = allRegistrations.length;
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -24,12 +25,10 @@ const Statistic = () => {
   return (
     <>
       <NavBar />
-      <Box height={25} />
+      <Box height={64} />
       <Box sx={{ display: "flex" }}>
         <SideBar />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <h1>Thống kê</h1>
-        
           <Grid container spacing={2}>
             {/* Hộp tổng số hộ */}
             {user && user.userRole !== "resident" && (

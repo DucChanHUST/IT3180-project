@@ -48,7 +48,7 @@ const DataTable = ({ filteredExpense, isAccountant, handleOpenEditDialog, handle
               <TableRow hover role="checkbox" tabIndex={-1} key={`${expense.feeId}_${expense.registrationId}`}>
                 {FIELD_MAPPING.slice(0, -1).map(column => (
                   <TableCell key={column.id} align={column.align}>
-                    {column.id === FIELD_MAPPING[2].id ? formatAmount(expense[column.id]) : expense[column.id]}
+                    {column.id === FIELD_MAPPING[3].id ? formatAmount(expense[column.id]) : expense[column.id]}
                   </TableCell>
                 ))}
                 {isAccountant ? (

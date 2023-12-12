@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { FormControl, MenuItem, Select, Stack, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { FIELD_MAPPING } from "./const";
+import { FormControl, MenuItem, Select, Stack, TextField, InputAdornment } from "@mui/material";
 
 const SearchBar = ({ expenseData, setFilteredExpense }) => {
-  const [searchCategory, setSearchCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchCategory, setSearchCategory] = useState("all");
 
   const handleCategoryChange = event => {
     const category = event.target.value;
@@ -23,16 +23,12 @@ const SearchBar = ({ expenseData, setFilteredExpense }) => {
 
   const filterFee = (term, searchCategory) => {
     const filteredExpense = expenseData.filter(item => {
-      if (!item) {
-        return false;
-      }
-
       const value = item[searchCategory];
 
       if (searchCategory === "all") {
         return Object.values(item).some(val => val && val.toString().includes(term.toLowerCase()));
       } else {
-        return value && value.toString().toLowerCase().includes(term.toLowerCase());
+        return value.toString().toLowerCase().includes(term.toLowerCase());
       }
     });
 

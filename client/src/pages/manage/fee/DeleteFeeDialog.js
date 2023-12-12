@@ -1,10 +1,11 @@
 import React, { memo } from "react";
+import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
+import Typography from "@mui/material/Typography";
+import DialogTitle from "@mui/material/DialogTitle";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import { Stack, Typography } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteFee } from "../../../redux/apiRequest";
 
@@ -25,6 +26,7 @@ const DeleteFeeDialog = ({ selectedFee, isDeleteDialogOpen, handleCloseDeleteDia
       <DialogTitle>Xóa khoản phí</DialogTitle>
       <DialogContent>
         <Stack spacing={2} mt={1}>
+          <Typography>Xóa khoản phí sẽ xóa luôn tất cả các khoản thu thuộc khoản phí này</Typography>
           <Typography>Bạn có chắc chắn rằng bạn muốn xóa khoản phí này chứ</Typography>
         </Stack>
       </DialogContent>

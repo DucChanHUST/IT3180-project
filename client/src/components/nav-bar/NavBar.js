@@ -1,21 +1,18 @@
 import React, { useState } from "react";
-import { styled } from "@mui/material/styles";
-import { Box, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from "@mui/material";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import MenuItem from "@mui/material/MenuItem";
+import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
+import Button from "@mui/material/Button";
+import Toolbar from "@mui/material/Toolbar";
+import MuiAppBar from "@mui/material/AppBar";
+import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
+import IconButton from "@mui/material/IconButton";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useAppStore } from "../../stores";
-import { NavLink, useNavigate } from "react-router-dom";
 import { PathConstant } from "../../const";
-import { useSelector, useDispatch } from "react-redux";
-import "./Navbar.css";
+import { styled } from "@mui/material/styles";
+import { NavLink, useNavigate } from "react-router-dom";
 
-
-// Cấu hình
 const AppBar = styled(
   MuiAppBar,
   {},
@@ -23,15 +20,13 @@ const AppBar = styled(
   zIndex: theme.zIndex.drawer + 1,
 }));
 
-///Hàm chính
 const NavBar = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const user = useSelector(state => state.auth.login?.currentUser);
   const navigate = useNavigate();
-  const updateOpen = useAppStore(state => state.updateOpen);
   const dopen = useAppStore(state => state.dopen);
+  const updateOpen = useAppStore(state => state.updateOpen);
+
+  const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
-  
 
   const handleProfileMenuOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -41,8 +36,6 @@ const NavBar = () => {
     setAnchorEl(null);
   };
 
-  const menuId = "account-menu";
-
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -50,7 +43,6 @@ const NavBar = () => {
         vertical: "top",
         horizontal: "right",
       }}
-      id={menuId}
       keepMounted
       transformOrigin={{
         vertical: "top",
@@ -60,13 +52,10 @@ const NavBar = () => {
       onClose={handleMenuClose}
     >
       <MenuItem>
-        <NavLink to="/myprofile">Profile</NavLink>
+        <NavLink to={PathConstant.PROFILE}>Thông tin cá nhân</NavLink>
       </MenuItem>
       <MenuItem>
-        <NavLink to="/Profile/userid">My account</NavLink>
-      </MenuItem>
-      <MenuItem>
-        <NavLink to="/Login">Log out</NavLink>
+        <NavLink to={PathConstant.LOGIN}>Đăng xuất</NavLink>
       </MenuItem>
     </Menu>
   );
@@ -78,63 +67,27 @@ const NavBar = () => {
           <IconButton size="large" edge="start" color="inherit" sx={{ mr: 2 }} onClick={() => updateOpen(!dopen)}>
             <MenuIcon />
           </IconButton>
-          <Typography
-            onClick={() => {
-              navigate(PathConstant.ROOT);
-            }}
-            variant="h6"
-            noWrap
-            component="div"
+
+          <Button
+            size="large"
+            color="inherit"
             sx={{ display: { xs: "none", sm: "block" } }}
+            onClick={() => {
+              navigate(PathConstant.HOMEPAGE);
+            }}
           >
-            Q
-          </Typography>
+            Quản lí Cộng đồng Thôn 12
+          </Button>
 
-          {user ? (
-            <>
-              <p className="username">
-                {" "}
-                Hi,
-                <span> {user.username}</span>
-              </p>
-
-              <Box sx={{ flexGrow: 1 }} />
-              <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                <IconButton
-                  size="large"
-                  edge="end"
-                  aria-label="account of current user"
-                  aria-controls={menuId}
-                  aria-haspopup="true"
-                  onClick={handleProfileMenuOpen}
-                  color="inherit"
-                >
-                  <AccountCircle />
-                </IconButton>
-              </Box>
-            </>
-          ) : (
-            <Button
-              sx={{
-                marginRight: "0",
-                marginLeft: "auto",
-                color: "white",
-                fontSize: "15px",
-                backgroundColor: "white", // Màu nền xanh
-                "&:hover": {
-                  backgroundColor: "gray", // Màu nền xám khi hover
-                },
-              }}
-            >
-              <NavLink to="/login" sx={{ color: "white" }}>
-                Login
-              </NavLink>
-            </Button>
-          )}
+          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ display: "flex" }}>
+            <IconButton edge="end" size="large" color="inherit" aria-haspopup="true" onClick={handleProfileMenuOpen}>
+              <AccountCircle />
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
       {renderMenu}
-      
     </Box>
   );
 };

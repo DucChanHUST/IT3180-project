@@ -5,7 +5,7 @@ import MuiDrawer from "@mui/material/Drawer";
 import PageItemList from "./PageItemList";
 import { useAppStore } from "../../stores";
 
-const drawerWidth = 220;
+const drawerWidth = 200;
 
 const openedMixin = theme => ({
   width: drawerWidth,

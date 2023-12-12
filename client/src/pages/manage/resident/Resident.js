@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useCallback, Fragment } from "react";
-import { SideBar, NavBar } from "../../../components";
-import { getAllResident, getRegistrationResident } from "../../../redux/apiRequest";
-import { useDispatch, useSelector } from "react-redux";
+import DataTable from "./DataTable";
+import SearchBar from "./SearchBar";
+import AddResidentDialog from "./AddResidentDialog";
+import EditResidentDialog from "./EditResidentDialog";
+import DeleteResidentDialog from "./DeleteResidentDialog";
+import { handleFormatDate } from "../helper";
+import { PathConstant } from "../../../const";
 import { useNavigate } from "react-router-dom";
 import { Button, Box, Grid } from "@mui/material";
-import DataTable from "./DataTable";
-import EditResidentDialog from "./EditResidentDialog";
-import AddResidentDialog from "./AddResidentDialog";
-import DeleteResidentDialog from "./DeleteResidentDialog";
-import SearchBar from "./SearchBar";
+import { SideBar, NavBar } from "../../../components";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllResident, getRegistrationResident } from "../../../redux/apiRequest";
 
 const Resident = () => {
   const dispatch = useDispatch();
@@ -17,13 +19,13 @@ const Resident = () => {
   const user = useSelector(state => state.auth.login?.currentUser);
   const allResident = useSelector(state => state.resident.allResident);
 
+  const [isLeader, setIsLeader] = useState(false);
   const [selectedResident, setSelectedResident] = useState({});
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [filteredResident, setFilteredResident] = useState([]);
   const [flattenedResident, setFlattenedResident] = useState([]);
-  const [isLeader, setIsLeader] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleOpenEditDialog = useCallback(resident => {
     setIsEditDialogOpen(true);
@@ -49,19 +51,23 @@ const Resident = () => {
 
   const handleFetchResident = async () => {
     if (!user) {
-      navigate("/Login");
+      navigate(PathConstant.LOGIN);
       return;
     }
-    try {
-      if (user.userRole === "leader") {
-        setIsLeader(true);
-        await getAllResident(user.token, dispatch);
-      } else {
+
+    switch (user.userRole) {
+      case "resident":
         setIsLeader(false);
         await getRegistrationResident(user.token, dispatch, user.userId);
-      }
-    } catch (error) {
-      console.error(error);
+        break;
+      case "accountant":
+        setIsLeader(false);
+        await getAllResident(user.token, dispatch);
+        break;
+      default:
+        setIsLeader(true);
+        await getAllResident(user.token, dispatch);
+        break;
     }
   };
 
@@ -71,12 +77,13 @@ const Resident = () => {
 
   useEffect(() => {
     if (!user) return;
-    if (user.userRole === "leader") {
-      const flattenedData = allResident.map(item => {
-        const { id, idNumber, name, dob, gender, phoneNumber, registration, user, relationship } = item;
+    let flattenedData = [];
+    if (user.userRole === "leader" || user.userRole === "accountant") {
+      flattenedData = allResident.map(item => {
+        let { id, idNumber, name, dob, gender, phoneNumber, registration, relationship } = item;
 
         const registrationId = registration ? registration.id : null;
-        const userId = user ? user.id : null;
+        dob = handleFormatDate(dob);
 
         return {
           id,
@@ -86,18 +93,29 @@ const Resident = () => {
           gender,
           phoneNumber,
           registrationId,
-          userId,
           relationship,
         };
       });
-
-
-      setFlattenedResident(flattenedData);
-      setFilteredResident(flattenedData);
     } else {
-      setFlattenedResident(allResident);
-      setFilteredResident(allResident);
+      flattenedData = allResident.map(item => {
+        let { id, idNumber, name, dob, gender, phoneNumber, registrationId, relationship } = item;
+
+        dob = handleFormatDate(dob);
+
+        return {
+          id,
+          idNumber,
+          name,
+          dob,
+          gender,
+          phoneNumber,
+          registrationId,
+          relationship,
+        };
+      });
     }
+    setFlattenedResident(flattenedData);
+    setFilteredResident(flattenedData);
   }, [user, allResident]);
 
   return (

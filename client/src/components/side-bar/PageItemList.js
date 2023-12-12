@@ -1,13 +1,12 @@
-import React, { useState } from "react";
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import React from "react";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import CreditCardRoundedIcon from "@mui/icons-material/CreditCardRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import SavingsRoundedIcon from "@mui/icons-material/SavingsRounded";
 import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
-import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
-import { useNavigate } from "react-router-dom";
+import CreditCardRoundedIcon from "@mui/icons-material/CreditCardRounded";
 import { PathConstant } from "../../const";
+import { useNavigate } from "react-router-dom";
+import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
 const PAGE_ITEM_LIST = [
   {
@@ -16,7 +15,7 @@ const PAGE_ITEM_LIST = [
     icon: <PersonRoundedIcon />,
   },
   {
-    name: "Gia đình",
+    name: "Hộ khẩu",
     path: PathConstant.REGISTRATION,
     icon: <HomeRoundedIcon />,
   },
@@ -31,20 +30,14 @@ const PAGE_ITEM_LIST = [
     icon: <SavingsRoundedIcon />,
   },
   {
-    name: "Báo cáo",
+    name: "Thống kê",
     path: PathConstant.STATISTIC,
     icon: <InsightsRoundedIcon />,
-  },
-  {
-    name: "Cài đặt",
-    path: PathConstant.SETTING,
-    icon: <SettingsRoundedIcon />,
   },
 ];
 
 const PageItemList = ({ open }) => {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState(null);
 
   return (
     <div>
@@ -55,11 +48,9 @@ const PageItemList = ({ open }) => {
             disablePadding
             sx={{
               display: "block",
-              backgroundColor: selected === index ? "#b0c4de" : "transparent", // Set the background color for the selected item
             }}
             onClick={() => {
               navigate(item.path);
-              setSelected(index); // Update the selected item
             }}
           >
             <ListItemButton sx={{ minHeight: 48, justifyContent: open ? "initial" : "center", px: 2.5 }}>

@@ -3,67 +3,55 @@ import { createSlice } from "@reduxjs/toolkit";
 const registrationSlice = createSlice({
   name: "registration",
   initialState: {
-    registrations: {
-      allRegistrations: null,
-      isFetching: false,
-      error: false,
-    },
+    allRegistration: [],
+    isFetching: false,
+    error: false,
   },
   reducers: {
     getRegistrationsStart: state => {
-      state.registrations.isFetching = true;
+      state.isFetching = true;
     },
     getRegistrationsSuccess: (state, action) => {
-      state.registrations.isFetching = false;
-      state.registrations.allRegistrations = action.payload;
+      state.isFetching = false;
+      state.allRegistration = action.payload;
     },
     getRegistrationsFailed: state => {
-      state.registrations.isFetching = false;
-      state.registrations.error = true;
+      state.isFetching = false;
+      state.error = true;
     },
 
     deleteRegistrationStart: state => {
-      state.registrations.isFetching = true;
+      state.isFetching = true;
     },
-    deleteRegistrationSuccess: (state, action) => {
-      state.registrations.isFetching = false;
-      // Remove the deleted registration from the array
-      state.registrations.allRegistrations = state.registrations.allRegistrations.filter(
-        regis => regis.id !== action.payload,
-      );
+    deleteRegistrationSuccess: (state) => {
+      state.isFetching = false;
     },
-    deleteRegistrationFailed: (state, action) => {
-      state.registrations.isFetching = false;
-      state.registrations.error = true;
-      state.msg = action.payload;
+    deleteRegistrationFailed: (state) => {
+      state.isFetching = false;
+      state.error = true;
     },
 
     addRegistrationsStart: state => {
-      state.registrations.isFetching = true;
+      state.isFetching = true;
     },
-    addRegistrationsSuccess: (state, action) => {
-      state.registrations.isFetching = false;
-      // You can update the state with the added registration data
-      state.msg = action.payload;
+    addRegistrationsSuccess: (state) => {
+      state.isFetching = false;
     },
     addRegistrationsFailed: state => {
-      state.registrations.isFetching = false;
-      state.registrations.error = true;
-      // You can handle errors when adding registrations
+      state.isFetching = false;
+      state.error = true;
     },
 
     updateRegistrationsStart: state => {
-      state.registrations.isFetching = true;
-      state.registrations.error = false; // Reset error state
+      state.isFetching = true;
+      state.error = false;
     },
-    updateRegistrationsSuccess: (state, action) => {
-      state.registrations.isFetching = false;
-      state.msg = action.payload; // Store success message or updated data
+    updateRegistrationsSuccess: (state) => {
+      state.isFetching = false;
     },
     updateRegistrationsFailed: state => {
-      state.registrations.isFetching = false;
-      state.registrations.error = true; // Set error flag
-      // Additional error handling logic if needed
+      state.isFetching = false;
+      state.error = true; 
     },
   },
 });

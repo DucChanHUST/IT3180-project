@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useCallback, Fragment } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Grid, Button } from "@mui/material";
-import { SideBar, NavBar } from "../../../components";
-import { getAllFee } from "../../../redux/apiRequest";
-import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import SearchBar from "./SearchBar";
 import DataTable from "./DataTable";
 import AddFeeDialog from "./AddFeeDialog";
 import EditFeeDialog from "./EditFeeDialog";
 import DeleteFeeDialog from "./DeleteFeeDialog";
+import { PathConstant } from "../../../const";
+import { useNavigate } from "react-router-dom";
+import { Box, Grid, Button } from "@mui/material";
+import { SideBar, NavBar } from "../../../components";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllFee, getRegistrationFee } from "../../../redux/apiRequest";
 
 const Fee = () => {
   const dispatch = useDispatch();
@@ -49,11 +51,30 @@ const Fee = () => {
 
   const handleFetchFee = async () => {
     if (!user) {
-      navigate("/Login");
+      navigate(PathConstant.LOGIN);
       return;
     }
-    user.userRole === "accountant" ? setIsAccountant(true) : setIsAccountant(false);
-    await getAllFee(user.token, dispatch);
+
+    switch (user.userRole) {
+      case "resident":
+        setIsAccountant(false);
+
+        const registrationResponse = await axios.get(`http://localhost:3001/api/users/${user.userId}`, {
+          headers: { Authorization: `bearer ${user.token}` },
+        });
+        const registrationId = registrationResponse.data.resident.registration.id;
+
+        await getRegistrationFee(user.token, dispatch, registrationId);
+        break;
+      case "accountant":
+        setIsAccountant(true);
+        await getAllFee(user.token, dispatch);
+        break;
+      default:
+        setIsAccountant(false);
+        await getAllFee(user.token, dispatch);
+        break;
+    }
   };
 
   useEffect(() => {
@@ -61,16 +82,21 @@ const Fee = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     const feeData = allFee.map(item => {
-      let { id, nameFee, type, amount, paid} = item;
+      let {id, nameFee, type, amount, paid, total, status} = item;
 
-      (type) ? (type = "Bắt buộc") : (type = "Tự nguyện");
+      type = type === 1 ? "Bắt buộc" : "Tự nguyện";
 
-      return { id, nameFee, type, amount, paid};
-    });
+      return {id, nameFee, type, amount, paid, total, status};
+    })
+
+    // console.log(feeData);
     
+
     setFeeData(feeData);
     setFilteredFee(feeData);
   }, [allFee, user]);
@@ -89,7 +115,7 @@ const Fee = () => {
             {isAccountant ? (
               <Grid item>
                 <Button onClick={() => setIsAddDialogOpen(true)} variant="contained">
-                  Thêm khoản thu
+                  Thêm khoản phí
                 </Button>
               </Grid>
             ) : (
