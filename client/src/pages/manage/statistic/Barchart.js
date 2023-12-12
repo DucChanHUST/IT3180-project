@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardContent,
 } from "@mui/material";
+import { useSelector } from "react-redux";
 import { Chart, BarController, CategoryScale, LinearScale, BarElement } from "chart.js";
 import dayjs from "dayjs";
 
