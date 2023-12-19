@@ -2,10 +2,12 @@ const residentRouter = require('express').Router()
 const { User, Registration, Resident } = require('../models/associations')
 const { tokenExtractor } = require('../util/tokenExtractor');
 const { checkUserRole } = require('../util/checkUserRole');
+const bcrypt = require('bcrypt')
+
 
 residentRouter.use(tokenExtractor);
 
-residentRouter.get('/',checkUserRole(['leader', 'accountant']), async (req, res) => {
+residentRouter.get('/', checkUserRole(['leader', 'accountant']), async (req, res) => {
   const listRes = await Resident.findAll({
     attributes: { exclude: ['registrationId'] },
     include: [
@@ -21,7 +23,7 @@ residentRouter.get('/',checkUserRole(['leader', 'accountant']), async (req, res)
   res.json(listRes)
 });
 
-residentRouter.get('/:id',checkUserRole(['leader', 'accountant']), async (req, res) => {
+residentRouter.get('/:id', checkUserRole(['leader', 'accountant']), async (req, res) => {
   try {
     const resident = await Resident.findByPk(req.params.id, {
       attributes: { exclude: ['registrationId'] },
@@ -68,8 +70,27 @@ residentRouter.put('/update/:id', checkUserRole(['leader']), async (req, res) =>
       ]
     });
     if (updateRes) {
-      await updateRes.update(req.body)
-      await updateRes.reload({ 
+      // update user if update resident's idNumber
+      const prevUsername = updateRes.idNumber;
+      if (req.body.idNumber !== null && req.body.idNumber !== prevUsername) {
+        let newUsername = req.body.idNumber;
+        const user = await User.findOne({
+          where: {
+            username: prevUsername
+          }
+        });
+        if (user) {
+          console.log("ok");
+          const passwordHash = await bcrypt.hash(newUsername, 10);
+          console.log(passwordHash);
+          user.username = newUsername;
+          user.passwordHash = passwordHash;
+          await user.save();
+        }
+      }
+
+      await updateRes.update(req.body);
+      await updateRes.reload({
         include: [
           {
             model: User,
@@ -79,7 +100,7 @@ residentRouter.put('/update/:id', checkUserRole(['leader']), async (req, res) =>
           }
         ]
       });
-      await updateRes.save()
+      await updateRes.save();
       res.status(200).json(updateRes)
     } else {
       res.status(404).json('Resident not found')
@@ -92,10 +113,10 @@ residentRouter.put('/update/:id', checkUserRole(['leader']), async (req, res) =>
 residentRouter.delete('/delete/:id', checkUserRole(['leader']), async (req, res) => {
   try {
     const delRes = await Resident.findByPk(req.params.id)
-    if(delRes){
+    if (delRes) {
       await delRes.destroy()
       res.status(202).json("Delete successfully")
-    }else{
+    } else {
       res.status(404).json("Resident not found")
     }
   } catch (error) {

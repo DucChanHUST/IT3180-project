@@ -10,10 +10,13 @@ Resident.belongsTo(Registration)
 Resident.hasOne(User)
 User.belongsTo(Resident)
 
+Registration.belongsToMany(Fee, { through: 'expenses' });
+Fee.belongsToMany(Registration, { through: 'expenses' });
+
 Resident.sync({ alter: true })
 Registration.sync({ alter: true })
 User.sync({ alter: true})
-
+Fee.sync({ alter: true})
 Expense.sync({ alter: true })
 
 module.exports = {
