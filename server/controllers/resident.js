@@ -71,24 +71,41 @@ residentRouter.put('/update/:id', checkUserRole(['leader']), async (req, res) =>
     });
     if (updateRes) {
       // update user if update resident's idNumber
+      const idNumber = req.body.idNumber; 
       const prevUsername = updateRes.idNumber;
-      if (req.body.idNumber !== null && req.body.idNumber !== prevUsername) {
-        let newUsername = req.body.idNumber;
+      if (idNumber !== null && idNumber !== prevUsername) {
+        const newUsername = idNumber;
+        const newPasswordHash = await bcrypt.hash(newUsername, 10);
         const user = await User.findOne({
           where: {
             username: prevUsername
           }
         });
         if (user) {
-          console.log("ok");
-          const passwordHash = await bcrypt.hash(newUsername, 10);
-          console.log(passwordHash);
-          user.username = newUsername;
-          user.passwordHash = passwordHash;
+          user.username = idNumber;
+          user.passwordHash = newPasswordHash;
           await user.save();
+        }else{
+          // trường hợp thêm số CCCD cho 1 người chưa có số CCCD
+          let residentId = updateRes.id;
+          let role = 'resident';
+          await User.create({
+            username: newUsername,
+            passwordHash: newPasswordHash,
+            role,
+            residentId
+          });
+        }
+      }else{
+        // trường hợp xóa số CCCD của một người
+        if(idNumber === null && prevUsername !== null){
+          await User.destroy({
+            where:{
+              username: prevUsername
+            }
+          });
         }
       }
-
       await updateRes.update(req.body);
       await updateRes.reload({
         include: [
