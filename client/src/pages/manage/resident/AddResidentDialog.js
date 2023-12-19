@@ -93,7 +93,7 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
   };
 
   return (
-    <Dialog open={isAddDialogOpen} onClose={handleCloseAddDialog} fullWidth>
+    <Dialog open={isAddDialogOpen} onClose={handleCancelAdd} fullWidth>
       <DialogTitle>Thêm nhân khẩu</DialogTitle>
       <DialogContent>
         <DialogContentText>{errorDialogContent}</DialogContentText>
