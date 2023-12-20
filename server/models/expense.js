@@ -14,12 +14,10 @@ Expense.init({
     type: DataTypes.INTEGER,
     allowNull: true,
     onDelete: 'SET NULL',
-    references: { model: 'registrations', key: 'id' },
   },
   feeId: {
     type: DataTypes.INTEGER,
     allowNull: true,
-    references: { model: 'fees', key: 'id' },
   },
   amount: {
     type: DataTypes.INTEGER,
