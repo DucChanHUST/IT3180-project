@@ -434,11 +434,11 @@ export const addExpense = async (accessToken, dispatch, expenseData) => {
 
 export const deleteExpense = async (accessToken, dispatch, expense) => {
   try {
-    await axios.delete(`http://localhost:3001/api/expense/`, {
-      data: {
-        registrationId: expense.registrationId,
-        feeId: expense.feeId,
-      },
+    await axios.delete(`http://localhost:3001/api/expense/${expense.id}`, {
+      // data: {
+      //   registrationId: expense.registrationId,
+      //   feeId: expense.feeId,
+      // },
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 

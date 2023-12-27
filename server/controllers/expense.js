@@ -83,13 +83,12 @@ expenseRouter.put('/',checkUserRole(['accountant']), async (req, res) => {
     }
 })
 
-expenseRouter.delete('/',checkUserRole(['accountant']), async (req, res) => {
-    const { registrationId, feeId } = req.body;
+expenseRouter.delete('/:id',checkUserRole(['accountant']), async (req, res) => {
+    // const { registrationId, feeId } = req.body;
     try {
         const expense = await Expense.findOne({
             where: {
-                registrationId: registrationId,
-                feeId: feeId
+                id: req.params.id,
             }
         });
         if (!expense) {
