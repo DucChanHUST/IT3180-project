@@ -50,6 +50,8 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
 
   const handleCancelEdit = () => {
     handleCloseEditDialog();
+    setErrorDialogContent("");
+    setErrors(INIT_ERRORS_VALUES);
     setResidentValues(INIT_RESIDENT_VALUES);
   };
 
@@ -73,6 +75,16 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
       return;
     }
 
+    if (!isValidIdNumber(residentValues.idNumber)) {
+      setErrorDialogContent(`Số CCCD "${residentValues.idNumber}" không hợp lệ`);
+      return;
+    }
+
+    if (!isValidPhoneNumber(residentValues.phoneNumber)) {
+      setErrorDialogContent(`Số điện thoại "${residentValues.phoneNumber}" không hợp lệ`);
+      return;
+    }
+
     const allResidentIdNumber = flattenedResident.map(item => item.idNumber);
     if (allResidentIdNumber.includes(residentValues.idNumber)) {
       setErrorDialogContent(`Số CCCD "${residentValues.idNumber}" đã tồn tại`);
@@ -91,7 +103,7 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
       return;
     }
 
-    handleCloseEditDialog();
+    handleCancelEdit();
     setResidentValues(INIT_RESIDENT_VALUES);
     residentValues.idNumber = residentValues.idNumber || null;
     updateResident(user.token, dispatch, residentValues, selectedResident.id);
@@ -182,16 +194,20 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
             </FormControl>
           </Stack>
           <NumberTextField
+            required={false}
+            error={errors.idNumber}
             label={FIELD_MAPPING.idNumber}
             value={residentValues.idNumber}
             onChange={handleResidentValueChange("idNumber")}
-            required={false}
+            helperText={!isValidIdNumber(residentValues.idNumber) ? "Phải nhập đúng 12 chữ số" : ""}
           />
           <NumberTextField
+            required={false}
+            error={errors.phoneNumber}
             label={FIELD_MAPPING.phoneNumber}
             value={residentValues.phoneNumber}
             onChange={handleResidentValueChange("phoneNumber")}
-            required={false}
+            helperText={!isValidPhoneNumber(residentValues.phoneNumber) ? "Phải nhập đúng 10 chữ số" : ""}
           />
           <Stack direction="row" spacing={1}>
             <NumberTextField
@@ -256,3 +272,11 @@ const START_OF_1900 = dayjs("1900-01-01T00:00:00.000");
 const ALL_RESIDENT_ROLE = RelationshipConstant.RELATIONSHIP.map(item => item.role);
 
 export default memo(EditResidentDialog);
+
+const isValidIdNumber = value => {
+  return !value || value.length === 12;
+};
+
+const isValidPhoneNumber = value => {
+  return !value || value.length === 10;
+};

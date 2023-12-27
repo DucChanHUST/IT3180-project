@@ -63,6 +63,16 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
       return;
     }
 
+    if (!isValidIdNumber(residentValues.idNumber)) {
+      setErrorDialogContent(`Số CCCD "${residentValues.idNumber}" không hợp lệ`);
+      return;
+    }
+
+    if (!isValidPhoneNumber(residentValues.phoneNumber)) {
+      setErrorDialogContent(`Số điện thoại "${residentValues.phoneNumber}" không hợp lệ`);
+      return;
+    }
+
     // Không được thêm `Nhân khẩu` có idNumber đã tồn tại
     const allResidentIdNumber = flattenedResident.map(item => item.idNumber);
     if (allResidentIdNumber.includes(residentValues.idNumber)) {
@@ -156,16 +166,20 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
             </FormControl>
           </Stack>
           <NumberTextField
+            required={false}
+            error={errors.idNumber}
             label={FIELD_MAPPING.idNumber}
             value={residentValues.idNumber}
             onChange={handleResidentValueChange("idNumber")}
-            required={false}
+            helperText={!isValidIdNumber(residentValues.idNumber) ? "Phải nhập đúng 12 chữ số" : ""}
           />
           <NumberTextField
+            required={false}
+            error={errors.phoneNumber}
             label={FIELD_MAPPING.phoneNumber}
             value={residentValues.phoneNumber}
             onChange={handleResidentValueChange("phoneNumber")}
-            required={false}
+            helperText={!isValidPhoneNumber(residentValues.phoneNumber) ? "Phải nhập đúng 10 chữ số" : ""}
           />
           <Stack direction="row" spacing={1}>
             <NumberTextField
@@ -239,3 +253,11 @@ const INIT_RESIDENT_VALUES = {
 };
 
 const ALL_RESIDENT_ROLE = RelationshipConstant.RELATIONSHIP.map(item => item.role);
+
+const isValidIdNumber = value => {
+  return !value || value.length === 12;
+};
+
+const isValidPhoneNumber = value => {
+  return !value || value.length === 10;
+};

@@ -118,7 +118,7 @@ export const handleFilterRelationship = (
 
   for (let i = 0; i < registrationResident.length; i++) {
     if (registrationResident[i].relationship === "Chủ hộ") {
-      headYear = new Date(registrationResident[i].dob);
+      headYear = new Date(handleConvertDateFormat(registrationResident[i].dob));
       headGender = registrationResident[i].gender;
     }
     existedRelationship.push(registrationResident[i].relationship);
