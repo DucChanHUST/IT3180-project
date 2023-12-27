@@ -83,7 +83,7 @@ const AddResidentDialog = ({ isAddDialogOpen, handleCloseAddDialog, flattenedRes
     }
 
     residentValues.idNumber = residentValues.idNumber || null;
-    handleCloseAddDialog();
+    handleCancelAdd();
     setResidentValues(INIT_RESIDENT_VALUES);
     addNewResident(user.token, dispatch, residentValues);
   };

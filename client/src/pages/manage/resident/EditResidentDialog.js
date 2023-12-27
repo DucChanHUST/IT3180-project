@@ -37,8 +37,11 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
     };
   }, [selectedResident]);
 
-  const user = useSelector(state => state.auth.login?.currentUser);
   const dispatch = useDispatch();
+  const user = useSelector(state => state.auth.login?.currentUser);
+  const allRegistrationId = useSelector(state => state.registration.allRegistration)?.map(
+    registration => registration.id,
+  );
 
   const [residentValues, setResidentValues] = useState(INIT_RESIDENT_VALUES);
   const [errors, setErrors] = useState(INIT_ERRORS_VALUES);
@@ -67,12 +70,31 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
 
     if (hasErrors) {
       setErrorDialogContent(`Vui lòng nhập ${errorContent.join(", ")}`);
-    } else {
-      handleCloseEditDialog();
-      setResidentValues(INIT_RESIDENT_VALUES);
-      residentValues.idNumber = residentValues.idNumber || null;
-      updateResident(user.token, dispatch, residentValues, selectedResident.id);
+      return;
     }
+
+    const allResidentIdNumber = flattenedResident.map(item => item.idNumber);
+    if (allResidentIdNumber.includes(residentValues.idNumber)) {
+      setErrorDialogContent(`Số CCCD "${residentValues.idNumber}" đã tồn tại`);
+      return;
+    }
+
+    // `Nhân khẩu` mới phải có `Mã hộ` đã tồn tại
+    if (!allRegistrationId.includes(parseInt(residentValues.registrationId))) {
+      setErrorDialogContent(`Mã hộ "${residentValues.registrationId}" chưa tồn tại`);
+      return;
+    }
+
+    // `Chủ hộ` bắt buộc phải có `Số CCCD`
+    if (residentValues.relationship === "Chủ hộ" && !residentValues.idNumber) {
+      setErrorDialogContent(`Vui lòng nhập ${FIELD_MAPPING.idNumber} cho Chủ hộ`);
+      return;
+    }
+
+    handleCloseEditDialog();
+    setResidentValues(INIT_RESIDENT_VALUES);
+    residentValues.idNumber = residentValues.idNumber || null;
+    updateResident(user.token, dispatch, residentValues, selectedResident.id);
   };
 
   const handleResidentValueChange = field => value => {
@@ -92,7 +114,7 @@ const EditResidentDialog = ({ isEditDialogOpen, handleCloseEditDialog, flattened
       INIT_RESIDENT_VALUES.relationship,
     );
     setPossibleRelationship(filteredRelationship);
-  }, [INIT_RESIDENT_VALUES, flattenedResident])
+  }, [INIT_RESIDENT_VALUES, flattenedResident]);
 
   return (
     <Dialog open={isEditDialogOpen} onClose={handleCloseEditDialog} fullWidth>
