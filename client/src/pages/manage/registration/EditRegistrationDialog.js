@@ -53,7 +53,7 @@ const EditRegistrationDialog = ({ selectedRegistration, isEditDialogOpen, handle
       return;
     }
 
-    handleCloseEditDialog();
+    handleCancelEdit();
     updateRegistration(user.token, dispatch, registrationValues, selectedRegistration.registrationId);
     setRegistrationValues(INIT_REGISTRATION_VALUES);
   };

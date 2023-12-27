@@ -47,7 +47,7 @@ const AddRegistrationDialog = ({ isAddDialogOpen, handleCloseAddDialog }) => {
       return;
     }
 
-    handleCloseAddDialog();
+    handleCancelAdd();
     addNewRegistration(user.token, dispatch, registrationValues);
     setRegistrationValues(INIT_REGISTRATION_VALUES);
   };
